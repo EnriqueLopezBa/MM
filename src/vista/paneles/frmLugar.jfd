@@ -1,0 +1,101 @@
+JFDML JFormDesigner: "7.0.5.0.404" Java: "1.8.0_261" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "fill"
+			"$columnConstraints": "[][][]"
+			"$rowConstraints": "[][][][]"
+		} ) {
+			name: "this"
+			"background": sfield java.awt.Color white
+			"name": "kk"
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbEstado"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0,grow, hmax 15%"
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbCiudad"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 0,,grow, hmax 15%"
+			} )
+			add( new FormComponent( "vista.paneles.frmEtiquetas" ) {
+				name: "frmEtiquetas1"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 0 1 4,grow, hmax 50%"
+			} )
+			add( new FormComponent( "Componentes.TextField" ) {
+				name: "txtLugar"
+				"labelText": "Nombre del Lugar"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1 2 1, growx"
+			} )
+			add( new FormComponent( "Componentes.TextField" ) {
+				name: "txtDomicilio"
+				"labelText": "Domicilio"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1 2 1,growx"
+			} )
+			add( new FormComponent( "Componentes.TextField" ) {
+				name: "txtCapacidad"
+				"labelText": "Capacidad"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 2,growx"
+			} )
+			add( new FormComponent( "Componentes.TextField" ) {
+				name: "txtPrecioAprox"
+				"labelText": "Precio Aprox"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 2,growx"
+			} )
+			add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
+				name: "btnGaleria"
+				"text": "Galeria"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnGaleria", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 3 2 1,grow,hmax 20%"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 755, 220 )
+		} )
+		add( new FormContainer( "javax.swing.JPopupMenu", new FormLayoutManager( class javax.swing.JPopupMenu ) ) {
+			name: "popupMenu2"
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "btnEliminarIMG"
+				"text": "Eliminar"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/delete.png" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEliminarIMG", true ) )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 10, 270 )
+			"size": new java.awt.Dimension( 103, 33 )
+		} )
+	}
+}

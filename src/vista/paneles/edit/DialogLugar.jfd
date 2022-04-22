@@ -1,0 +1,31 @@
+JFDML JFormDesigner: "7.0.5.0.404" Java: "1.8.0_261" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "fill"
+			"$columnConstraints": "[fill][fill]"
+			"$rowConstraints": "[198][]"
+		} ) {
+			name: "this"
+			"modal": true
+			"background": new java.awt.Color( 255, 255, 255, 255 )
+			"defaultCloseOperation": 2
+			"title": "                   Edicion de Lugares"
+			add( new FormComponent( "vista.paneles.pnlCRUD" ) {
+				name: "p"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0, spanx"
+			} )
+			add( new FormComponent( "vista.paneles.frmLugar" ) {
+				name: "f"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1, span, grow"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 506, 406 )
+		} )
+	}
+}

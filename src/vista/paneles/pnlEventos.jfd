@@ -1,0 +1,232 @@
+JFDML JFormDesigner: "7.0.5.0.404" Java: "1.8.0_261" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "fill,insets 0,hidemode 3,gap 4 4"
+			"$columnConstraints": "para[fill][294:n,grow 30,fill][grow 5,fill][grow 5,fill]0[grow 70]"
+			"$rowConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][]"
+		} ) {
+			name: "this"
+			"background": new java.awt.Color( 255, 255, 255, 255 )
+			"preferredSize": new java.awt.Dimension( 1350, 850 )
+			"minimumSize": new java.awt.Dimension( 1350, 850 )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblNombreEvento"
+				"text": "Nombre Evento"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblPresupuesto"
+				"text": "Presupuesto"
+				"font": &SwingDerivedFont0 new com.jformdesigner.model.SwingDerivedFont( null, 0, 1, false )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblCantInvitados"
+				"text": "Cant. Invitados"
+				"font": #SwingDerivedFont0
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 2"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblCaracteristicas"
+				"text": "Estilo/Caracteristicas"
+				"font": #SwingDerivedFont0
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 3"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblFecha"
+				"text": "Fecha"
+				"font": #SwingDerivedFont0
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 4"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblTipoEvento"
+				"text": "Tipo de evento"
+				"font": #SwingDerivedFont0
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 5"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblEstado"
+				"text": "Estado"
+				"font": #SwingDerivedFont0
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 6"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblCiudad"
+				"text": "Ciudad"
+				"font": #SwingDerivedFont0
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 7"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "txtNombreEvento"
+				"font": new java.awt.Font( "Segoe UI", 1, 16 )
+				"horizontalAlignment": 0
+				"nextFocusableComponent": new FormReference( "txtPresupuesto" )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 0"
+			} )
+			add( new FormComponent( "javax.swing.JFormattedTextField" ) {
+				name: "txtPresupuesto"
+				"font": &Font0 new java.awt.Font( "Segoe UI", 1, 16 )
+				"horizontalAlignment": 0
+				"nextFocusableComponent": new FormReference( "txtCantInvitados" )
+				addEvent( new FormEvent( "java.awt.event.KeyListener", "keyReleased", "txtPresupuestoKeyReleased", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 1"
+			} )
+			add( new FormComponent( "javax.swing.JFormattedTextField" ) {
+				name: "txtCantInvitados"
+				"font": #Font0
+				"horizontalAlignment": 0
+				addEvent( new FormEvent( "java.awt.event.KeyListener", "keyReleased", "txtCantInvitadosKeyReleased", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 2"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "pnlListEtiquetas"
+				"background": sfield java.awt.Color white
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 3"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "txtFecha"
+				"horizontalAlignment": 0
+				"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 3, false )
+				"nextFocusableComponent": new FormReference( "cmbTipoEvento" )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 4"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnAdmin"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/admin.png" )
+				"contentAreaFilled": false
+				"borderPainted": false
+				"cursor": new java.awt.Cursor( 12 )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAdmin", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 0, growy 0, growx 0"
+			} )
+			add( new FormComponent( "independientes.image_slider.ImageSlider" ) {
+				name: "imageSlider1"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 3 0, growx, spanx, spany"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblEditEtiqueta"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/edit.png" )
+				"cursor": new java.awt.Cursor( 12 )
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mousePressed", "lblEditEtiquetaMousePressed", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 3,alignx null,grow 0 0"
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbEstado"
+				"nextFocusableComponent": new FormReference( "cmbCiudad" )
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cmbEstado", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 6"
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbCiudad"
+				"nextFocusableComponent": new FormReference( "cmbLugar" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cmbCiudad", false ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 7"
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbTipoEvento"
+				"nextFocusableComponent": new FormReference( "cmbEstado" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cmbTipoEvento", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 5"
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbLugar"
+				"nextFocusableComponent": new FormReference( "btnAceptar" )
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cmbLugar", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 8"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblEditEstado"
+				"icon": &SwingIcon0 new com.jformdesigner.model.SwingIcon( 0, "/img/edit.png" )
+				"cursor": &Cursor0 new java.awt.Cursor( 12 )
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblEditEstadoMouseClicked", false ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 6,alignx null,grow 0 0"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblEditTipoEvento"
+				"icon": #SwingIcon0
+				"cursor": #Cursor0
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblEditTipoEventoMouseClicked", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 5,alignx null,grow 0 0"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblEditciudad"
+				"icon": #SwingIcon0
+				"cursor": #Cursor0
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblEditciudadMouseClicked", false ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 7,alignx null,grow 0 0"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblLugar"
+				"text": "Lugar"
+				"font": #SwingDerivedFont0
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 8"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblEditLugar"
+				"icon": #SwingIcon0
+				"cursor": #Cursor0
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblEditLugarMouseClicked", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 8, grow 0 0, split 2"
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "cbOtro"
+				"text": "Otro"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbOtro", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 3 8"
+			} )
+			add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
+				name: "btnAceptar"
+				"text": "Aceptar Evento"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAceptar", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 9,growy"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 1145, 680 )
+		} )
+		add( new FormComponent( "com.raven.datechooser.DateChooser" ) {
+			name: "dateChooser"
+			"textRefernce": new FormReference( "txtFecha" )
+			"dateFormat": "yyyy-MM-dd"
+			addEvent( new FormEvent( "java.beans.PropertyChangeListener", "propertyChange", "dateChooserPropertyChange", true ) )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 55, 686 )
+		} )
+	}
+}

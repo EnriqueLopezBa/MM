@@ -1,0 +1,155 @@
+JFDML JFormDesigner: "7.0.5.0.404" Java: "1.8.0_261" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$columnConstraints": "[grow 90]rel[grow 10]rel"
+			"$rowConstraints": "[][grow, fill]push[]"
+		} ) {
+			name: "this"
+			"background": new java.awt.Color( 255, 255, 255, 255 )
+			"name": "cc"
+			auxiliary() {
+				"JavaCodeGenerator.variableModifiers": 1
+			}
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$columnConstraints": "[grow][grow 0]"
+				"$rowConstraints": "[grow, fill]"
+			} ) {
+				name: "pnlBusqueda"
+				"background": new java.awt.Color( 255, 255, 255, 255 )
+				"preferredSize": new java.awt.Dimension( 1165, 51 )
+				add( new FormComponent( "Componentes.TextField" ) {
+					name: "txtBusqueda"
+					"labelText": "Buscar"
+					"margin": new java.awt.Insets( 2, 6, 5, 6 )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0, grow"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblCerrar"
+					"background": new java.awt.Color( 255, 255, 255, 255 )
+					"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/close.png" )
+					"cursor": new java.awt.Cursor( 12 )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 0"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0, spanx, grow"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "pnlTabla"
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "jScrollPane1"
+					"background": new java.awt.Color( 204, 204, 0, 255 )
+					add( new FormComponent( "Componentes.tableC.Table" ) {
+						name: "tblBuscar"
+						"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector, new java.util.Vector {
+							add( "Title 1" )
+							add( "Title 2" )
+							add( "Title 3" )
+							add( "Title 4" )
+						}, new java.util.Vector {
+							add( class java.lang.Object )
+							add( class java.lang.Object )
+							add( class java.lang.Object )
+							add( class java.lang.Object )
+						}, new java.util.Vector {
+							add( false )
+							add( false )
+							add( false )
+							add( false )
+						}, new java.util.Vector {
+							add( null )
+							add( null )
+							add( null )
+							add( null )
+						} )
+						auxiliary() {
+							"JavaCodeGenerator.variableModifiers": 1
+						}
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "Center"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1, grow"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$columnConstraints": "[grow]"
+				"$rowConstraints": "[grow][grow][grow]"
+				"$layoutConstraints": "flowy"
+			} ) {
+				name: "pnlBotones"
+				"background": new java.awt.Color( 255, 255, 255, 255 )
+				"preferredSize": new java.awt.Dimension( 300, 338 )
+				add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
+					name: "btnModificar"
+					"text": "Modificar"
+					"colorBackground2": new java.awt.Color( 102, 153, 255, 255 )
+					"font": &Font0 new java.awt.Font( "Segoe UI Black", 0, 16 )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 1,height 50, growx"
+				} )
+				add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
+					name: "btnAgregar"
+					"text": "Agregar"
+					"colorBackground": new java.awt.Color( 102, 255, 102, 255 )
+					"colorBackground2": new java.awt.Color( 0, 204, 51, 255 )
+					"font": #Font0
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0,height 50, growx"
+				} )
+				add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
+					name: "btnEliminar"
+					"text": "Eliminar"
+					"colorBackground": new java.awt.Color( 255, 102, 102, 255 )
+					"colorBackground2": new java.awt.Color( 255, 51, 51, 255 )
+					"font": #Font0
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 2,height 50, growx"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 1, grow"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 1165, 552 )
+		} )
+		add( new FormContainer( "javax.swing.JPopupMenu", new FormLayoutManager( class javax.swing.JPopupMenu ) ) {
+			name: "jPopupMenu1"
+			auxiliary() {
+				"JavaCodeGenerator.variableModifiers": 1
+			}
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "btnSeleccionar"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/person.png" )
+				"text": "Seleccionar Cliente"
+			} )
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "btnEventos"
+				"text": "Eventos"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/event.png" )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 562 )
+			"size": new java.awt.Dimension( 167, 70 )
+		} )
+	}
+}

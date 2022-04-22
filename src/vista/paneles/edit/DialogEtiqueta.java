@@ -28,89 +28,89 @@ public class DialogEtiqueta extends JDialog {
     ControladorEtiqueta controlador = new ControladorEtiqueta();
 
     public DialogEtiqueta(java.awt.Frame parent) {
-        super(parent);
-        initComponents();
-        final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.5).intValue()));
-        setLocationRelativeTo(null);
-        getContentPane().setBackground(Color.white);
-        p.init(new String[]{"idEtiqueta", "Etiqueta"}, 1, true);
-        f.init();
-
-        llenarTabla();
-        p.txtBusqueda.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                llenarTabla();
-            }
-
-        });
-
-        //Busqueda
-        p.tblBuscar.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int x = p.tblBuscar.getSelectedRow();
-                if (x != -1) {
-                    f.txtEtiqueta.setText(p.tblModel.getValueAt(x, 1).toString());
-                }
-            }
-        });
-
-        //AGREGAR
-        p.btnAgregar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (f.txtEtiqueta.getText().isEmpty()) {
-                    Constante.mensaje("Campo vacio", Message.Tipo.ADVERTENCIA);
-                    f.txtEtiqueta.requestFocus();
-                    return;
-                }
-                Etiqueta etiqueta = new Etiqueta();
-                etiqueta.setEtiqueta(f.txtEtiqueta.getText());
-                Mensaje m = controlador.registrar(etiqueta);
-                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-                if (m.getTipoMensaje() == Message.Tipo.OK) {
-                    llenarTabla();
-                }
-
-            }
-        });
-        //Modificar
-        p.btnModificar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!Constante.filaSeleccionada(p.tblBuscar)) {
-                    return;
-                }
-                int x = p.tblBuscar.getSelectedRow();
-                Etiqueta etiqueta = new Etiqueta();
-                etiqueta.setIdEtiqueta((int) p.tblModel.getValueAt(x, 0));
-                etiqueta.setEtiqueta(p.tblModel.getValueAt(x, 1).toString());
-                Mensaje m = controlador.actualizar(etiqueta);
-                if (m.getTipoMensaje() == Tipo.OK) {
-                    llenarTabla();
-                }
-                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-            }
-        });
-        //Eliminar
-        p.btnEliminar.addActionListener((ActionEvent e) -> {
-            if (!Constante.filaSeleccionada(p.tblBuscar)) {
-                return;
-            }
-            if (JOptionPane.showConfirmDialog(this, " Seguro que desea eliminar?") != 0) {
-                return;
-            }
-            int x = p.tblBuscar.getSelectedRow();
-            Etiqueta etiqueta = new Etiqueta();
-            etiqueta.setIdEtiqueta((int) p.tblModel.getValueAt(x, 0));
-            Mensaje m = controlador.eliminar(etiqueta);
-            if (m.getTipoMensaje() == Tipo.OK) {
-                llenarTabla();
-            }
-            Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-        });
+//        super(parent);
+//        initComponents();
+//        final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+//        setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.5).intValue()));
+//        setLocationRelativeTo(null);
+//        getContentPane().setBackground(Color.white);
+//        p.init(new String[]{"idEtiqueta", "Etiqueta"}, 1, true);
+//        f.init();
+//
+//        llenarTabla();
+//        p.txtBusqueda.addKeyListener(new KeyAdapter() {
+//            @Override
+//            public void keyReleased(KeyEvent e) {
+//                llenarTabla();
+//            }
+//
+//        });
+//
+//        //Busqueda
+//        p.tblBuscar.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mousePressed(MouseEvent e) {
+//                int x = p.tblBuscar.getSelectedRow();
+//                if (x != -1) {
+//                    f.txtEtiqueta.setText(p.tblModel.getValueAt(x, 1).toString());
+//                }
+//            }
+//        });
+//
+//        //AGREGAR
+//        p.btnAgregar.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                if (f.txtEtiqueta.getText().isEmpty()) {
+//                    Constante.mensaje("Campo vacio", Message.Tipo.ADVERTENCIA);
+//                    f.txtEtiqueta.requestFocus();
+//                    return;
+//                }
+//                Etiqueta etiqueta = new Etiqueta();
+//                etiqueta.setEtiqueta(f.txtEtiqueta.getText());
+//                Mensaje m = controlador.registrar(etiqueta);
+//                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+//                if (m.getTipoMensaje() == Message.Tipo.OK) {
+//                    llenarTabla();
+//                }
+//
+//            }
+//        });
+//        //Modificar
+//        p.btnModificar.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                if (!Constante.filaSeleccionada(p.tblBuscar)) {
+//                    return;
+//                }
+//                int x = p.tblBuscar.getSelectedRow();
+//                Etiqueta etiqueta = new Etiqueta();
+//                etiqueta.setIdEtiqueta((int) p.tblModel.getValueAt(x, 0));
+//                etiqueta.setEtiqueta(p.tblModel.getValueAt(x, 1).toString());
+//                Mensaje m = controlador.actualizar(etiqueta);
+//                if (m.getTipoMensaje() == Tipo.OK) {
+//                    llenarTabla();
+//                }
+//                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+//            }
+//        });
+//        //Eliminar
+//        p.btnEliminar.addActionListener((ActionEvent e) -> {
+//            if (!Constante.filaSeleccionada(p.tblBuscar)) {
+//                return;
+//            }
+//            if (JOptionPane.showConfirmDialog(this, " Seguro que desea eliminar?") != 0) {
+//                return;
+//            }
+//            int x = p.tblBuscar.getSelectedRow();
+//            Etiqueta etiqueta = new Etiqueta();
+//            etiqueta.setIdEtiqueta((int) p.tblModel.getValueAt(x, 0));
+//            Mensaje m = controlador.eliminar(etiqueta);
+//            if (m.getTipoMensaje() == Tipo.OK) {
+//                llenarTabla();
+//            }
+//            Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+//        });
 
     }
 

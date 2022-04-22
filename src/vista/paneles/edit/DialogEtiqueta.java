@@ -36,7 +36,9 @@ public class DialogEtiqueta extends JDialog {
         getContentPane().setBackground(Color.white);
         p.init(new String[]{"idEtiqueta", "Etiqueta"}, 1, true);
         f.init();
-
+        f.listEtiqueta.setEnabled(false);
+        f.btnClean.setEnabled(false);
+        f.btnAgregarEtiqueta.setEnabled(false);
         llenarTabla();
         p.txtBusqueda.addKeyListener(new KeyAdapter() {
             @Override

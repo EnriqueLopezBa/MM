@@ -12,12 +12,18 @@ new FormModel {
 			"background": sfield java.awt.Color white
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "txtEtiqueta"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 0, spany, growx, h 35%!"
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "btnAgregarEtiqueta"
 				"text": "+"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAgregarEtiqueta", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 1 0, grow"
@@ -44,6 +50,9 @@ new FormModel {
 				"borderPainted": false
 				"contentAreaFilled": false
 				"cursor": new java.awt.Cursor( 12 )
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnClean", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 1 1,grow"

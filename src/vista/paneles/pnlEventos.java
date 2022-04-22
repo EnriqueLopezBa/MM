@@ -1,6 +1,3 @@
-/*
- * Created by JFormDesigner on Thu Apr 21 10:42:38 MDT 2022
- */
 package vista.paneles;
 
 import java.beans.*;
@@ -131,7 +128,8 @@ public class pnlEventos extends JPanel {
                 if (estado.getEstado().equals(cmbEstado.getSelectedItem().toString())) {
                     estadoActual = estado;
                 }
-            }
+            }//
+            
             cargarCiudad();
         }
     }
@@ -293,7 +291,6 @@ public class pnlEventos extends JPanel {
         pnlListEtiquetas = new JPanel();
         txtFecha = new JTextField();
         btnAdmin = new JButton();
-        imageSlider1 = new ImageSlider();
         lblEditEtiqueta = new JLabel();
         cmbEstado = new JComboBox();
         cmbCiudad = new JComboBox();
@@ -420,7 +417,6 @@ public class pnlEventos extends JPanel {
         btnAdmin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnAdmin.addActionListener(e -> btnAdmin(e));
         add(btnAdmin, "cell 2 0, growy 0, growx 0");
-        add(imageSlider1, "cell 3 0, growx, spanx, spany");
 
         //---- lblEditEtiqueta ----
         lblEditEtiqueta.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
@@ -534,7 +530,6 @@ public class pnlEventos extends JPanel {
     private JPanel pnlListEtiquetas;
     private JTextField txtFecha;
     private JButton btnAdmin;
-    private ImageSlider imageSlider1;
     private JLabel lblEditEtiqueta;
     public JComboBox cmbEstado;
     private JComboBox cmbCiudad;

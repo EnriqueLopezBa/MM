@@ -116,11 +116,6 @@ new FormModel {
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 2 0, growy 0, growx 0"
 			} )
-			add( new FormComponent( "independientes.image_slider.ImageSlider" ) {
-				name: "imageSlider1"
-			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 3 0, growx, spanx, spany"
-			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblEditEtiqueta"
 				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/edit.png" )

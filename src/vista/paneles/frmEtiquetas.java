@@ -170,11 +170,11 @@ public class frmEtiquetas extends JPanel {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    private JTextField txtEtiqueta;
-    private JButton btnAgregarEtiqueta;
+    public JTextField txtEtiqueta;
+    public JButton btnAgregarEtiqueta;
     private JScrollPane scrollPane1;
     public JList listEtiqueta;
-    private JButton btnClean;
+    public JButton btnClean;
     private JLabel lblEncontrado;
     private JPopupMenu popupMenu1;
     private JMenuItem btnQuitar;

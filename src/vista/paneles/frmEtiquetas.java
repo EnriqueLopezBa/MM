@@ -42,6 +42,22 @@ public class frmEtiquetas extends JPanel {
                 listEtiqueta.setVisibleRowCount(a);
             }
         });
+        listModel.addListDataListener(new ListDataListener() {
+            @Override
+            public void intervalAdded(ListDataEvent e) {
+                listEtiqueta.setModel(listModel);
+            }
+
+            @Override
+            public void intervalRemoved(ListDataEvent e) {
+                listEtiqueta.setModel(listModel);
+            }
+
+            @Override
+            public void contentsChanged(ListDataEvent e) {
+                
+            }
+        });
     }
 
     public void autoCompletar(java.util.List<String> lista){
@@ -78,7 +94,6 @@ public class frmEtiquetas extends JPanel {
             return;
         }
         listModel.addElement(txtEtiqueta.getText().substring(0,1).toUpperCase() + txtEtiqueta.getText().substring(1));
-        listEtiqueta.setModel(listModel);
         txtEtiqueta.setText("");
     }
     

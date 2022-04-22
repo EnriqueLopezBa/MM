@@ -55,7 +55,14 @@ public class LugarDAOImp implements ILugarDAO {
 
     @Override
     public Lugar obtenerByID(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR WHERE IDLUGAR = "+id)) {
+            if (rs.next()) {
+                return new Lugar(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerByID Lugar, " + e.getMessage());
+        }   
+        return null;
     }
 
     @Override
@@ -139,6 +146,18 @@ public class LugarDAOImp implements ILugarDAO {
         } catch (SQLException e) {
             System.err.println("Error obtenerByIDCiudad Lugar, " + e.getMessage());
         }    
+        return null;
+    }
+
+    @Override
+    public Lugar obtenerLugarByLast() {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM lugar ORDER BY idLugar DESC")) {
+            if (rs.next()) {
+                return new Lugar(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error ObtenerLugarByLast Lugar, "  + e.getMessage());
+        }      
         return null;
     }
 

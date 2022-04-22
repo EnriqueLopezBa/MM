@@ -1,4 +1,3 @@
-
 package controlador;
 
 import dao.EtiquetaDAOImp;
@@ -11,24 +10,33 @@ import modelo.Etiqueta;
  * @author Enrique
  */
 public class ControladorEtiqueta {
-    
-    
-    public ArrayList<Etiqueta> obtenerLista(){
+
+    public ArrayList<Etiqueta> obtenerLista() {
         return EtiquetaDAOImp.getInstancia().obtenerLista();
     }
-    public ArrayList<Etiqueta> obtenerListaByCadena(String cadena){
+
+    public Etiqueta obtenerByID(int id) {
+        return EtiquetaDAOImp.getInstancia().obtenerByID(id);
+    }
+
+    public Etiqueta obtenerByEtiquetaNombre(String nombre) {
+        return EtiquetaDAOImp.getInstancia().obtenerByEtiquetaNombre(nombre);
+    }
+
+    public ArrayList<Etiqueta> obtenerListaByCadena(String cadena) {
         return EtiquetaDAOImp.getInstancia().obtenerListaByCadena(cadena);
     }
-    
-    public Mensaje registrar(Etiqueta et){
+
+    public Mensaje registrar(Etiqueta et) {
         return EtiquetaDAOImp.getInstancia().registrar(et);
     }
-    public Mensaje actualizar(Etiqueta et){
+
+    public Mensaje actualizar(Etiqueta et) {
         return EtiquetaDAOImp.getInstancia().actualizar(et);
     }
-    public Mensaje eliminar(Etiqueta et){
+
+    public Mensaje eliminar(Etiqueta et) {
         return EtiquetaDAOImp.getInstancia().eliminar(et);
     }
-    
-    
+
 }

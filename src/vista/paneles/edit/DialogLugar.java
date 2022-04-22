@@ -2,12 +2,13 @@ package vista.paneles.edit;
 
 import java.awt.*;
 import javax.swing.*;
-import Componentes.TextField;
 import Componentes.Sweet_Alert.Message;
 import Componentes.Sweet_Alert.Message.Tipo;
 import controlador.ControladorCiudad;
 import controlador.ControladorEstado;
+import controlador.ControladorEtiqueta;
 import controlador.ControladorLugar;
+import controlador.ControladorLugarEtiquetas;
 import independientes.Constante;
 import independientes.Mensaje;
 import java.awt.event.ActionEvent;
@@ -19,11 +20,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
+import static javax.swing.JOptionPane.showMessageDialog;
 import modelo.Ciudad;
 import modelo.Estado;
 import modelo.Etiqueta;
 import modelo.Lugar;
+import modelo.LugarEtiquetas;
 
 import net.miginfocom.swing.*;
 import vista.paneles.*;
@@ -36,6 +38,9 @@ public class DialogLugar extends JDialog {
     private ControladorCiudad controladorCiudad = new ControladorCiudad();
     private ControladorLugar controladorLugar = new ControladorLugar();
     private ControladorEstado controladorEstado = new ControladorEstado();
+    private ControladorLugarEtiquetas controladorLugarEtiquetas = new ControladorLugarEtiquetas();
+    private ControladorEtiqueta controladorEtiqueta = new ControladorEtiqueta();
+
     private Estado estadoActual = null;
     private Ciudad ciudadActual = null;
 
@@ -86,20 +91,13 @@ public class DialogLugar extends JDialog {
         }
         cargarCiduades();
         llenarTabla();
-         f.init(); // Iniciar Etiquetas
+        f.init(); // Iniciar Etiquetas
         //AGREGAR
         p.btnAgregar.addActionListener((ActionEvent e) -> {
             if (!validaDatos()) {
                 return;
             }
-           
-            DefaultListModel list = new DefaultListModel();
-            list.addElement("asd");
-          
-            for(Object etique : f.frmEtiquetas1.listModel.toArray()){
-                
-            }
-            
+
             //Lugar
             Lugar lugar = new Lugar();
             lugar.setIdCiudad(ciudadActual.getIdCiudad());
@@ -110,6 +108,19 @@ public class DialogLugar extends JDialog {
             Mensaje m = controladorLugar.registrar(lugar);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
+
+                //Registro de las etiquetas
+                Lugar lug = controladorLugar.obtenerLugarByLast();
+                ArrayList<LugarEtiquetas> loteEtiquetas = new ArrayList<>();
+                for (Object etique : f.frmEtiquetas1.listModel.toArray()) {
+                    Etiqueta temp = controladorEtiqueta.obtenerByEtiquetaNombre((String) etique);
+                    if (temp != null) {
+                        loteEtiquetas.add(new LugarEtiquetas(temp.getIdEtiqueta(), lug.getIdLugar()));
+                    }
+                }
+                Mensaje mm = controladorLugarEtiquetas.registrarLote(loteEtiquetas);
+                Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
+                //Fin registro de etiquetas
             }
             Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
         });
@@ -133,6 +144,19 @@ public class DialogLugar extends JDialog {
             Mensaje m = controladorLugar.actualizar(lugar);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
+                //Actualizar etiquetas
+
+                ArrayList<LugarEtiquetas> loteEtiquetas = new ArrayList<>();
+                for (Object etique : f.frmEtiquetas1.listModel.toArray()) {
+                    Etiqueta temp = controladorEtiqueta.obtenerByEtiquetaNombre((String) etique);
+                    if (temp != null) {
+                        loteEtiquetas.add(new LugarEtiquetas(temp.getIdEtiqueta(), lugar.getIdLugar()));
+                    }
+                } //SE BUSCA CADA UNO DE LOS REGISTROS PARA INGRESARLOS AL ARRAY
+               controladorLugarEtiquetas.actualizarLote(loteEtiquetas); //SE ACTUALIZAN LAS ETIQUETAS 
+               
+                //Fin actualizar etiquetas
+
             }
             Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
         });
@@ -169,6 +193,11 @@ public class DialogLugar extends JDialog {
                 f.txtPrecioAprox.setText(p.tblModel.getValueAt(x, 5).toString());
                 f.cmbEstado.setSelectedItem(controladorEstado.obtenerByID(controladorCiudad.obtenerById((int) p.tblModel.getValueAt(x, 1)).getIdEstado()).getEstado());
                 f.cmbCiudad.setSelectedItem(controladorCiudad.obtenerListaByIDEstado(estadoActual.getIdEstado()));
+                ArrayList<LugarEtiquetas> temp = controladorLugarEtiquetas.obtenerEtiquetasByIDLugar((int) p.tblModel.getValueAt(x, 0));
+                f.frmEtiquetas1.listModel.clear();
+                for (LugarEtiquetas as : temp) {
+                    f.frmEtiquetas1.listModel.addElement(controladorEtiqueta.obtenerByID(as.getIdEtiqueta()).getEtiqueta());
+                }
             }
         });
 

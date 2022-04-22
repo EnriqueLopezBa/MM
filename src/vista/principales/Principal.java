@@ -15,6 +15,7 @@ public class Principal extends JFrame {
     
     
     private static Principal instancia;
+    private int mouseX, mouseY;
     
     public static Principal getInstancia(){
         if (instancia == null) {
@@ -70,11 +71,12 @@ public class Principal extends JFrame {
     }
 
     private void pnlMenuMouseDragged(MouseEvent e) {
-        // TODO add your code here
+        this.setLocation(this.getX() + e.getX() - mouseX, this.getY() + e.getY() - mouseY);
     }
 
     private void pnlMenuMousePressed(MouseEvent e) {
-        // TODO add your code here
+        mouseX = e.getX();
+        mouseY = e.getY();
     }
 
     private void btnCerrar(ActionEvent e) {

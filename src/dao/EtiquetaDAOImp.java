@@ -49,21 +49,28 @@ public class EtiquetaDAOImp implements IEtiquetaDAO {
 
     @Override
     public ArrayList<Etiqueta> obtenerListaByCadena(String cadena) {
-           try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ETIQUETA WHERE ETIQUETA LIKE '%"+cadena+"%'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ETIQUETA WHERE ETIQUETA LIKE '%" + cadena + "%'")) {
             ArrayList<Etiqueta> temp = new ArrayList<>();
-            while(rs.next()){
+            while (rs.next()) {
                 temp.add(new Etiqueta(rs.getInt(1), rs.getString(2)));
             }
             return temp;
         } catch (SQLException e) {
             System.err.println("Error obtenerLista Etiqueta, " + e.getMessage());
-        }  
+        }
         return null;
     }
 
     @Override
     public Etiqueta obtenerByID(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ETIQUETA WHERE IDETIQUETA = " + id)) {
+            if (rs.next()) {
+                return new Etiqueta(rs.getInt(1), rs.getString(2));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerByID Etiqueta, " + e.getMessage());
+        }        
+        return null;
     }
 
     @Override
@@ -118,6 +125,19 @@ public class EtiquetaDAOImp implements IEtiquetaDAO {
             System.err.println("Error ya existeEtiqueta, " + e.getMessage());
         }        
         return "";
+    }
+
+    @Override
+    public Etiqueta obtenerByEtiquetaNombre(String nombre) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ETIQUETA WHERE ETIQUETA = '"+nombre+"'")) {
+            if(rs.next()){
+                return new Etiqueta(rs.getInt(1), rs.getString(2));
+            }
+           
+        } catch (SQLException e) {
+            System.err.println("Error obtenerListaByNombre Etiqueta, " + e.getMessage());
+        }  
+        return null;      
     }
     
 }

@@ -1,4 +1,4 @@
-package Custom.image_slider;
+package independientes.image_slider;
 
 import java.awt.Color;
 import java.awt.Graphics;

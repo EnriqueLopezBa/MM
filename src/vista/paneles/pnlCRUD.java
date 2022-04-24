@@ -63,8 +63,7 @@ public class pnlCRUD extends JPanel {
             "[grow 10]rel",
             // rows
             "[]" +
-            "[grow, fill]push" +
-            "[]"));
+            "[grow,fill]push"));
 
         //======== pnlBusqueda ========
         {

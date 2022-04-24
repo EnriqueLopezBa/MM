@@ -5,7 +5,7 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$columnConstraints": "[grow 90]rel[grow 10]rel"
-			"$rowConstraints": "[][grow, fill]push[]"
+			"$rowConstraints": "[][grow,fill]push"
 		} ) {
 			name: "this"
 			"background": new java.awt.Color( 255, 255, 255, 255 )

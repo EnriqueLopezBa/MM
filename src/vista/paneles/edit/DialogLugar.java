@@ -19,6 +19,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import static javax.swing.JOptionPane.showMessageDialog;
 import modelo.Ciudad;
@@ -29,6 +32,7 @@ import modelo.LugarEtiquetas;
 
 import net.miginfocom.swing.*;
 import vista.paneles.*;
+import vista.principales.Principal;
 
 /**
  * @author das
@@ -198,6 +202,24 @@ public class DialogLugar extends JDialog {
                 for (LugarEtiquetas as : temp) {
                     f.frmEtiquetas1.listModel.addElement(controladorEtiqueta.obtenerByID(as.getIdEtiqueta()).getEtiqueta());
                 }
+            }
+        });
+        //boton GALERIA
+        f.btnGaleria.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                 if (!Constante.filaSeleccionada(p.tblBuscar)) {
+                    return;
+                }
+                int x = p.tblBuscar.getSelectedRow();
+                DialogLugarImagenes temp = new DialogLugarImagenes(Principal.getInstancia(),controladorLugar.obtenerByID((int)p.tblModel.getValueAt(x, 0)) );
+                temp.setVisible(true);
+                temp.addWindowListener(new WindowAdapter() {
+                     @Override
+                     public void windowClosed(WindowEvent e) {
+                         super.windowClosed(e); //To change body of generated methods, choose Tools | Templates.
+                     }
+                });
             }
         });
 

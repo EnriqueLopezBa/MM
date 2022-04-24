@@ -91,7 +91,9 @@ new FormModel {
 				name: "btnEliminarIMG"
 				"text": "Eliminar"
 				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/delete.png" )
-				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEliminarIMG", true ) )
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 10, 270 )

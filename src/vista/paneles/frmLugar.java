@@ -6,6 +6,8 @@ import javax.swing.*;
 import Componentes.Sweet_Alert.Button;
 import Componentes.TextField;
 import net.miginfocom.swing.*;
+import vista.paneles.edit.DialogLugarImagenes;
+import vista.principales.Principal;
 
 public class frmLugar extends JPanel {
 
@@ -17,31 +19,16 @@ public class frmLugar extends JPanel {
          frmEtiquetas1.init();
     }
 
-    private void btnEliminarIMG(ActionEvent e) {
-
+    private void btnGaleria(ActionEvent e) {
+        // TODO add your code here
     }
+
 
     
      
 
 
-    private void btnGaleria(ActionEvent e) {
-//        if (p.pnlEvento.crud.lugar == null || p.pnlEvento.crud.filaSeleccionada == -1) {
-//            new Message(p, true, "Selecciona un lugar", Message.Tipo.ERROR).showAlert();
-//            return;
-//        }
-//   
-//        p.galeria = new Galeria(p, true);
-//        p.galeria.init(p.pnlEvento.crud.lugar);
-//        p.galeria.setVisible(true);
-        
-    }
 
-    private void txtDescripcionKeyPressed(KeyEvent e) {
-        // TODO add your code here
-    }
-
-  
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -101,7 +88,6 @@ public class frmLugar extends JPanel {
             //---- btnEliminarIMG ----
             btnEliminarIMG.setText("Eliminar");
             btnEliminarIMG.setIcon(new ImageIcon(getClass().getResource("/img/delete.png")));
-            btnEliminarIMG.addActionListener(e -> btnEliminarIMG(e));
             popupMenu2.add(btnEliminarIMG);
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -117,6 +103,6 @@ public class frmLugar extends JPanel {
     public TextField txtPrecioAprox;
     public Button btnGaleria;
     private JPopupMenu popupMenu2;
-    private JMenuItem btnEliminarIMG;
+    public JMenuItem btnEliminarIMG;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

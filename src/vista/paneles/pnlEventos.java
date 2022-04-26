@@ -24,10 +24,14 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import com.raven.datechooser.*;
 import controlador.ControladorCiudad;
+import controlador.ControladorCliente;
 import controlador.ControladorEstado;
+import controlador.ControladorEvento;
 import controlador.ControladorLugar;
 import controlador.ControladorTipoEvento;
 import independientes.Constante;
+import independientes.MMException;
+import independientes.Mensaje;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -39,13 +43,16 @@ import independientes.image_slider.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import modelo.Ciudad;
+import modelo.Cliente;
 import modelo.Estado;
+import modelo.Evento;
 import modelo.Lugar;
 import modelo.TipoEvento;
 import net.miginfocom.swing.MigLayout;
 import vista.paneles.edit.DialogCiudad;
 import vista.paneles.edit.DialogEstado;
 import vista.paneles.edit.DialogEtiqueta;
+import vista.paneles.edit.DialogEvento;
 import vista.paneles.edit.DialogLugar;
 import vista.paneles.edit.DialogTipoEvento;
 import vista.principales.Principal;
@@ -53,14 +60,21 @@ import vista.principales.Principal;
 public class pnlEventos extends JPanel {
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    private ControladorTipoEvento controladorEvento = new ControladorTipoEvento();
+    private ControladorTipoEvento controladortipoEvento = new ControladorTipoEvento();
     private ControladorEstado controladorEstado = new ControladorEstado();
     private ControladorCiudad controladorCiudad = new ControladorCiudad();
     private ControladorLugar controladorLugar = new ControladorLugar();
+    private ControladorEvento controladorEvento = new ControladorEvento();
+    private ControladorCliente controladorCliente = new ControladorCliente();
 
-    private Estado estadoActual = null;
-    private Ciudad ciudadActual = null;
-    
+    public Estado estadoActual = null;
+    public Ciudad ciudadActual = null;
+    public TipoEvento tipoEventoActual = null;
+    public Lugar lugarActual = null;
+            
+    public frmEtiquetas frm;
+  
+
     public pnlEventos() {
         initComponents();
         txtPresupuesto.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
@@ -71,18 +85,29 @@ public class pnlEventos extends JPanel {
         cargarEstado();
         cargarCiudad();
         cargarLugares();
+        i.init(ScrollBar.VERTICAL);
+        modoAdmin();
+    }
+
+    private void modoAdmin() {
+        btnAdmin.setVisible(Constante.getAdmin());
+        lblEditEstado.setVisible(Constante.getAdmin());
+        lblEditEtiqueta.setVisible(Constante.getAdmin());
+        lblEditLugar.setVisible(Constante.getAdmin());
+        lblEditTipoEvento.setVisible(Constante.getAdmin());
+        lblEditciudad.setVisible(Constante.getAdmin());
     }
 
     public void cargarEtiquetas() {
         pnlListEtiquetas.removeAll();
-        frmEtiquetas frm = new frmEtiquetas();
+        frm = new frmEtiquetas();
         pnlListEtiquetas.add(frm);
         frm.init();
     }
 
     public void cargarTipoEvento() {
         cmbTipoEvento.removeAllItems();
-        for (TipoEvento e : controladorEvento.obtenerListaByCadena("")) {
+        for (TipoEvento e : controladortipoEvento.obtenerListaByCadena("")) {
             cmbTipoEvento.addItem(e.getTematica());
         }
     }
@@ -94,42 +119,49 @@ public class pnlEventos extends JPanel {
         }
     }
 
-    public void cargarCiudad(){
+    public void cargarCiudad() {
         if (estadoActual == null) {
             return;
         }
         cmbCiudad.removeAllItems();
-        for(Ciudad c : controladorCiudad.obtenerListaByIDEstado(estadoActual.getIdEstado())){
+        for (Ciudad c : controladorCiudad.obtenerListaByIDEstado(estadoActual.getIdEstado())) {
             cmbCiudad.addItem(c.getCiudad());
         }
     }
-    public void cargarLugares(){
+
+    public void cargarLugares() {
         if (ciudadActual == null) {
             return;
         }
         cmbLugar.removeAllItems();
-        for(Lugar c : controladorLugar.obtenerListaByIDCIudad(ciudadActual.getIdCiudad())){
+        for (Lugar c : controladorLugar.obtenerListaByIDCIudad(ciudadActual.getIdCiudad())) {
             cmbLugar.addItem(c.getNombreLocal());
         }
     }
-    
-    
+
     private void btnAdmin(ActionEvent e) {
-        // TODO add your code here
+        DialogEvento temp = new DialogEvento(Principal.getInstancia(), this);
+        temp.setVisible(true);
     }
 
     private void cmbTipoEvento(ActionEvent e) {
-        // TODO add your code here
+        if (cmbTipoEvento.getSelectedIndex() != -1) {
+            for(TipoEvento evento : controladortipoEvento.obtenerListaByCadena("")){
+                if (evento.getTematica().equals(cmbTipoEvento.getSelectedItem().toString())) {
+                    tipoEventoActual = evento;
+                }
+            }
+        }
     }
 
     private void cmbEstado(ActionEvent e) {
         if (cmbEstado.getSelectedIndex() != -1) {
-            for(Estado estado : controladorEstado.obtenerListaByCadena("")){
+            for (Estado estado : controladorEstado.obtenerListaByCadena("")) {
                 if (estado.getEstado().equals(cmbEstado.getSelectedItem().toString())) {
                     estadoActual = estado;
                 }
             }//
-            
+
             cargarCiudad();
         }
     }
@@ -188,14 +220,19 @@ public class pnlEventos extends JPanel {
 
     private void cmbCiudad() {
         if (cmbCiudad.getSelectedItem() != null && estadoActual != null) {
-            for(Ciudad ciudad : controladorCiudad.obtenerListaByIDEstado(estadoActual.getIdEstado())){
+            for (Ciudad ciudad : controladorCiudad.obtenerListaByIDEstado(estadoActual.getIdEstado())) {
                 if (ciudad.getCiudad().equals(cmbCiudad.getSelectedItem().toString())) {
                     ciudadActual = ciudad;
+                    cargarLugarImagenes();
                     cargarLugares();
                     break;
                 }
             }
         }
+    }
+
+    private void cargarLugarImagenes() {
+        i.lugarImagenesByIDCiudad(ciudadActual.getIdCiudad(), frm.listModel);
     }
 
     private void lblEditciudadMouseClicked() {
@@ -207,12 +244,21 @@ public class pnlEventos extends JPanel {
                 super.windowClosed(e); //To change body of generated methods, choose Tools | Templates.
                 cargarCiudad();
             }
-            
+
         });
     }
 
     private void cmbLugar(ActionEvent e) {
-        // TODO add your code here
+        if (cbOtro.isSelected()) {
+            return;
+        }
+        if (cmbLugar.getSelectedIndex() != -1) {
+            for(Lugar lu : controladorLugar.obtenerListaByIDCIudad(ciudadActual.getIdCiudad())){
+                if (lu.getNombreLocal().equals(cmbLugar.getSelectedItem().toString())) {
+                    lugarActual = lu;
+                }
+            }
+        }
     }
 
     private void lblEditLugarMouseClicked(MouseEvent e) {
@@ -224,7 +270,7 @@ public class pnlEventos extends JPanel {
                 super.windowClosed(e); //To change body of generated methods, choose Tools | Templates.
                 cargarLugares();
             }
-        
+
         });
     }
 
@@ -233,7 +279,60 @@ public class pnlEventos extends JPanel {
     }
 
     private void btnAceptar(ActionEvent e) {
-        // TODO add your code here
+        try {
+            validarDatos(txtPresupuesto, txtCantInvitados, cmbLugar, txtNombreEvento);
+            Evento evento = new Evento();
+            if (Constante.clienteTemporal != null) {
+                evento.setIdCliente(Constante.clienteTemporal.getIdCliente());
+            }else{
+                evento.setIdCliente(controladorCliente.obtenerClienteActivo().getIdCliente());
+            }
+            evento.setIdTipoEvento(controladortipoEvento.obtenerListaByCadena(cmbTipoEvento.getSelectedItem().toString()).get(0).getIdTipoEvento());
+            evento.setFecha(getFecha());
+            evento.setNoInvitados(Integer.parseInt(txtCantInvitados.getText().replaceAll(",", "")));
+            evento.setPresupuesto(Integer.parseInt(txtPresupuesto.getText().replaceAll(",", "")));
+            evento.setEstilo(txtEstilo.getText());
+            evento.setNombreEvento(txtNombreEvento.getText());
+            Lugar lu = new Lugar();
+            lu.setIdCiudad(ciudadActual.getIdCiudad());
+            if (cbOtro.isSelected()) {
+                lu.setNombreLocal(cmbLugar.getEditor().getItem().toString());
+                controladorLugar.registrar(lu);
+                evento.setIdLugar(controladorLugar.obtenerLugarByLast().getIdLugar());
+            } else {
+                lu.setNombreLocal(cmbLugar.getSelectedItem().toString());
+                evento.setIdLugar(controladorLugar.obtenerLugarByCadena(lu).getIdLugar());
+            }
+
+            Mensaje m = controladorEvento.registrar(evento);
+            Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+        } catch (MMException ee) {
+            Constante.mensaje(ee.getMessage(), Message.Tipo.ERROR);
+        }
+    }
+
+    private void validarDatos(JTextField txtPresupuesto, JTextField txtNoInvitados, JComboBox cmbLugar, JTextField txtNombreEvento) throws MMException {
+        if (txtPresupuesto.getText().isEmpty()) {
+            txtPresupuesto.requestFocus();
+            throw new MMException("Prepuesto vacio");
+        }
+        if (txtNoInvitados.getText().isEmpty()) {
+            txtNoInvitados.requestFocus();
+            throw new MMException("Numero de invitados vacio");
+        }
+        if (cmbLugar.isEditable()) {
+            if (cmbLugar.getEditor().getItem().toString().isEmpty()) {
+                cmbLugar.requestFocus();
+                throw new MMException("Lugar vacio");
+            }
+        }
+        if (txtNombreEvento.getText().isEmpty()) {
+            txtNombreEvento.requestFocus();
+            throw new MMException("Nombre de evento vacio");
+        }
+        if (controladorCliente.obtenerClienteActivo() == null) {
+            throw new MMException("Sin cliente activo");
+        }
     }
 
     private void setMinDate() {
@@ -255,7 +354,7 @@ public class pnlEventos extends JPanel {
         }
     }
 
-    private Date getFecha() {
+    public Date getFecha() {
         Calendar c1 = Calendar.getInstance();
         c1.set(Calendar.YEAR, dateChooser.getSelectedDate().getYear());
         c1.set(Calendar.MONTH, dateChooser.getSelectedDate().getMonth() - 1);
@@ -277,6 +376,7 @@ public class pnlEventos extends JPanel {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        label1 = new JLabel();
         lblNombreEvento = new JLabel();
         lblPresupuesto = new JLabel();
         lblCantInvitados = new JLabel();
@@ -291,6 +391,9 @@ public class pnlEventos extends JPanel {
         pnlListEtiquetas = new JPanel();
         txtFecha = new JTextField();
         btnAdmin = new JButton();
+        i = new ImageSlider();
+        lblEstilo = new JLabel();
+        txtEstilo = new JTextField();
         lblEditEtiqueta = new JLabel();
         cmbEstado = new JComboBox();
         cmbCiudad = new JComboBox();
@@ -315,9 +418,9 @@ public class pnlEventos extends JPanel {
             "para[fill]" +
             "[294:n,grow 30,fill]" +
             "[grow 5,fill]" +
-            "[grow 5,fill]0" +
-            "[grow 70]",
+            "[grow 5,fill]0",
             // rows
+            "[]unrel" +
             "[fill]" +
             "[fill]" +
             "[fill]" +
@@ -327,52 +430,59 @@ public class pnlEventos extends JPanel {
             "[fill]" +
             "[fill]" +
             "[fill]" +
-            "[]"));
+            "[fill]" +
+            "[fill]unrel"));
+
+        //---- label1 ----
+        label1.setText("Agregar Evento");
+        label1.setHorizontalAlignment(SwingConstants.CENTER);
+        label1.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        add(label1, "cell 0 0, spanx, grow");
 
         //---- lblNombreEvento ----
         lblNombreEvento.setText("Nombre Evento");
-        add(lblNombreEvento, "cell 0 0");
+        add(lblNombreEvento, "cell 0 1");
 
         //---- lblPresupuesto ----
         lblPresupuesto.setText("Presupuesto");
         lblPresupuesto.setFont(lblPresupuesto.getFont().deriveFont(lblPresupuesto.getFont().getSize() + 1f));
-        add(lblPresupuesto, "cell 0 1");
+        add(lblPresupuesto, "cell 0 2");
 
         //---- lblCantInvitados ----
         lblCantInvitados.setText("Cant. Invitados");
         lblCantInvitados.setFont(lblCantInvitados.getFont().deriveFont(lblCantInvitados.getFont().getSize() + 1f));
-        add(lblCantInvitados, "cell 0 2");
+        add(lblCantInvitados, "cell 0 3");
 
         //---- lblCaracteristicas ----
-        lblCaracteristicas.setText("Estilo/Caracteristicas");
+        lblCaracteristicas.setText("Caracteristicas de evento");
         lblCaracteristicas.setFont(lblCaracteristicas.getFont().deriveFont(lblCaracteristicas.getFont().getSize() + 1f));
-        add(lblCaracteristicas, "cell 0 3");
+        add(lblCaracteristicas, "cell 0 5");
 
         //---- lblFecha ----
         lblFecha.setText("Fecha");
         lblFecha.setFont(lblFecha.getFont().deriveFont(lblFecha.getFont().getSize() + 1f));
-        add(lblFecha, "cell 0 4");
+        add(lblFecha, "cell 0 6");
 
         //---- lblTipoEvento ----
         lblTipoEvento.setText("Tipo de evento");
         lblTipoEvento.setFont(lblTipoEvento.getFont().deriveFont(lblTipoEvento.getFont().getSize() + 1f));
-        add(lblTipoEvento, "cell 0 5");
+        add(lblTipoEvento, "cell 0 7");
 
         //---- lblEstado ----
         lblEstado.setText("Estado");
         lblEstado.setFont(lblEstado.getFont().deriveFont(lblEstado.getFont().getSize() + 1f));
-        add(lblEstado, "cell 0 6");
+        add(lblEstado, "cell 0 8");
 
         //---- lblCiudad ----
         lblCiudad.setText("Ciudad");
         lblCiudad.setFont(lblCiudad.getFont().deriveFont(lblCiudad.getFont().getSize() + 1f));
-        add(lblCiudad, "cell 0 7");
+        add(lblCiudad, "cell 0 9");
 
         //---- txtNombreEvento ----
         txtNombreEvento.setFont(new Font("Segoe UI", Font.BOLD, 16));
         txtNombreEvento.setHorizontalAlignment(SwingConstants.CENTER);
         txtNombreEvento.setNextFocusableComponent(txtPresupuesto);
-        add(txtNombreEvento, "cell 1 0");
+        add(txtNombreEvento, "cell 1 1");
 
         //---- txtPresupuesto ----
         txtPresupuesto.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -384,7 +494,7 @@ public class pnlEventos extends JPanel {
                 txtPresupuestoKeyReleased(e);
             }
         });
-        add(txtPresupuesto, "cell 1 1");
+        add(txtPresupuesto, "cell 1 2");
 
         //---- txtCantInvitados ----
         txtCantInvitados.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -395,20 +505,20 @@ public class pnlEventos extends JPanel {
                 txtCantInvitadosKeyReleased(e);
             }
         });
-        add(txtCantInvitados, "cell 1 2");
+        add(txtCantInvitados, "cell 1 3");
 
         //======== pnlListEtiquetas ========
         {
             pnlListEtiquetas.setBackground(Color.white);
             pnlListEtiquetas.setLayout(new BorderLayout());
         }
-        add(pnlListEtiquetas, "cell 1 3");
+        add(pnlListEtiquetas, "cell 1 5");
 
         //---- txtFecha ----
         txtFecha.setHorizontalAlignment(SwingConstants.CENTER);
         txtFecha.setFont(txtFecha.getFont().deriveFont(txtFecha.getFont().getSize() + 3f));
         txtFecha.setNextFocusableComponent(cmbTipoEvento);
-        add(txtFecha, "cell 1 4");
+        add(txtFecha, "cell 1 6");
 
         //---- btnAdmin ----
         btnAdmin.setIcon(new ImageIcon(getClass().getResource("/img/admin.png")));
@@ -416,7 +526,20 @@ public class pnlEventos extends JPanel {
         btnAdmin.setBorderPainted(false);
         btnAdmin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnAdmin.addActionListener(e -> btnAdmin(e));
-        add(btnAdmin, "cell 2 0, growy 0, growx 0");
+        add(btnAdmin, "cell 2 1,grow 0 0");
+
+        //---- i ----
+        i.setBackground(Color.white);
+        add(i, "cell 3 1 1 11");
+
+        //---- lblEstilo ----
+        lblEstilo.setText("Estilo");
+        add(lblEstilo, "cell 0 4");
+
+        //---- txtEstilo ----
+        txtEstilo.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        txtEstilo.setHorizontalAlignment(SwingConstants.CENTER);
+        add(txtEstilo, "cell 1 4");
 
         //---- lblEditEtiqueta ----
         lblEditEtiqueta.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
@@ -427,27 +550,27 @@ public class pnlEventos extends JPanel {
                 lblEditEtiquetaMousePressed(e);
             }
         });
-        add(lblEditEtiqueta, "cell 2 3,alignx null,grow 0 0");
+        add(lblEditEtiqueta, "cell 2 5,grow 0 0");
 
         //---- cmbEstado ----
         cmbEstado.setNextFocusableComponent(cmbCiudad);
         cmbEstado.addActionListener(e -> cmbEstado(e));
-        add(cmbEstado, "cell 1 6");
+        add(cmbEstado, "cell 1 8");
 
         //---- cmbCiudad ----
         cmbCiudad.setNextFocusableComponent(cmbLugar);
         cmbCiudad.addActionListener(e -> cmbCiudad());
-        add(cmbCiudad, "cell 1 7");
+        add(cmbCiudad, "cell 1 9");
 
         //---- cmbTipoEvento ----
         cmbTipoEvento.setNextFocusableComponent(cmbEstado);
         cmbTipoEvento.addActionListener(e -> cmbTipoEvento(e));
-        add(cmbTipoEvento, "cell 1 5");
+        add(cmbTipoEvento, "cell 1 7");
 
         //---- cmbLugar ----
         cmbLugar.setNextFocusableComponent(btnAceptar);
         cmbLugar.addActionListener(e -> cmbLugar(e));
-        add(cmbLugar, "cell 1 8");
+        add(cmbLugar, "cell 1 10");
 
         //---- lblEditEstado ----
         lblEditEstado.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
@@ -458,7 +581,7 @@ public class pnlEventos extends JPanel {
                 lblEditEstadoMouseClicked();
             }
         });
-        add(lblEditEstado, "cell 2 6,alignx null,grow 0 0");
+        add(lblEditEstado, "cell 2 8,grow 0 0");
 
         //---- lblEditTipoEvento ----
         lblEditTipoEvento.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
@@ -469,7 +592,7 @@ public class pnlEventos extends JPanel {
                 lblEditTipoEventoMouseClicked(e);
             }
         });
-        add(lblEditTipoEvento, "cell 2 5,alignx null,grow 0 0");
+        add(lblEditTipoEvento, "cell 2 7,grow 0 0");
 
         //---- lblEditciudad ----
         lblEditciudad.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
@@ -480,12 +603,12 @@ public class pnlEventos extends JPanel {
                 lblEditciudadMouseClicked();
             }
         });
-        add(lblEditciudad, "cell 2 7,alignx null,grow 0 0");
+        add(lblEditciudad, "cell 2 9,grow 0 0");
 
         //---- lblLugar ----
         lblLugar.setText("Lugar");
         lblLugar.setFont(lblLugar.getFont().deriveFont(lblLugar.getFont().getSize() + 1f));
-        add(lblLugar, "cell 0 8");
+        add(lblLugar, "cell 0 10");
 
         //---- lblEditLugar ----
         lblEditLugar.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
@@ -496,17 +619,17 @@ public class pnlEventos extends JPanel {
                 lblEditLugarMouseClicked(e);
             }
         });
-        add(lblEditLugar, "cell 2 8, grow 0 0, split 2");
+        add(lblEditLugar, "split 2,cell 2 10,grow 0 0");
 
         //---- cbOtro ----
         cbOtro.setText("Otro");
         cbOtro.addActionListener(e -> cbOtro(e));
-        add(cbOtro, "cell 3 8");
+        add(cbOtro, "cell 2 10");
 
         //---- btnAceptar ----
         btnAceptar.setText("Aceptar Evento");
         btnAceptar.addActionListener(e -> btnAceptar(e));
-        add(btnAceptar, "cell 1 9,growy");
+        add(btnAceptar, "cell 1 11,growy");
 
         //---- dateChooser ----
         dateChooser.setTextRefernce(txtFecha);
@@ -516,6 +639,7 @@ public class pnlEventos extends JPanel {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    private JLabel label1;
     private JLabel lblNombreEvento;
     private JLabel lblPresupuesto;
     private JLabel lblCantInvitados;
@@ -524,24 +648,27 @@ public class pnlEventos extends JPanel {
     private JLabel lblTipoEvento;
     private JLabel lblEstado;
     private JLabel lblCiudad;
-    private JTextField txtNombreEvento;
-    private JFormattedTextField txtPresupuesto;
-    private JFormattedTextField txtCantInvitados;
-    private JPanel pnlListEtiquetas;
-    private JTextField txtFecha;
+    public JTextField txtNombreEvento;
+    public JFormattedTextField txtPresupuesto;
+    public JFormattedTextField txtCantInvitados;
+    public JPanel pnlListEtiquetas;
+    public JTextField txtFecha;
     private JButton btnAdmin;
+    public ImageSlider i;
+    private JLabel lblEstilo;
+    public JTextField txtEstilo;
     private JLabel lblEditEtiqueta;
     public JComboBox cmbEstado;
-    private JComboBox cmbCiudad;
-    private JComboBox cmbTipoEvento;
+    public JComboBox cmbCiudad;
+    public JComboBox cmbTipoEvento;
     public JComboBox cmbLugar;
     private JLabel lblEditEstado;
     private JLabel lblEditTipoEvento;
     private JLabel lblEditciudad;
     private JLabel lblLugar;
     private JLabel lblEditLugar;
-    private JCheckBox cbOtro;
+    public JCheckBox cbOtro;
     private Button btnAceptar;
-    private DateChooser dateChooser;
+    public DateChooser dateChooser;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

@@ -1,48 +1,32 @@
 
 package modelo;
 
-/**
- *
- * @author Enrique
- */
-public class LugarImagenes {
-    private int idLugar;
+
+public class ProveedorImagen {
+    private int idProveedor;
     private String id2;
     private byte[] imagen;
     private String descripcion;
-    private boolean predeterminada;
 
-    public LugarImagenes() {
+    public ProveedorImagen() {
     }
 
-    public LugarImagenes(int idLugar, String id2, byte[] imagen, String descripcion, boolean predeterminada) {
-        this.idLugar = idLugar;
+    public ProveedorImagen(int idProveedor, String id2, byte[] imagen, String descripcion) {
+        this.idProveedor = idProveedor;
         this.id2 = id2;
         this.imagen = imagen;
         this.descripcion = descripcion;
-        this.predeterminada = predeterminada;
     }
 
-   
-
-    public boolean isPredeterminada() {
-        return predeterminada;
+    public int getIdProveedor() {
+        return idProveedor;
     }
 
-    public void setPredeterminada(boolean predeterminada) {
-        this.predeterminada = predeterminada;
-    }
-    
-
-    public int getIdLugar() {
-        return idLugar;
+    public void setIdProveedor(int idProveedor) {
+        this.idProveedor = idProveedor;
     }
 
-    public void setIdLugar(int idLugar) {
-        this.idLugar = idLugar;
-    }
 
-  
     public String getId2() {
         return id2;
     }
@@ -66,11 +50,6 @@ public class LugarImagenes {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-
-    
-   
- 
-
 
     
     

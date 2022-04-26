@@ -10,4 +10,5 @@ import modelo.Lugar;
 public interface ILugarDAO extends CRUD<Lugar> {
     ArrayList<Lugar> obtenerListaByIDCiudad(int idCiudad);
     Lugar obtenerLugarByLast();
+    Lugar obtenerLugarByCadena(Lugar lug);
 }

@@ -161,4 +161,16 @@ public class LugarDAOImp implements ILugarDAO {
         return null;
     }
 
+    @Override
+    public Lugar obtenerLugarByCadena(Lugar lug) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR WHERE idCiudad = "+lug.getIdCiudad()+" NOMBRELOCAL = '"+lug.getNombreLocal()+"'")) {
+            if (rs.next()) {
+                return new Lugar(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerLugarByCadena Lugar," + e.getMessage());
+        }        
+        return null;
+    }
+
 }

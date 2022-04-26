@@ -8,6 +8,7 @@ package independientes;
 import Componentes.Sweet_Alert.Message;
 import Componentes.Sweet_Alert.Message.Tipo;
 import javax.swing.JTable;
+import modelo.Cliente;
 import vista.principales.Principal;
 
 /**
@@ -27,5 +28,9 @@ public class Constante {
         mensaje("Seleccionada una fila", Tipo.ERROR);
         return false;
     }
+    public static boolean getAdmin(){
+        return Principal.getInstancia().admin;
+    }
     
+    public static Cliente clienteTemporal;
 }

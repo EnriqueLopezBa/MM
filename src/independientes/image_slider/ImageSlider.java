@@ -1,10 +1,17 @@
 package independientes.image_slider;
 
+import controlador.ControladorEtiqueta;
+import controlador.ControladorLugar;
 import controlador.ControladorLugarImagenes;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JList;
+import modelo.Etiqueta;
 import modelo.Lugar;
 import modelo.LugarImagenes;
 import net.miginfocom.swing.MigLayout;
@@ -12,42 +19,60 @@ import net.miginfocom.swing.MigLayout;
 public class ImageSlider extends javax.swing.JPanel {
 
     private ControladorLugarImagenes controladorLugarImagenes = new ControladorLugarImagenes();
+    private ControladorLugar controladorLugar = new ControladorLugar();
+    private ControladorEtiqueta controladorEtiqueta = new ControladorEtiqueta();
 
-    private final MigLayout imageLayout;
+    private MigLayout imageLayout;
 
     public ImageSlider() {
         initComponents();
         imageLayout = new MigLayout("al center, filly", "10[]10");
         panelItem.setLayout(imageLayout);
-       
     }
-    
-    public void init(int orientacion){
-         ScrollBar sb = new ScrollBar();
-        if (orientacion  == ScrollBar.HORIZONTAL) {
+
+    public void init(int orientacion) {
+        ScrollBar sb = new ScrollBar();
+        if (orientacion == ScrollBar.HORIZONTAL) {
             sb.setOrientation(ScrollBar.HORIZONTAL);
             sp.setHorizontalScrollBar(sb);
         } else {
+            imageLayout = new MigLayout("fillx, flowy", "push[]push");
+            panelItem.setLayout(imageLayout);
             sb.setOrientation(ScrollBar.VERTICAL);
             sp.setVerticalScrollBar(sb);
         }
     }
 
     public void lugarImagenes(Lugar lugar) {
+        panelItem.removeAll();
+        panelItem.revalidate();
+        panelItem.repaint();
         for (LugarImagenes lu : controladorLugarImagenes.obtenerListaByIDLugar(lugar.getIdLugar())) {
             panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 250, h 200");
         }
     }
 
-    private void testImage() {
-//        panelItem.add(getItem(new ImageIcon(getClass().getResource("/image/img-1.jpg"))), "w 250, h 200");
-//        panelItem.add(getItem(new ImageIcon(getClass().getResource("/image/img-2.jpg"))), "w 250, h 200");
-//        panelItem.add(getItem(new ImageIcon(getClass().getResource("/image/img-3.jpg"))), "w 250, h 200");
-//        panelItem.add(getItem(new ImageIcon(getClass().getResource("/image/img-4.jpg"))), "w 250, h 200");
-//        panelItem.add(getItem(new ImageIcon(getClass().getResource("/image/img-5.jpg"))), "w 250, h 200");
-//        panelItem.add(getItem(new ImageIcon(getClass().getResource("/image/img-6.jpg"))), "w 250, h 200");
-//        panelItem.add(getItem(new ImageIcon(getClass().getResource("/image/img-7.jpg"))), "w 250, h 200");
-
+    public void lugarImagenesByIDCiudad(int idCiudad, DefaultListModel modelo) {
+        panelItem.removeAll();
+        panelItem.revalidate();
+        panelItem.repaint();
+        //Obtener caracteristicas (etiquetas) por el usuario
+     
+        ArrayList<String> arrayList = Collections.list(modelo.elements());
+        String arr = "";
+        if (!arrayList.isEmpty()) {
+            for (String ee : arrayList) {
+                Etiqueta etiqueta = controladorEtiqueta.obtenerByEtiquetaNombre(ee);
+                arr += etiqueta.getIdEtiqueta()+",";
+            }
+            arr = arr.substring(0, arr.length() - 1);
+        }else{
+            arr = "0";
+        }
+        for (LugarImagenes lu : controladorLugarImagenes.obtenerListaByIDCiudad(idCiudad, arr)) {
+            Lugar lugar = controladorLugar.obtenerByID(lu.getIdLugar());
+            panelItem.add(getItem(new ImageIcon(lu.getImagen()), lugar, lu), "w 250, h 200");
+        }
     }
 
     private ImageItem getItem(Icon icon, Lugar lugar, LugarImagenes lugarimg) {

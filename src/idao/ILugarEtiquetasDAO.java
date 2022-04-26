@@ -11,6 +11,6 @@ import modelo.LugarEtiquetas;
  */
 public interface ILugarEtiquetasDAO extends CRUD<LugarEtiquetas> {
     Mensaje registrarLote(ArrayList<LugarEtiquetas> lote);
-    Mensaje actualizarLote(ArrayList<LugarEtiquetas> lote);
+    Mensaje actualizarLote(ArrayList<LugarEtiquetas> lote, int idLugar);
     ArrayList<LugarEtiquetas> obtenerEtiquetasByIDLugar(int idLugar);
 }

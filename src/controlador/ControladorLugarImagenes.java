@@ -19,6 +19,10 @@ public class ControladorLugarImagenes {
         return LugarImagenesDAOImp.getInstancia().obtenerListaByIDLugar(idLugar);
     }
 
+    public ArrayList<LugarImagenes> obtenerListaByIDCiudad(int idCiudad, String etiquetas) {
+        return LugarImagenesDAOImp.getInstancia().obtenerListaByIDCiudad(idCiudad, etiquetas);
+    }
+
     public LugarImagenes obtenerById2(String id2) {
         return LugarImagenesDAOImp.getInstancia().obtenerById2(id2);
     }

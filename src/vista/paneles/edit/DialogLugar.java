@@ -55,7 +55,7 @@ public class DialogLugar extends JDialog {
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.5).intValue()));
         setLocationRelativeTo(null);
-        p.init(new String[]{"idLugar", "idCiudad", "Nombre Local", "Domicilio", "Capacidad", "Precio"}, 2, true);
+        p.init(new String[]{"idLugar", "idCiudad", "Nombre Local", "Domicilio", "Capacidad", "Precio"}, 0, true);
         init();
     }
 
@@ -149,7 +149,6 @@ public class DialogLugar extends JDialog {
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
                 //Actualizar etiquetas
-
                 ArrayList<LugarEtiquetas> loteEtiquetas = new ArrayList<>();
                 for (Object etique : f.frmEtiquetas1.listModel.toArray()) {
                     Etiqueta temp = controladorEtiqueta.obtenerByEtiquetaNombre((String) etique);
@@ -157,10 +156,9 @@ public class DialogLugar extends JDialog {
                         loteEtiquetas.add(new LugarEtiquetas(temp.getIdEtiqueta(), lugar.getIdLugar()));
                     }
                 } //SE BUSCA CADA UNO DE LOS REGISTROS PARA INGRESARLOS AL ARRAY
-               controladorLugarEtiquetas.actualizarLote(loteEtiquetas); //SE ACTUALIZAN LAS ETIQUETAS 
-               
-                //Fin actualizar etiquetas
+                controladorLugarEtiquetas.actualizarLote(loteEtiquetas, lugar.getIdLugar()); //SE ACTUALIZAN LAS ETIQUETAS 
 
+                //Fin actualizar etiquetas
             }
             Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
         });
@@ -195,8 +193,10 @@ public class DialogLugar extends JDialog {
                 f.txtDomicilio.setText(p.tblModel.getValueAt(x, 3).toString());
                 f.txtCapacidad.setText(p.tblModel.getValueAt(x, 4).toString());
                 f.txtPrecioAprox.setText(p.tblModel.getValueAt(x, 5).toString());
-                f.cmbEstado.setSelectedItem(controladorEstado.obtenerByID(controladorCiudad.obtenerById((int) p.tblModel.getValueAt(x, 1)).getIdEstado()).getEstado());
-                f.cmbCiudad.setSelectedItem(controladorCiudad.obtenerListaByIDEstado(estadoActual.getIdEstado()));
+                Ciudad city = controladorCiudad.obtenerById((int) p.tblModel.getValueAt(x, 1));
+                f.cmbEstado.setSelectedItem(controladorEstado.obtenerByID(city.getIdEstado()).getEstado());
+                refreshEstado();
+                f.cmbCiudad.setSelectedItem(city.getCiudad());
                 ArrayList<LugarEtiquetas> temp = controladorLugarEtiquetas.obtenerEtiquetasByIDLugar((int) p.tblModel.getValueAt(x, 0));
                 f.frmEtiquetas1.listModel.clear();
                 for (LugarEtiquetas as : temp) {
@@ -208,17 +208,17 @@ public class DialogLugar extends JDialog {
         f.btnGaleria.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                 if (!Constante.filaSeleccionada(p.tblBuscar)) {
+                if (!Constante.filaSeleccionada(p.tblBuscar)) {
                     return;
                 }
                 int x = p.tblBuscar.getSelectedRow();
-                DialogLugarImagenes temp = new DialogLugarImagenes(Principal.getInstancia(),controladorLugar.obtenerByID((int)p.tblModel.getValueAt(x, 0)) );
+                DialogLugarImagenes temp = new DialogLugarImagenes(Principal.getInstancia(), controladorLugar.obtenerByID((int) p.tblModel.getValueAt(x, 0)));
                 temp.setVisible(true);
                 temp.addWindowListener(new WindowAdapter() {
-                     @Override
-                     public void windowClosed(WindowEvent e) {
-                         super.windowClosed(e); //To change body of generated methods, choose Tools | Templates.
-                     }
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        super.windowClosed(e); //To change body of generated methods, choose Tools | Templates.
+                    }
                 });
             }
         });
@@ -247,18 +247,22 @@ public class DialogLugar extends JDialog {
         f.cmbEstado.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                if (f.cmbEstado.getSelectedIndex() != -1) {
-                    for (Estado estado : controladorEstado.obtenerListaByCadena("")) {
-                        if (estado.getEstado().equals(f.cmbEstado.getSelectedItem().toString())) {
-                            estadoActual = estado;
-                            cargarCiduades();
-                            break;
-                        }
-                    }
-                }
+               refreshEstado();
             }
         });
 
+    }
+
+    private void refreshEstado() {
+        if (f.cmbEstado.getSelectedIndex() != -1) {
+            for (Estado estado : controladorEstado.obtenerListaByCadena("")) {
+                if (estado.getEstado().equals(f.cmbEstado.getSelectedItem().toString())) {
+                    estadoActual = estado;
+                    cargarCiduades();
+                    break;
+                }
+            }
+        }
     }
 
     private void llenarTabla() {

@@ -9,5 +9,6 @@ import modelo.Cliente;
  */
 public interface IClienteDAO extends CRUD<Cliente> {
     //INDICAR METODOS ESPECIFICOS DEL CLIENTE
-
+    Cliente obtenerClienteActivo();
+    boolean setClienteActivoById(int idCliente);
 }

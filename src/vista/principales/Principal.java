@@ -5,30 +5,57 @@ import java.awt.event.*;
 import javax.swing.*;
 import Componentes.*;
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import controlador.ControladorCliente;
+import modelo.Cliente;
 import vista.paneles.pnlCliente;
 import vista.paneles.pnlEventos;
+import vista.paneles.pnlProveedores;
 
 /**
  * @author das
  */
 public class Principal extends JFrame {
-    
-    
+
     private static Principal instancia;
     private int mouseX, mouseY;
+
+    public boolean admin = false;
+    public pnlEventos pnlEventos = null;
     
-    public static Principal getInstancia(){
+    private ControladorCliente controladorCliente = new ControladorCliente();
+
+    public static Principal getInstancia() {
         if (instancia == null) {
             instancia = new Principal();
         }
         return instancia;
     }
-    
+
     private Principal() {
         initComponents();
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         setMinimumSize(screensize.getSize());
         setLocationRelativeTo(null);
+
+        new Timer(2000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (admin) {
+                    ((Timer) e.getSource()).stop();
+                }
+                getClienteActivo();
+            }
+        }).start();
+
+    }
+
+    public void getClienteActivo() {
+        Cliente cliente = controladorCliente.obtenerClienteActivo();
+        if (cliente != null) {
+            lblCliente.setText("Cliente activo: " + cliente.getCorreo() + " - " + cliente.getNombre() + " " + cliente.getApellido());
+        }else{
+            lblCliente.setText("Cliente Activo: ");
+        }
     }
 
     private void thisWindowIconified(WindowEvent e) {
@@ -46,20 +73,21 @@ public class Principal extends JFrame {
     private void btnCliente(ActionEvent e) {
         cambiarPanel(new pnlCliente());
     }
-    
-    private void cambiarPanel(JPanel pnl){
-        
+
+    private void cambiarPanel(JPanel pnl) {
+
         pnlContenido.removeAll();
         pnlContenido.add(pnl);
         pnlContenido.revalidate();
     }
 
     private void btnEvento(ActionEvent e) {
-        cambiarPanel(new pnlEventos());
+        pnlEventos = new pnlEventos();
+        cambiarPanel(pnlEventos);
     }
 
     private void btnProveedores(ActionEvent e) {
-        // TODO add your code here
+        cambiarPanel(new pnlProveedores());
     }
 
     private void btnPago(ActionEvent e) {
@@ -80,7 +108,8 @@ public class Principal extends JFrame {
     }
 
     private void btnCerrar(ActionEvent e) {
-      System.exit(0);
+//        controladorCliente.desactivarClienteActivo();
+        System.exit(0);
     }
 
     private void btnMinimizar(ActionEvent e) {
@@ -278,20 +307,19 @@ public class Principal extends JFrame {
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
-    
     public static void main(String[] args) {
         try {
-             UIManager.setLookAndFeel(new FlatIntelliJLaf());
+            UIManager.setLookAndFeel(new FlatIntelliJLaf());
         } catch (UnsupportedLookAndFeelException e) {
             System.err.println(e.getMessage());
         }
         getInstancia().setVisible(true);
-       new Inicio(getInstancia(), true).setVisible(true);
+        new Inicio(getInstancia(), true).setVisible(true);
     }
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JPanel pnlOpciones;
     private JPanel panel6;
-    private JLabel label4;
+    protected JLabel label4;
     protected Buttont btnCliente;
     public Buttont btnEvento;
     private Buttont btnAgenda;

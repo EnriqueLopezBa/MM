@@ -15,6 +15,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import static javax.swing.JOptionPane.showConfirmDialog;
 import modelo.Cliente;
 import net.miginfocom.swing.*;
+import vista.principales.Principal;
 
 public class pnlCliente extends JPanel {
 
@@ -25,6 +26,10 @@ public class pnlCliente extends JPanel {
         initComponents();
         pnlCrud = new pnlCRUD();
         pnlCrud.init(new String[]{"idCliente", "Nombre", "Apellido", "Email", "Telefono", "Telefono 2"}, 1, false);
+        if (!Constante.getAdmin()) {
+            pnlEdicion.setVisible(false);
+            return;
+        }
         pnlEdicion.add(pnlCrud);
         pnlEdicion.revalidate();
         pnlCrud.tblBuscar.setComponentPopupMenu(pnlCrud.jPopupMenu1); //Asignar Popup de cliente
@@ -112,6 +117,20 @@ public class pnlCliente extends JPanel {
             }
         });
 
+        pnlCrud.btnSeleccionar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!Constante.filaSeleccionada(pnlCrud.tblBuscar)) {
+                    return;
+                }
+                int x = pnlCrud.tblBuscar.getSelectedRow();
+                if (controlador.setClienteActivoById((int) pnlCrud.tblModel.getValueAt(x, 0))) {
+                    Cliente cliente = controlador.obtenerClienteActivo();
+                    Principal.getInstancia().lblCliente.setText("Cliente Activo: " + cliente.getCorreo()
+                            + " - " + cliente.getNombre() + " " + cliente.getApellido());
+                }
+            }
+        });
     }
 
     private void cargarClientes() {

@@ -34,6 +34,13 @@ public class ClienteDAOImp implements IClienteDAO {
 
     @Override
     public Cliente obtenerByID(int id) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE IDCLIENTE = " + id)) {
+            if (rs.next()) {
+                return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerByID, " + e.getMessage());
+        }
         return null;
     }
 
@@ -58,7 +65,6 @@ public class ClienteDAOImp implements IClienteDAO {
         return null;
     }
 
-  
     @Override
     public Mensaje registrar(Cliente t) {
         //Validar
@@ -66,7 +72,7 @@ public class ClienteDAOImp implements IClienteDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente!");
         }
-     
+
         try (PreparedStatement ps = cn.prepareStatement(" INSERT INTO CLIENTE (nombre, apellido, email, telefono, telefono2)"
                 + " VALUES (?,?,?,?,?)")) {
 
@@ -75,7 +81,7 @@ public class ClienteDAOImp implements IClienteDAO {
             ps.setString(3, t.getCorreo());
             ps.setString(4, t.getTelefono());
             ps.setString(5, t.getTelefono2());
-            return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado!"):new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar!");
+            return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado!") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar!");
         } catch (SQLException e) {
             System.err.println("Error registro cliente, " + e.getMessage());
         }
@@ -84,7 +90,7 @@ public class ClienteDAOImp implements IClienteDAO {
 
     @Override
     public Mensaje actualizar(Cliente t) {
-       String x = yaExiste(t);
+        String x = yaExiste(t);
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente!");
         }
@@ -115,26 +121,56 @@ public class ClienteDAOImp implements IClienteDAO {
 
     @Override
     public String yaExiste(Cliente t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != "+t.getIdCliente()+" and EMAIL = '" + t.getCorreo() +"'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != " + t.getIdCliente() + " and EMAIL = '" + t.getCorreo() + "'")) {
             if (rs.next()) {
                 return "Correo";
             }
-          try(ResultSet rss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != "+t.getIdCliente()+" and TELEFONO = '"+t.getTelefono()+"'")){
-              if (rss.next()) {
-                  return "Telefono";
-              }
-          }
-          try(ResultSet rsss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != "+t.getIdCliente()+" and TELEFONO2 = '"+t.getTelefono2()+"'")){
-              if (rsss.next()) {
-                  return "Telefono 2";
-              }
-          }
+            try (ResultSet rss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != " + t.getIdCliente() + " and TELEFONO = '" + t.getTelefono() + "'")) {
+                if (rss.next()) {
+                    return "Telefono";
+                }
+            }
+            try (ResultSet rsss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != " + t.getIdCliente() + " and TELEFONO2 = '" + t.getTelefono2() + "'")) {
+                if (rsss.next()) {
+                    return "Telefono 2";
+                }
+            }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
-        } 
+        }
         return "";
     }
 
- 
+    @Override
+    public Cliente obtenerClienteActivo() {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE ACTIVO = 1")) {
+            if (rs.next()) {
+                return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerClienteActivo Cliente, " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public boolean setClienteActivoById(int idCliente) {
+        desactivarClienteActivo();
+        try (PreparedStatement pss = cn.prepareStatement("UPDATE CLIENTE SET ACTIVO = 1 WHERE idCliente = " + idCliente)) {
+            return pss.executeUpdate() >= 1;
+        } catch (SQLException e) {
+            System.err.println("Error setClienteActivoById Cliente, " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    public void desactivarClienteActivo() {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE cliente SET ACTIVO = 0;")) {
+            ps.execute();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
 
 }

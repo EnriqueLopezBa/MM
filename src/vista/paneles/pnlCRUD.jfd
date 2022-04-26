@@ -14,7 +14,7 @@ new FormModel {
 				"JavaCodeGenerator.variableModifiers": 1
 			}
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
-				"$columnConstraints": "[grow][grow 0]"
+				"$columnConstraints": "[grow]"
 				"$rowConstraints": "[grow, fill]"
 			} ) {
 				name: "pnlBusqueda"
@@ -29,17 +29,6 @@ new FormModel {
 					}
 				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 					"value": "cell 0 0, grow"
-				} )
-				add( new FormComponent( "javax.swing.JLabel" ) {
-					name: "lblCerrar"
-					"background": new java.awt.Color( 255, 255, 255, 255 )
-					"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/close.png" )
-					"cursor": new java.awt.Cursor( 12 )
-					auxiliary() {
-						"JavaCodeGenerator.variableModifiers": 1
-					}
-				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-					"value": "cell 1 0"
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 0, spanx, grow"
@@ -141,11 +130,17 @@ new FormModel {
 				name: "btnSeleccionar"
 				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/person.png" )
 				"text": "Seleccionar Cliente"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
 			} )
 			add( new FormComponent( "javax.swing.JMenuItem" ) {
 				name: "btnEventos"
 				"text": "Eventos"
 				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/event.png" )
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 562 )

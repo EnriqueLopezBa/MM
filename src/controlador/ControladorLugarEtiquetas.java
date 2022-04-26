@@ -15,8 +15,8 @@ public class ControladorLugarEtiquetas {
         return LugarEtiquetasDAOImp.getInstancia().registrarLote(lote);
     }
 
-    public Mensaje actualizarLote(ArrayList<LugarEtiquetas> lote) {
-        return LugarEtiquetasDAOImp.getInstancia().actualizarLote(lote);
+    public Mensaje actualizarLote(ArrayList<LugarEtiquetas> lote, int idLugar) {
+        return LugarEtiquetasDAOImp.getInstancia().actualizarLote(lote, idLugar);
     }
 
     public Mensaje eliminar(LugarEtiquetas t) {

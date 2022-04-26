@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dao;
 
 import Componentes.Sweet_Alert.Message;
@@ -56,7 +51,14 @@ public class TipoEventoDAOImp implements ITipoEventoDAO {
 
     @Override
     public TipoEvento obtenerByID(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM TIPOEVENTO WHERE IDTIPOEVENTO = "+id)) {
+            if (rs.next()) {
+                return new TipoEvento(rs.getInt(1), rs.getString(2));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerByID TipoEvento , " + e.getMessage());
+        }      
+        return null;
     }
 
     @Override
@@ -111,6 +113,18 @@ public class TipoEventoDAOImp implements ITipoEventoDAO {
             System.err.println("Error yaExiste TipoEvento, " + e.getMessage());
         }        
         return "";
+    }
+
+    @Override
+    public TipoEvento obtenerTipoEventoByNombre(String nombre) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM TIPOEVENTO WHERE TIPOEVENTO ='"+nombre+"'")) {
+            if (rs.next()) {
+                return new TipoEvento(rs.getInt(1), rs.getString(2));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerTipoEventoByNombre TipoEventoo, " + e.getMessage());
+        }   
+        return null;
     }
 
 }

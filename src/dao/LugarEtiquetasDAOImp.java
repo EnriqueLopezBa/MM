@@ -60,7 +60,7 @@ public class LugarEtiquetasDAOImp implements ILugarEtiquetasDAO {
             ps.execute();
         } catch (SQLException e) {
             System.err.println("Error registrar LugarEtiqueta, " + e.getMessage());
-        }        
+        }
         return new Mensaje(Message.Tipo.OK, "Registrado");
     }
 
@@ -112,14 +112,16 @@ public class LugarEtiquetasDAOImp implements ILugarEtiquetasDAO {
     }
 
     @Override
-    public Mensaje actualizarLote(ArrayList<LugarEtiquetas> lote) {
-        ArrayList<LugarEtiquetas> temp = obtenerEtiquetasByIDLugar(lote.get(0).getIdLugar());
-        for(LugarEtiquetas l : temp){
-            if (!lote.contains(l)) {
-                eliminar(l);
-            }
-        }
+    public Mensaje actualizarLote(ArrayList<LugarEtiquetas> lote, int idLugar) {
         
+            ArrayList<LugarEtiquetas> temp = obtenerEtiquetasByIDLugar(idLugar);
+            for (LugarEtiquetas l : temp) {
+                if (!lote.contains(l)) {
+                    eliminar(l);
+                }
+            }
+        
+
         for (LugarEtiquetas et : lote) {
             if (!yaExiste(et).isEmpty()) {
                 continue;
@@ -134,13 +136,13 @@ public class LugarEtiquetasDAOImp implements ILugarEtiquetasDAO {
     public ArrayList<LugarEtiquetas> obtenerEtiquetasByIDLugar(int idLugar) {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGARETIQUETAS WHERE IDLUGAR = " + idLugar)) {
             ArrayList<LugarEtiquetas> temp = new ArrayList<>();
-            while(rs.next()){
+            while (rs.next()) {
                 temp.add(new LugarEtiquetas(rs.getInt(1), rs.getInt(2)));
             }
             return temp;
         } catch (SQLException e) {
             System.err.println("Error obtenerLista LugarEtiqeuetas, " + e.getMessage());
-        }    
+        }
         return null;
     }
 

@@ -49,7 +49,7 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
 
     @Override
     public Mensaje registrar(LugarImagenes t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO LUGARIMAGENES VALUES(?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO LUGARIMAGENES VALUES(?,?,?,?,?)")) {
             if (t.getImagen() != null) {
                 String id2 = UUID.nameUUIDFromBytes(t.getImagen()).toString().toUpperCase();
                 t.setId2(id2);
@@ -62,6 +62,7 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
                 ps.setString(2, id2);
                 ps.setBinaryStream(3, forindex, t.getImagen().length);
                 ps.setString(4, t.getDescripcion());
+                ps.setBoolean(5, t.isPredeterminada());
                 return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
             }
         } catch (SQLException e) {
@@ -72,17 +73,24 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
 
     @Override
     public Mensaje actualizar(LugarImagenes t) {
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE LUGARIMAGENES SET IMAGEN = ?, DESCRIPCION = ? WHERE ID2 = ?")) {
+
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE LUGARIMAGENES SET IMAGEN = ?, DESCRIPCION = ?, PREDETERMINADA = ? WHERE ID2 = ?")) {
             String id2 = UUID.nameUUIDFromBytes(t.getImagen()).toString().toUpperCase();
             t.setId2(id2);
-            String x = yaExiste(t);
-            if (!x.isEmpty()) {
-                return new Mensaje(Message.Tipo.ERROR, x);
+            //Quitar la predeterminada anteror
+            if (t.isPredeterminada()) {
+                try (PreparedStatement pss = cn.prepareStatement("update lugarImagenes set predeterminada = 0 where idLugar = ?")) {
+                    pss.setInt(1, t.getIdLugar());
+                    pss.execute();
+                } catch (SQLException e) {
+                    System.err.println(e.getMessage());
+                }
             }
             ByteArrayInputStream forindex = new ByteArrayInputStream(t.getImagen());
             ps.setBinaryStream(1, forindex, t.getImagen().length);
             ps.setString(2, t.getDescripcion());
-            ps.setString(3, id2);
+            ps.setInt(3, (t.isPredeterminada()) ? 1 : 0);
+            ps.setString(4, id2);
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
         } catch (SQLException e) {
             System.err.println("Error actualizar LugarImagenes, " + e.getMessage());
@@ -118,7 +126,7 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGARIMAGENES WHERE IDLUGAR = " + idLugar)) {
             ArrayList<LugarImagenes> temp = new ArrayList<>();
             while (rs.next()) {
-                temp.add(new LugarImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4)));
+                temp.add(new LugarImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), rs.getBoolean(5)));
             }
             return temp;
         } catch (SQLException e) {
@@ -131,10 +139,34 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
     public LugarImagenes obtenerById2(String id2) {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGARIMAGENES WHERE ID2 = '" + id2 + "'")) {
             if (rs.next()) {
-                return new LugarImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4));
+                return new LugarImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), rs.getBoolean(5));
             }
         } catch (SQLException e) {
             System.err.println("Error obtenerByID, " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public ArrayList<LugarImagenes> obtenerListaByIDCiudad(int idCiudad, String etiquetas) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT LUI.*, \n"
+                + "  (\n"
+                + "  SELECT COUNT(*) \n"
+                + "  FROM LugarEtiquetas LUE\n"
+                + "  WHERE LUE.idLugar = LUI.idLugar AND LUE.idEtiqueta IN ("+etiquetas+")\n"
+                + "  ) AS CDDV\n"
+                + "  FROM lugarImagenes LUI\n"
+                + "  JOIN lugar L ON\n"
+                + "  L.idLugar = LUI.idLugar\n"
+                + "  WHERE L.idCiudad = "+idCiudad+" AND LUI.predeterminada = 1 \n"
+                + "  ORDER BY CDDV DESC")) {
+            ArrayList<LugarImagenes> temp = new ArrayList<>();
+            while (rs.next()) {
+                temp.add(new LugarImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), true));
+            }
+            return temp;
+        } catch (SQLException e) {
+            System.err.println("Error obtenerListaByIDCiudad LugarImagenes, " + e.getMessage());
         }
         return null;
     }

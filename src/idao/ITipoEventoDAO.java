@@ -8,4 +8,5 @@ import modelo.TipoEvento;
  */
 public interface ITipoEventoDAO extends CRUD<TipoEvento> {
     // Metodos propies de tipo evento
+    TipoEvento obtenerTipoEventoByNombre(String nombre);
 }

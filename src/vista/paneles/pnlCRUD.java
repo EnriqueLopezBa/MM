@@ -41,7 +41,6 @@ public class pnlCRUD extends JPanel {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         pnlBusqueda = new JPanel();
         txtBusqueda = new TextField();
-        lblCerrar = new JLabel();
         pnlTabla = new JPanel();
         jScrollPane1 = new JScrollPane();
         tblBuscar = new Table();
@@ -72,8 +71,7 @@ public class pnlCRUD extends JPanel {
             pnlBusqueda.setLayout(new MigLayout(
                 null,
                 // columns
-                "[grow]" +
-                "[grow 0]",
+                "[grow]",
                 // rows
                 "[grow, fill]"));
 
@@ -81,12 +79,6 @@ public class pnlCRUD extends JPanel {
             txtBusqueda.setLabelText("Buscar");
             txtBusqueda.setMargin(new Insets(2, 6, 5, 6));
             pnlBusqueda.add(txtBusqueda, "cell 0 0, grow");
-
-            //---- lblCerrar ----
-            lblCerrar.setBackground(Color.white);
-            lblCerrar.setIcon(new ImageIcon(getClass().getResource("/img/close.png")));
-            lblCerrar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            pnlBusqueda.add(lblCerrar, "cell 1 0");
         }
         add(pnlBusqueda, "cell 0 0, spanx, grow");
 
@@ -174,7 +166,6 @@ public class pnlCRUD extends JPanel {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JPanel pnlBusqueda;
     public TextField txtBusqueda;
-    public JLabel lblCerrar;
     private JPanel pnlTabla;
     private JScrollPane jScrollPane1;
     public Table tblBuscar;
@@ -183,7 +174,7 @@ public class pnlCRUD extends JPanel {
     public Button btnAgregar;
     public Button btnEliminar;
     public JPopupMenu jPopupMenu1;
-    private JMenuItem btnSeleccionar;
-    private JMenuItem btnEventos;
+    public JMenuItem btnSeleccionar;
+    public JMenuItem btnEventos;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

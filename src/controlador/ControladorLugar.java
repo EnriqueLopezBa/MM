@@ -11,10 +11,6 @@ import modelo.Lugar;
  */
 public class ControladorLugar {
 
-    public ArrayList<Lugar> obtenerLista() {
-        return LugarDAOImp.getInstancia().obtenerLista();
-    }
-
     public Lugar obtenerByID(int id) {
         return LugarDAOImp.getInstancia().obtenerByID(id);
     }
@@ -25,6 +21,10 @@ public class ControladorLugar {
 
     public ArrayList<Lugar> obtenerListaByCadena(String cadena) {
         return LugarDAOImp.getInstancia().obtenerListaByCadena(cadena);
+    }
+
+    public Lugar obtenerLugarByCadena(Lugar lug) {
+        return LugarDAOImp.getInstancia().obtenerLugarByCadena(lug);
     }
 
     public ArrayList<Lugar> obtenerListaByIDCIudad(int idCiudad) {

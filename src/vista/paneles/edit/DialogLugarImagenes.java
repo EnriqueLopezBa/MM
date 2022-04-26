@@ -1,6 +1,5 @@
 package vista.paneles.edit;
 
-import Componentes.Sweet_Alert.Message;
 import Componentes.Sweet_Alert.Message.Tipo;
 import java.awt.*;
 import java.awt.event.*;
@@ -13,15 +12,11 @@ import independientes.Constante;
 import independientes.MMException;
 import independientes.Mensaje;
 import independientes.image_slider.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import modelo.Lugar;
 import modelo.LugarImagenes;
@@ -77,8 +72,11 @@ public class DialogLugarImagenes extends JDialog {
                     temp.setIdLugar(lugar.getIdLugar());
                     temp.setImagen(getImagen());
                     temp.setDescripcion(txtDescripcion.getText());
+                    temp.setPredeterminada(cbPredeterminada.isSelected());
                     Mensaje m = controladorLugarImagenes.registrar(temp);
                     Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+                    llenarTabla(lugar.getIdLugar());
+                    i.lugarImagenes(lugar);
                 } catch (MMException ee) {
                     Constante.mensaje(ee.getMessage(), Tipo.ADVERTENCIA);
                 }
@@ -93,9 +91,11 @@ public class DialogLugarImagenes extends JDialog {
                     if (x != -1) {
                         validaDatos();
                         LugarImagenes temp = new LugarImagenes();
+                        temp.setIdLugar((int)p.tblModel.getValueAt(x, 0));
                         temp.setId2(p.tblModel.getValueAt(x, 1).toString());
                         temp.setImagen(getImagen());
                         temp.setDescripcion(txtDescripcion.getText());
+                        temp.setPredeterminada(cbPredeterminada.isSelected());
                         Mensaje m = controladorLugarImagenes.actualizar(temp);
                         if (m.getTipoMensaje() == Tipo.OK) {
                             llenarTabla(lugar.getIdLugar());
@@ -120,6 +120,7 @@ public class DialogLugarImagenes extends JDialog {
                     LugarImagenes temp = controladorLugarImagenes.obtenerById2(p.tblModel.getValueAt(x, 1).toString());
                     lblIMG.setIcon(new ImageIcon(new ImageIcon(temp.getImagen()).getImage().getScaledInstance(lblIMG.getWidth() - 10, lblIMG.getHeight() - 10, Image.SCALE_DEFAULT)));
                     imagen = temp.getImagen();
+                    cbPredeterminada.setSelected(temp.isPredeterminada());
                     txtDescripcion.setText(p.tblModel.getValueAt(x, 2).toString());
                 }
 
@@ -158,6 +159,8 @@ public class DialogLugarImagenes extends JDialog {
         i = new ImageSlider();
         p = new pnlCRUD();
         lblIMG = new JLabel();
+        panel1 = new JPanel();
+        cbPredeterminada = new JCheckBox();
         txtDescripcion = new TextField();
 
         //======== this ========
@@ -188,11 +191,28 @@ public class DialogLugarImagenes extends JDialog {
                 lblIMGMouseClicked(e);
             }
         });
-        contentPane.add(lblIMG, "cell 0 2,push,width 50:50:push, h 30%!");
+        contentPane.add(lblIMG, "cell 0 2,push,width 10:10, h 30%!");
 
-        //---- txtDescripcion ----
-        txtDescripcion.setLabelText("Descripcion");
-        contentPane.add(txtDescripcion, "cell 1 2");
+        //======== panel1 ========
+        {
+            panel1.setBackground(Color.white);
+            panel1.setLayout(new MigLayout(
+                "fill",
+                // columns
+                "[fill]",
+                // rows
+                "[]" +
+                "[]"));
+
+            //---- cbPredeterminada ----
+            cbPredeterminada.setText("Imagen predeterminada");
+            panel1.add(cbPredeterminada, "cell 0 0");
+
+            //---- txtDescripcion ----
+            txtDescripcion.setLabelText("Descripcion");
+            panel1.add(txtDescripcion, "cell 0 1");
+        }
+        contentPane.add(panel1, "cell 1 2, growx");
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -202,6 +222,8 @@ public class DialogLugarImagenes extends JDialog {
     private ImageSlider i;
     private pnlCRUD p;
     private JLabel lblIMG;
+    private JPanel panel1;
+    private JCheckBox cbPredeterminada;
     private TextField txtDescripcion;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

@@ -9,9 +9,10 @@ new FormModel {
 			"type": enum java.awt.Window$Type POPUP
 			"defaultCloseOperation": 2
 			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "thisWindowClosing", true ) )
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosed", "thisWindowClosed", true ) )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {seq l {space :p:101:p, par l {comp txtCorreo::::212:x, comp botonGradiente1::t:::x, comp txtClave::l::212:x}, space :p:122:p}, seq {par l {seq l {space :::p, comp btnCliente:::p::p}, seq {space :p:122:p, comp lblError:::p::p}}, space :::x}}"
-				"$verticalGroup": "par l {seq l {space :::p, comp btnCliente:::p::p, space :p:33:p, comp txtCorreo:::p::p, space :p:37:p, comp txtClave:::p::p, space ::65:x, comp lblError:::p::p, space u:::p, comp botonGradiente1:::p:47:p, space :p:25:p}}"
+				"$horizontalGroup": "par l {seq {space :p:122:p, comp lblError:::p::p, space ::313:x}, seq l {space :p:101:p, par l {comp txtCorreo::::212:x, comp botonGradiente1::t:::x, comp txtClave::l::212:x}, space :p:122:p}}"
+				"$verticalGroup": "par l {seq l {space :p:60:p, comp txtCorreo:::p::p, space :p:37:p, comp txtClave:::p::p, space ::65:x, comp lblError:::p::p, space u:::p, comp botonGradiente1:::p:47:p, space :p:25:p}}"
 			} ) {
 				name: "panel2"
 				"background": new java.awt.Color( 255, 255, 255, 255 )
@@ -35,14 +36,8 @@ new FormModel {
 					"PNivelRedondo1": 40
 					"PGradiante1": new java.awt.Color( 255, 204, 255, 255 )
 					"PGradiante2": new java.awt.Color( 255, 204, 204, 255 )
-					"cursor": &Cursor0 new java.awt.Cursor( 12 )
+					"cursor": new java.awt.Cursor( 12 )
 					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "botonGradiente1MouseClicked", false ) )
-				} )
-				add( new FormComponent( "javax.swing.JLabel" ) {
-					name: "btnCliente"
-					"text": "Iniciar como Cliente"
-					"cursor": #Cursor0
-					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "label3MouseClicked", false ) )
 				} )
 				add( new FormComponent( "javax.swing.JLabel" ) {
 					name: "lblError"

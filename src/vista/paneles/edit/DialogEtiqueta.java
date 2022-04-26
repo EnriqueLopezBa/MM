@@ -35,7 +35,7 @@ public class DialogEtiqueta extends JDialog {
         setLocationRelativeTo(null);
         getContentPane().setBackground(Color.white);
         p.init(new String[]{"idEtiqueta", "Etiqueta"}, 1, true);
-        f.init();
+        f.init(new Etiqueta());
         f.listEtiqueta.setEnabled(false);
         f.btnClean.setEnabled(false);
         f.btnAgregarEtiqueta.setEnabled(false);

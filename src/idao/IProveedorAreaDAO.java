@@ -10,4 +10,6 @@ import modelo.ProveedorArea;
 public interface IProveedorAreaDAO extends CRUD<ProveedorArea>{
     
     ArrayList<ProveedorArea> obtenerListaByIdCiudad(int idCiudad);
+    ArrayList<ProveedorArea> obtenerListaByIdProveedor(int idProveedor);
+    
 }

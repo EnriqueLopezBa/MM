@@ -118,4 +118,18 @@ public class ProveedorAreaDAOImp implements IProveedorAreaDAO {
         return null;
     }
 
+    @Override
+    public ArrayList<ProveedorArea> obtenerListaByIdProveedor(int idProveedor) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDORAREA WHERE IDPROVEEDOR ="+idProveedor)) {
+            ArrayList<ProveedorArea> temp = new ArrayList<>();
+            while(rs.next()){
+                temp.add(new ProveedorArea(rs.getInt(1), rs.getInt(2)));
+            }
+            return temp;
+        } catch (SQLException e) {
+            System.err.println("Error obtenerListaByIdProveedor ProveedorArea, "+ e.getMessage());
+        }        
+        return null;
+    }
+
 }

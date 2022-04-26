@@ -81,6 +81,9 @@ public class DialogTipoProveedor extends JDialog {
                 return;
             }
             int x = p.tblBuscar.getSelectedRow();
+            if (JOptionPane.showConfirmDialog(null, "Seguro que desea eliminar "+ p.tblModel.getValueAt(x, 1).toString()+"?") != 0) {
+                return;
+            }
             TipoProveedor tipo = new TipoProveedor();
             tipo.setIdTipoProveedor((int) p.tblModel.getValueAt(x, 0));
             Mensaje m = controlador.eliminar(tipo);

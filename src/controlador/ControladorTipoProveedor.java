@@ -20,6 +20,14 @@ public class ControladorTipoProveedor {
         return TipoProveedorDAOImp.getInstancia().obtenerListaByCadena(cadena);
     }
 
+    public TipoProveedor obtenerByID(int id) {
+        return TipoProveedorDAOImp.getInstancia().obtenerByID(id);
+    }
+
+    public TipoProveedor obtenerTipoProveedorByNombre(String nombre) {
+        return TipoProveedorDAOImp.getInstancia().obtenerTipoProveedorByNombre(nombre);
+    }
+
     public Mensaje registrar(TipoProveedor t) {
         return TipoProveedorDAOImp.getInstancia().registrar(t);
     }

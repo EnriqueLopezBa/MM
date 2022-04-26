@@ -4,27 +4,24 @@ package vista.paneles;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import Componentes.*;
 import Componentes.Sweet_Alert.Button;
-import Componentes.Sweet_Alert.Message;
 import Componentes.TextField;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import controlador.ControladorTipoProveedor;
+import modelo.TipoProveedor;
 import net.miginfocom.swing.*;
 
 public class frmProveedor extends JPanel{
 
-
+    private ControladorTipoProveedor controladorTipoProveedor = new ControladorTipoProveedor();
+    
     public frmProveedor() {
         initComponents();
+    }
     
-
+    public void init(){
+        for(TipoProveedor tipo : controladorTipoProveedor.obtenerListaByCadena("")){
+            cmbTipoProveedor.addItem(tipo.getTipoProveedor());
+        }
     }
 
     private void btnEliminarIMG(ActionEvent e) {
@@ -73,6 +70,7 @@ public class frmProveedor extends JPanel{
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        cmbTipoProveedor = new JComboBox();
         txtNombre = new TextField();
         txtNombreEmpresa = new TextField();
         txtPrecioAprox = new TextField();
@@ -83,24 +81,25 @@ public class frmProveedor extends JPanel{
         //======== this ========
         setBackground(Color.white);
         setLayout(new MigLayout(
-            null,
+            "fill",
             // columns
             "rel[grow 40,shrink 0,sizegroup 1,fill]unrel" +
             "[grow 30,shrink 0,sizegroup 1,fill]unrel" +
             "[grow 30,shrink 0,sizegroup 1,fill]10",
             // rows
             "[fill]para" +
-            "[center]" +
+            "[]" +
             "[]"));
+        add(cmbTipoProveedor, "cell 0 0");
 
         //---- txtNombre ----
         txtNombre.setLabelText("Nombre");
         txtNombre.setMargin(new Insets(6, 6, 8, 6));
-        add(txtNombre, "cell 0 0");
+        add(txtNombre, "cell 1 0");
 
         //---- txtNombreEmpresa ----
         txtNombreEmpresa.setLabelText("Nombre Empresa");
-        add(txtNombreEmpresa, "cell 1 0");
+        add(txtNombreEmpresa, "cell 2 0");
 
         //---- txtPrecioAprox ----
         txtPrecioAprox.setLabelText("Precio Aprox");
@@ -110,7 +109,7 @@ public class frmProveedor extends JPanel{
                 txtPrecioAproxKeyTyped(e);
             }
         });
-        add(txtPrecioAprox, "cell 2 0");
+        add(txtPrecioAprox, "cell 0 1");
 
         //---- txtTelefono ----
         txtTelefono.setLabelText("Telefono");
@@ -120,7 +119,7 @@ public class frmProveedor extends JPanel{
                 txtTelefonoKeyTyped(e);
             }
         });
-        add(txtTelefono, "cell 0 1, aligny top");
+        add(txtTelefono, "cell 1 1,aligny top");
 
         //---- txtTelefono2 ----
         txtTelefono2.setLabelText("Telefono 2");
@@ -130,16 +129,17 @@ public class frmProveedor extends JPanel{
                 txtTelefono2KeyTyped(e);
             }
         });
-        add(txtTelefono2, "cell 1 1,growx, aligny top");
+        add(txtTelefono2, "cell 2 1,aligny top,growx");
 
         //---- btnGaleria ----
         btnGaleria.setText("Galeria");
         btnGaleria.addActionListener(e -> btnGaleria(e));
-        add(btnGaleria, "cell 0 2, spanx, aligny top");
+        add(btnGaleria, "cell 0 2, spanx, aligny top, grow");
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    public JComboBox cmbTipoProveedor;
     public TextField txtNombre;
     public TextField txtNombreEmpresa;
     public TextField txtPrecioAprox;

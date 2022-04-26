@@ -31,4 +31,7 @@ public class ControladorProveedorArea {
     public ArrayList<ProveedorArea> obtenerListaByIdCiudad(int idCiudad) {
         return ProveedorAreaDAOImp.getInstancia().obtenerListaByIdCiudad(idCiudad);
     }
+     public ArrayList<ProveedorArea> obtenerListaByIdProveedor(int idProveedor){
+         return ProveedorAreaDAOImp.getInstancia().obtenerListaByIdProveedor(idProveedor);
+     }
 }

@@ -1,44 +1,56 @@
 /*
  * Created by JFormDesigner on Mon Apr 18 16:37:34 MDT 2022
  */
-
 package vista.paneles;
 
-
+import controlador.ControladorCiudad;
 import controlador.ControladorEtiqueta;
+import controlador.ControladorProveedorArea;
 import independientes.AutoComplete;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.*;
+import modelo.Ciudad;
 import modelo.Etiqueta;
+import modelo.ProveedorArea;
 import net.miginfocom.swing.*;
 
 public class frmEtiquetas extends JPanel {
-    
+
     public DefaultListModel listModel = new DefaultListModel();
+
     ArrayList<String> lista;
 
-    
+    ControladorProveedorArea controladorProveedorArea = new ControladorProveedorArea();
+    ControladorCiudad controladorCiudad = new ControladorCiudad();
     ControladorEtiqueta controlador = new ControladorEtiqueta();
+
     public frmEtiquetas() {
-        initComponents();      
+        initComponents();
     }
-    
-    public void init(){
-        
+
+    public void init(Object objeto) {
+
         ArrayList<String> lista = new ArrayList<>();
-        for(Etiqueta as : controlador.obtenerLista()){
-            lista.add(as.getEtiqueta().toLowerCase());
-        }   
+        if (objeto instanceof Etiqueta) {
+            for (Etiqueta as : controlador.obtenerLista()) {
+                lista.add(as.getEtiqueta().toLowerCase());
+            }
+        }else if (objeto instanceof ProveedorArea) {
+            for(Ciudad ciudad : controladorCiudad.obtenerListaByCadena("")){
+                lista.add(ciudad.getCiudad().toLowerCase());
+            }
+        }
+
         autoCompletar(lista);
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e); //To change body of generated methods, choose Tools | Templates.
-                    double xas = listEtiqueta.getSize().getHeight() * 0.035;
-                    int a = (int)Math.round(xas);
+                double xas = listEtiqueta.getSize().getHeight() * 0.035;
+                int a = (int) Math.round(xas);
                 listEtiqueta.setVisibleRowCount(a);
             }
         });
@@ -55,13 +67,13 @@ public class frmEtiquetas extends JPanel {
 
             @Override
             public void contentsChanged(ListDataEvent e) {
-                
+
             }
         });
     }
 
-    public void autoCompletar(java.util.List<String> lista){
-          AutoComplete autoComplete = new AutoComplete(txtEtiqueta,lista);
+    public void autoCompletar(java.util.List<String> lista) {
+        AutoComplete autoComplete = new AutoComplete(txtEtiqueta, lista);
         txtEtiqueta.getDocument().addDocumentListener(autoComplete);
         txtEtiqueta.setFocusTraversalKeysEnabled(true); // false para que TAB funcione como commit
         txtEtiqueta.getInputMap().put(KeyStroke.getKeyStroke("TAB"), "commit");
@@ -69,20 +81,21 @@ public class frmEtiquetas extends JPanel {
         txtEtiqueta.getActionMap().put("commit", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               addElementListModel();
+                addElementListModel();
             }
         });
     }
+
     //Lista de etiqueas
     private boolean etiquetaEnLista() {
-      
-      for(Object et : listModel.toArray()){
-          if (((String) et).equalsIgnoreCase(txtEtiqueta.getText())) {
-              listEtiqueta.setSelectedValue(et, true);
-              return true;
-          }
-      }
-      return false;
+
+        for (Object et : listModel.toArray()) {
+            if (((String) et).equalsIgnoreCase(txtEtiqueta.getText())) {
+                listEtiqueta.setSelectedValue(et, true);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void addElementListModel() {
@@ -93,12 +106,12 @@ public class frmEtiquetas extends JPanel {
             txtEtiqueta.setText("");
             return;
         }
-        listModel.addElement(txtEtiqueta.getText().substring(0,1).toUpperCase() + txtEtiqueta.getText().substring(1));
+        listModel.addElement(txtEtiqueta.getText().substring(0, 1).toUpperCase() + txtEtiqueta.getText().substring(1));
         txtEtiqueta.setText("");
     }
-    
+
     private void listEtiquetasValueChanged(ListSelectionEvent e) {
-       
+
     }
 
     private void btnAgregarEtiqueta(ActionEvent e) {
@@ -106,8 +119,8 @@ public class frmEtiquetas extends JPanel {
     }
 
     private void btnClean(ActionEvent e) {
-      listModel.clear();
-      listEtiqueta.setModel(listModel);
+        listModel.clear();
+        listEtiqueta.setModel(listModel);
     }
 
     private void btnQuitar(ActionEvent e) {

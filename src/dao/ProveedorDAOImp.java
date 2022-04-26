@@ -65,14 +65,13 @@ public class ProveedorDAOImp implements IProveedorDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR VALUES (?,?,?,?,?,?,?)")) {
-            ps.setInt(1, t.getIdProveedor());
-            ps.setInt(2, t.getIdtipoProveedor());
-            ps.setString(3, t.getNombre());
-            ps.setString(4, t.getNombreEmpresa());
-            ps.setString(5, t.getTelefono());
-            ps.setString(6, t.getTelefono2());
-            ps.setInt(7, t.getPrecioAprox());
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR VALUES (?,?,?,?,?,?)")) {       
+            ps.setInt(1, t.getIdtipoProveedor());
+            ps.setString(2, t.getNombre());
+            ps.setString(3, t.getNombreEmpresa());
+            ps.setString(4, t.getTelefono());
+            ps.setString(5, t.getTelefono2());
+            ps.setInt(6, t.getPrecioAprox());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
         } catch (SQLException e) {
             System.err.println("Error registrar Proveedor, " + e.getMessage());
@@ -115,21 +114,21 @@ public class ProveedorDAOImp implements IProveedorDAO {
 
     @Override
     public String yaExiste(Proveedor t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR WHERE IDPROVEEDOR != " + t.getIdProveedor() + " TELEFONO = '" + t.getTelefono() + "'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR WHERE IDPROVEEDOR != " + t.getIdProveedor() + " and TELEFONO = '" + t.getTelefono() + "'")) {
             if (rs.next()) {
                 return t.getTelefono();
             }
         } catch (SQLException e) {
             System.err.println("Error yaExiste Proveedor, " + e.getMessage());
         }
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR WHERE IDPROVEEDOR != " + t.getIdProveedor() + " TELEFONO2 = '" + t.getTelefono2() + "'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR WHERE IDPROVEEDOR != " + t.getIdProveedor() + " and TELEFONO2 = '" + t.getTelefono2() + "'")) {
             if (rs.next()) {
                 return t.getTelefono2();
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM proveedor where idproveedor != " + t.getIdProveedor() + " nombre = '" + t.getNombre() + "'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM proveedor where idproveedor != " + t.getIdProveedor() + " and nombre = '" + t.getNombre() + "'")) {
             if (rs.next()) {
                 return t.getNombre();
             }

@@ -8,4 +8,5 @@ import modelo.TipoProveedor;
  */
 public interface ITipoProveedorDAO extends CRUD<TipoProveedor> {
     
+    TipoProveedor obtenerTipoProveedorByNombre(String nombre);
 }

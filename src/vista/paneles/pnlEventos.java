@@ -45,6 +45,7 @@ import java.awt.event.WindowEvent;
 import modelo.Ciudad;
 import modelo.Cliente;
 import modelo.Estado;
+import modelo.Etiqueta;
 import modelo.Evento;
 import modelo.Lugar;
 import modelo.TipoEvento;
@@ -102,7 +103,7 @@ public class pnlEventos extends JPanel {
         pnlListEtiquetas.removeAll();
         frm = new frmEtiquetas();
         pnlListEtiquetas.add(frm);
-        frm.init();
+        frm.init(new Etiqueta());
     }
 
     public void cargarTipoEvento() {

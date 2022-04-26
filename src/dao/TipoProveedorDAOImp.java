@@ -51,7 +51,14 @@ public class TipoProveedorDAOImp implements ITipoProveedorDAO {
 
     @Override
     public TipoProveedor obtenerByID(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM TIPOPROVEEDOR WHERE IDTIPOPROVEEDOR = "+ id)) {
+            if (rs.next()) {
+                return new TipoProveedor(rs.getInt(1), rs.getString(2));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerByID TipoProveedor, " + e.getMessage());
+        }        
+        return null;
     }
 
     @Override
@@ -60,9 +67,8 @@ public class TipoProveedorDAOImp implements ITipoProveedorDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO TIPOPROVEEDOR VALUES(?,?)")) {
-            ps.setInt(1, t.getIdTipoProveedor());
-            ps.setString(2, t.getTipoProveedor());
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO TIPOPROVEEDOR VALUES(?)")) {
+            ps.setString(1, t.getTipoProveedor());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
         } catch (SQLException e) {
             System.err.println("Error registrar TipoProveedor, " + e.getMessage());
@@ -107,6 +113,18 @@ public class TipoProveedorDAOImp implements ITipoProveedorDAO {
             System.err.println("Error yaExiste TipoProveedor, " + e.getMessage());
         }        
         return "";
+    }
+
+    @Override
+    public TipoProveedor obtenerTipoProveedorByNombre(String nombre) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM TIPOPROVEEDOR WHERE TIPOPROVEEDOR = '"+nombre+"'")) {
+            if (rs.next()) {
+                return new TipoProveedor(rs.getInt(1), rs.getString(2));
+            }
+        } catch (SQLException e) {
+            System.err.println("error obtenerTipoProveedorByNombre TipoProveedor, "  +e.getMessage());
+        }        
+        return null;
     }
 
 }

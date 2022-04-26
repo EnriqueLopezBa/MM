@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import Componentes.Sweet_Alert.Button;
 import Componentes.TextField;
+import modelo.Etiqueta;
 import net.miginfocom.swing.*;
 import vista.paneles.edit.DialogLugarImagenes;
 import vista.principales.Principal;
@@ -16,7 +17,7 @@ public class frmLugar extends JPanel {
     }
     
     public void init(){
-         frmEtiquetas1.init();
+         frmEtiquetas1.init(new Etiqueta());
     }
 
     private void btnGaleria(ActionEvent e) {

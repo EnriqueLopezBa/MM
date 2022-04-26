@@ -27,6 +27,8 @@ import modelo.Proveedor;
 import modelo.ProveedorArea;
 import modelo.TipoProveedor;
 import net.miginfocom.swing.*;
+import vista.paneles.edit.DialogProveedor;
+import vista.paneles.edit.DialogTipoProveedor;
 import vista.principales.Principal;
 
 /**
@@ -143,6 +145,16 @@ public class pnlProveedores extends JPanel {
         }
     }
 
+    private void lblEditTipoProveedorMouseClicked(MouseEvent e) {
+        DialogTipoProveedor temp = new DialogTipoProveedor(Principal.getInstancia());
+        temp.setVisible(true);
+    }
+
+    private void lblEditProveedorMouseClicked(MouseEvent e) {
+        DialogProveedor temp = new DialogProveedor(Principal.getInstancia());
+        temp.setVisible(true);
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         lblTitutlo = new JLabel();
@@ -153,10 +165,11 @@ public class pnlProveedores extends JPanel {
         i = new ImageSlider();
         lblTipoProveedor = new JLabel();
         cmbTipoProveedor = new JComboBox();
-        label1 = new JLabel();
+        lblEditTipoProveedor = new JLabel();
         lblProveedor = new JLabel();
         cmbProveedor = new JComboBox();
-        label2 = new JLabel();
+        cbOtro = new JCheckBox();
+        lblEditProveedor = new JLabel();
         btnAgregarProveedor = new Button();
         btnFinalizarProveedor = new Button();
 
@@ -166,7 +179,7 @@ public class pnlProveedores extends JPanel {
             "fill",
             // columns
             "[fill]" +
-            "[fill]" +
+            "[grow,fill]" +
             "[fill]" +
             "[fill]",
             // rows
@@ -226,9 +239,16 @@ public class pnlProveedores extends JPanel {
         cmbTipoProveedor.addItemListener(e -> cmbTipoProveedorItemStateChanged(e));
         add(cmbTipoProveedor, "cell 1 2, hmax 6%, split 2");
 
-        //---- label1 ----
-        label1.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
-        add(label1, "cell 1 2, grow 0 0");
+        //---- lblEditTipoProveedor ----
+        lblEditTipoProveedor.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
+        lblEditTipoProveedor.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblEditTipoProveedor.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                lblEditTipoProveedorMouseClicked(e);
+            }
+        });
+        add(lblEditTipoProveedor, "cell 1 2, grow 0 0");
 
         //---- lblProveedor ----
         lblProveedor.setText("Proveedor");
@@ -238,9 +258,21 @@ public class pnlProveedores extends JPanel {
         cmbProveedor.addItemListener(e -> cmbProveedorItemStateChanged(e));
         add(cmbProveedor, "cell 1 3, hmax 6%, split 2");
 
-        //---- label2 ----
-        label2.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
-        add(label2, "cell 1 3, grow 0 0");
+        //---- cbOtro ----
+        cbOtro.setText("Otro");
+        cbOtro.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        add(cbOtro, "cell 1 3, split 2, grow 0 0");
+
+        //---- lblEditProveedor ----
+        lblEditProveedor.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
+        lblEditProveedor.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblEditProveedor.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                lblEditProveedorMouseClicked(e);
+            }
+        });
+        add(lblEditProveedor, "cell 1 3, grow 0 0");
 
         //---- btnAgregarProveedor ----
         btnAgregarProveedor.setText("Agregar Proveedor");
@@ -263,10 +295,11 @@ public class pnlProveedores extends JPanel {
     private ImageSlider i;
     private JLabel lblTipoProveedor;
     private JComboBox cmbTipoProveedor;
-    private JLabel label1;
+    private JLabel lblEditTipoProveedor;
     private JLabel lblProveedor;
     private JComboBox cmbProveedor;
-    private JLabel label2;
+    private JCheckBox cbOtro;
+    private JLabel lblEditProveedor;
     private Button btnAgregarProveedor;
     private Button btnFinalizarProveedor;
     // JFormDesigner - End of variables declaration  //GEN-END:variables

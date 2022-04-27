@@ -1,9 +1,6 @@
-/*
- * Created by JFormDesigner on Tue Apr 26 00:50:57 MDT 2022
- */
+
 package vista.paneles.edit;
 
-import Componentes.Sweet_Alert.Message;
 import Componentes.Sweet_Alert.Message.Tipo;
 import controlador.ControladorCiudad;
 import controlador.ControladorProveedor;
@@ -16,11 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.*;
 import modelo.Ciudad;
 import modelo.Proveedor;
@@ -102,7 +97,7 @@ public class DialogProveedor extends JDialog {
                         }
                     }
                     Mensaje mm = controladorProveedorArea.registrarLote(lote);
-                    Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
+//                    Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
                     
                 }
                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());// Proveedor Agregado
@@ -141,7 +136,7 @@ public class DialogProveedor extends JDialog {
                     }
                     
                     Mensaje mm = controladorProveedorArea.actualizarLote(lote, proveedor.getIdProveedor());
-                    Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
+//                    Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
                 }
                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
             }

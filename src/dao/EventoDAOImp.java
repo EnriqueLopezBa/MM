@@ -61,7 +61,7 @@ public class EventoDAOImp implements IEventoDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existe");
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO EVENTO VALUES(?,?,?,?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO EVENTO(idCliente, idTipoEvento, idLugar, fechaProgramada, noInvitados, presupuesto, estilo, nombreEvento) VALUES(?,?,?,?,?,?,?,?)")) {
             ps.setInt(1, t.getIdCliente());
             ps.setInt(2, t.getIdTipoEvento());
             ps.setInt(3, t.getIdLugar());

@@ -18,7 +18,6 @@ import independientes.Constante;
 import independientes.Mensaje;
 import independientes.image_slider.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Date;
 import modelo.Cliente;

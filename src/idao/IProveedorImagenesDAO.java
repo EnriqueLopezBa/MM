@@ -1,11 +1,13 @@
 package idao;
 
-import modelo.ProveedorImagen;
+import java.util.ArrayList;
+import modelo.ProveedorImagenes;
 
 /**
  *
  * @author Enrique
  */
-public interface IProveedorImagenesDAO extends CRUD<ProveedorImagen> {
-    
+public interface IProveedorImagenesDAO extends CRUD<ProveedorImagenes> {
+    ArrayList<ProveedorImagenes> obtenerListabyIdProveedor(int idProveedor);
+    ArrayList<ProveedorImagenes> obtenerListabyIdCiudad(int idCiudad);
 }

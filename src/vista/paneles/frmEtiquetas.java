@@ -157,6 +157,7 @@ public class frmEtiquetas extends JPanel {
 
         //---- btnAgregarEtiqueta ----
         btnAgregarEtiqueta.setText("+");
+        btnAgregarEtiqueta.setFocusable(false);
         btnAgregarEtiqueta.addActionListener(e -> btnAgregarEtiqueta(e));
         add(btnAgregarEtiqueta, "cell 1 0, grow");
 
@@ -168,6 +169,7 @@ public class frmEtiquetas extends JPanel {
             listEtiqueta.setLayoutOrientation(JList.HORIZONTAL_WRAP);
             listEtiqueta.setVisibleRowCount(2);
             listEtiqueta.setComponentPopupMenu(popupMenu1);
+            listEtiqueta.setFocusable(false);
             listEtiqueta.addListSelectionListener(e -> listEtiquetasValueChanged(e));
             scrollPane1.setViewportView(listEtiqueta);
         }
@@ -178,6 +180,7 @@ public class frmEtiquetas extends JPanel {
         btnClean.setBorderPainted(false);
         btnClean.setContentAreaFilled(false);
         btnClean.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnClean.setFocusable(false);
         btnClean.addActionListener(e -> btnClean(e));
         add(btnClean, "cell 1 1,grow");
 

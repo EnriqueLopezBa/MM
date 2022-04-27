@@ -3,6 +3,8 @@ package independientes.image_slider;
 import controlador.ControladorEtiqueta;
 import controlador.ControladorLugar;
 import controlador.ControladorLugarImagenes;
+import controlador.ControladorProveedor;
+import controlador.ControladorProveedorImagenes;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +16,8 @@ import javax.swing.JList;
 import modelo.Etiqueta;
 import modelo.Lugar;
 import modelo.LugarImagenes;
+import modelo.Proveedor;
+import modelo.ProveedorImagenes;
 import net.miginfocom.swing.MigLayout;
 
 public class ImageSlider extends javax.swing.JPanel {
@@ -21,6 +25,8 @@ public class ImageSlider extends javax.swing.JPanel {
     private ControladorLugarImagenes controladorLugarImagenes = new ControladorLugarImagenes();
     private ControladorLugar controladorLugar = new ControladorLugar();
     private ControladorEtiqueta controladorEtiqueta = new ControladorEtiqueta();
+    private ControladorProveedorImagenes controladorProvImagenes = new ControladorProveedorImagenes();
+    private ControladorProveedor controladorProveedor = new ControladorProveedor();
 
     private MigLayout imageLayout;
 
@@ -52,21 +58,40 @@ public class ImageSlider extends javax.swing.JPanel {
         }
     }
 
+    public void proveedorImagenes(Proveedor proveedor) {
+        panelItem.removeAll();
+        panelItem.revalidate();
+        panelItem.repaint();
+        for (ProveedorImagenes lu : controladorProvImagenes.obtenerListabyIdProveedor(proveedor.getIdProveedor())) {
+            panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 250, h 200");
+        }
+    }
+
+    public void proveedorImagenesByCiudad(int idCiudad) {
+        panelItem.removeAll();
+        panelItem.revalidate();
+        panelItem.repaint();
+        for (ProveedorImagenes lu : controladorProvImagenes.obtenerListabyIdCiudad(idCiudad)) {
+            Proveedor proveedor = controladorProveedor.obtenerByID(lu.getIdProveedor());
+            panelItem.add(getItem(new ImageIcon(lu.getImagen()), proveedor, lu), "w 250, h 200");
+        }
+    }
+
     public void lugarImagenesByIDCiudad(int idCiudad, DefaultListModel modelo) {
         panelItem.removeAll();
         panelItem.revalidate();
         panelItem.repaint();
         //Obtener caracteristicas (etiquetas) por el usuario
-     
+
         ArrayList<String> arrayList = Collections.list(modelo.elements());
         String arr = "";
         if (!arrayList.isEmpty()) {
             for (String ee : arrayList) {
                 Etiqueta etiqueta = controladorEtiqueta.obtenerByEtiquetaNombre(ee);
-                arr += etiqueta.getIdEtiqueta()+",";
+                arr += etiqueta.getIdEtiqueta() + ",";
             }
             arr = arr.substring(0, arr.length() - 1);
-        }else{
+        } else {
             arr = "0";
         }
         for (LugarImagenes lu : controladorLugarImagenes.obtenerListaByIDCiudad(idCiudad, arr)) {
@@ -75,8 +100,8 @@ public class ImageSlider extends javax.swing.JPanel {
         }
     }
 
-    private ImageItem getItem(Icon icon, Lugar lugar, LugarImagenes lugarimg) {
-        return new ImageItem(icon, imageLayout, lugar, lugarimg);
+    private ImageItem getItem(Icon icon, Object clase, Object claseIMG) {
+        return new ImageItem(icon, imageLayout, clase, claseIMG);
     }
 
     @SuppressWarnings("unchecked")

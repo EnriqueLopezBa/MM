@@ -2,21 +2,39 @@
 package modelo;
 
 
-public class ProveedorImagen {
+public class ProveedorImagenes {
     private int idProveedor;
     private String id2;
     private byte[] imagen;
     private String descripcion;
+    private boolean predeterminada;
 
-    public ProveedorImagen() {
+    public ProveedorImagenes() {
     }
 
-    public ProveedorImagen(int idProveedor, String id2, byte[] imagen, String descripcion) {
+    public ProveedorImagenes(int idProveedor, String id2, byte[] imagen, String descripcion) {
         this.idProveedor = idProveedor;
         this.id2 = id2;
         this.imagen = imagen;
         this.descripcion = descripcion;
     }
+
+    public ProveedorImagenes(int idProveedor, String id2, byte[] imagen, String descripcion, boolean predeterminada) {
+        this.idProveedor = idProveedor;
+        this.id2 = id2;
+        this.imagen = imagen;
+        this.descripcion = descripcion;
+        this.predeterminada = predeterminada;
+    }
+
+    public boolean isPredeterminada() {
+        return predeterminada;
+    }
+
+    public void setPredeterminada(boolean predeterminada) {
+        this.predeterminada = predeterminada;
+    }
+    
 
     public int getIdProveedor() {
         return idProveedor;

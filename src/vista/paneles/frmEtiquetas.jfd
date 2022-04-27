@@ -21,6 +21,7 @@ new FormModel {
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "btnAgregarEtiqueta"
 				"text": "+"
+				"focusable": false
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
@@ -36,6 +37,7 @@ new FormModel {
 					"layoutOrientation": 2
 					"visibleRowCount": 2
 					"componentPopupMenu": new FormReference( "popupMenu1" )
+					"focusable": false
 					auxiliary() {
 						"JavaCodeGenerator.variableModifiers": 1
 					}
@@ -50,6 +52,7 @@ new FormModel {
 				"borderPainted": false
 				"contentAreaFilled": false
 				"cursor": new java.awt.Cursor( 12 )
+				"focusable": false
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}

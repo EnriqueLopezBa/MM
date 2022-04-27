@@ -23,6 +23,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import modelo.Lugar;
 import modelo.LugarImagenes;
+import modelo.Proveedor;
+import modelo.ProveedorImagenes;
 import net.miginfocom.swing.MigLayout;
 import vista.paneles.edit.DialogLugarImagenes;
 import vista.principales.Principal;
@@ -36,14 +38,26 @@ public class ImageItem extends JComponent {
 
     private Lugar lugar;
     private LugarImagenes lugarIMG;
-    
-    public ImageItem(Icon image, MigLayout mig, Lugar lugar, LugarImagenes lugarIMG) {
+
+    private Proveedor proveedor;
+    private ProveedorImagenes proveedorIMG;
+
+    public ImageItem(Icon image, MigLayout mig, Object clase, Object claseIMG) {
         this.image = image;
-        this.lugar = lugar;
-        this.lugarIMG = lugarIMG;
+        if (clase instanceof Lugar) {
+            this.lugar = (Lugar) lugar;
+        } else if (clase instanceof Proveedor) {
+            this.proveedor = (Proveedor) clase;
+        }
+        if (claseIMG instanceof LugarImagenes) {
+            this.lugarIMG = (LugarImagenes) claseIMG;
+        } else if (claseIMG instanceof ProveedorImagenes) {
+            this.proveedorIMG = (ProveedorImagenes) claseIMG;
+        }
+
         setBackground(Color.BLACK);
         setToolTipText("Click derecho para ver galeria");
-        
+
         timer = new Timer(0, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -85,11 +99,14 @@ public class ImageItem extends JComponent {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
                 if (SwingUtilities.isRightMouseButton(e)) {
-                    DialogLugarImagenes te = new DialogLugarImagenes(Principal.getInstancia(), lugar);
-                    te.setVisible(true);
+                    if (lugar != null) {
+                        DialogLugarImagenes te = new DialogLugarImagenes(Principal.getInstancia(), lugar);
+                        te.setVisible(true);
+                    }
+
                 }
             }
-            
+
         });
     }
 
@@ -100,7 +117,7 @@ public class ImageItem extends JComponent {
             Rectangle size = getAutoSize(image);
             int width = getWidth();
             int height = getHeight();
-            
+
             BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = img.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -111,11 +128,11 @@ public class ImageItem extends JComponent {
             g.dispose();
             g2.drawImage(img, 0, 0, null);
             if (lugar != null && lugarIMG != null) {
-               g2.setFont(new Font("Times Roman", Font.PLAIN, 14)); 
+                g2.setFont(new Font("Times Roman", Font.PLAIN, 14));
                 g2.drawString("Nombre: " + lugar.getNombreLocal(), 15, height - shadowSize + 15);
-                g2.drawString("Capacidad Aprox.: " + lugar.getCapacidad()+"", 15, height - shadowSize + 30);
-                g2.drawString("Precio Aprox.: " + lugar.getPrecio()+"", 15, height - shadowSize + 45);
-            }else if (lugarIMG != null) {
+                g2.drawString("Capacidad Aprox.: " + lugar.getCapacidad() + "", 15, height - shadowSize + 30);
+                g2.drawString("Precio Aprox.: " + lugar.getPrecio() + "", 15, height - shadowSize + 45);
+            } else if (lugarIMG != null) {
                 g2.drawString(lugarIMG.getDescripcion(), 15, height - shadowSize + 15);
             }
             g2.dispose();

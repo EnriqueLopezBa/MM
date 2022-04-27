@@ -56,7 +56,14 @@ public class ProveedorDAOImp implements IProveedorDAO {
 
     @Override
     public Proveedor obtenerByID(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR WHERE IDPROVEEDOR = "+id)) {
+            if (rs.next()) {
+               return new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerBYID Proveedor, " + e.getMessage());
+        }     
+        return null;
     }
 
     @Override
@@ -65,7 +72,7 @@ public class ProveedorDAOImp implements IProveedorDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR VALUES (?,?,?,?,?,?)")) {       
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR VALUES (?,?,?,?,?,?)")) {
             ps.setInt(1, t.getIdtipoProveedor());
             ps.setString(2, t.getNombre());
             ps.setString(3, t.getNombreEmpresa());
@@ -86,7 +93,7 @@ public class ProveedorDAOImp implements IProveedorDAO {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
         try (PreparedStatement ps = cn.prepareStatement("UPDATE proveedor SET idTipoProveedor = ?, nombre = ?, nombreEmpresa = ?,"
-                + " telefono = ?, telefono2 = ?, precioAprox = ? WHERE idProveedor")) {
+                + " telefono = ?, telefono2 = ?, precioAprox = ? WHERE idProveedor = ?")) {
             ps.setInt(1, t.getIdtipoProveedor());
             ps.setString(2, t.getNombre());
             ps.setString(3, t.getNombreEmpresa());
@@ -148,6 +155,18 @@ public class ProveedorDAOImp implements IProveedorDAO {
             return temp;
         } catch (SQLException e) {
             System.err.println("Error obtenerListaByIdTipoProveedor Proveedor, " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public Proveedor obtenerByLast() {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT TOP 1 * FROM proveedor ORDER BY idProveedor DESC")) {
+            if (rs.next()) {
+                return new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerByLast Proveedor, " + e.getMessage());
         }
         return null;
     }

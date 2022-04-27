@@ -1,0 +1,46 @@
+JFDML JFormDesigner: "7.0.5.0.404" Java: "1.8.0_261" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "fill"
+			"$columnConstraints": "[grow,fill][grow,fill]"
+			"$rowConstraints": "[][][]"
+		} ) {
+			name: "this"
+			"background": new java.awt.Color( 255, 255, 255, 255 )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane2"
+				add( new FormComponent( "javax.swing.JTextPane" ) {
+					name: "txtPregunta"
+					"text": "<html><p style=\"text-align:center\">Center this text!</p></html>"
+					"editable": false
+					"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+					"disabledTextColor": new java.awt.Color( 0, 0, 0, 255 )
+					"contentType": "text/html"
+					"font": new java.awt.Font( "Segoe UI", 1, 20 )
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0, spanx, grow"
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane1"
+				add( new FormComponent( "javax.swing.JTextArea" ) {
+					name: "txtRespuesta"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1, spanx, grow"
+			} )
+			add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
+				name: "btnSiguiente"
+				"text": "Siguiente"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 2,aligny top, alignx right"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 520, 375 )
+		} )
+	}
+}

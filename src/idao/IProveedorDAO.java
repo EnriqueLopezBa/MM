@@ -10,4 +10,5 @@ import modelo.Proveedor;
 public interface IProveedorDAO extends CRUD<Proveedor> {
 
     ArrayList<Proveedor> obtenerListaByIdTipoProveedor(int idTipoProveedor);
+    Proveedor obtenerByLast();
 }

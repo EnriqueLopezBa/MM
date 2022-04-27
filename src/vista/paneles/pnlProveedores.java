@@ -1,6 +1,3 @@
-/*
- * Created by JFormDesigner on Mon Apr 25 15:58:16 MDT 2022
- */
 package vista.paneles;
 
 import java.awt.*;
@@ -8,32 +5,33 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import Componentes.Sweet_Alert.Button;
+import Componentes.Sweet_Alert.Message;
 import Componentes.tableC.*;
 import controlador.ControladorCliente;
 import controlador.ControladorEvento;
 import controlador.ControladorLugar;
 import controlador.ControladorProveedor;
 import controlador.ControladorProveedorArea;
+import controlador.ControladorProveedorEvento;
 import controlador.ControladorTipoProveedor;
 import independientes.Constante;
+import independientes.Mensaje;
 import independientes.image_slider.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Date;
 import modelo.Cliente;
 import modelo.Evento;
 import modelo.Proveedor;
 import modelo.ProveedorArea;
+import modelo.ProveedorEvento;
 import modelo.TipoProveedor;
 import net.miginfocom.swing.*;
 import vista.paneles.edit.DialogProveedor;
 import vista.paneles.edit.DialogTipoProveedor;
 import vista.principales.Principal;
 
-/**
- * @author das
- */
 public class pnlProveedores extends JPanel {
 
     private ControladorCliente controladorCliente = new ControladorCliente();
@@ -42,6 +40,7 @@ public class pnlProveedores extends JPanel {
     private ControladorProveedor controladorProveedor = new ControladorProveedor();
     private ControladorProveedorArea controladorProveedorArea = new ControladorProveedorArea();
     private ControladorLugar controladorLugar = new ControladorLugar();
+    private ControladorProveedorEvento controladorProveedorEvento = new ControladorProveedorEvento();
 
     private Cliente clienteTemp = null;
 
@@ -49,17 +48,18 @@ public class pnlProveedores extends JPanel {
     private Proveedor proveedorActual;
     private Evento eventoActual;
 
+    private DefaultTableModel m;
+
     public pnlProveedores() {
         initComponents();
-        new Timer(2000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cargarNombreEvento();
-            }
-        }).start();
+            m = (DefaultTableModel) tblProveedor.getModel();
+      
         cargarNombreEvento();
         cargarTipoProveedor();
         cargarProveedores();
+    
+         tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
+         tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
     }
 
     private void cargarTipoProveedor() {
@@ -82,10 +82,11 @@ public class pnlProveedores extends JPanel {
         }
 
     }
-
+  
     private void cargarNombreEvento() {
         if (Constante.clienteTemporal == null) {
             cmbNombreEvento.removeAllItems();
+      
             for (Evento e : controladorEvento.obtenerEventoByIDCliente(controladorCliente.obtenerClienteActivo().getIdCliente())) {
                 cmbNombreEvento.addItem(e.getNombreEvento());
             }
@@ -131,7 +132,19 @@ public class pnlProveedores extends JPanel {
                 }
             }
         }
+        cargarProveedorEvento();
 
+    }
+    private void cargarProveedorEvento(){
+        if (eventoActual == null || controladorProveedorEvento.obtenerListaByIdEvento(eventoActual.getIdEvento()) == null) {
+            return;
+        }
+        m.setRowCount(0);
+        for(ProveedorEvento pro : controladorProveedorEvento.obtenerListaByIdEvento(eventoActual.getIdEvento())){
+          Proveedor proveedor = controladorProveedor.obtenerByID(pro.getIdProveedor());
+          TipoProveedor tipo = controladorTipoProveedor.obtenerByID(proveedor.getIdtipoProveedor());
+            m.addRow(new Object[]{tipo.getIdTipoProveedor(), proveedor.getIdProveedor(), tipo.getTipoProveedor(), proveedor.getNombreEmpresa()});
+        }
     }
 
     private void cmbProveedorItemStateChanged(ItemEvent e) {
@@ -155,6 +168,70 @@ public class pnlProveedores extends JPanel {
         temp.setVisible(true);
     }
 
+    private void btnAgregarProveedor(ActionEvent e) {
+
+        if (cbOtro.isSelected()) {
+            for (int j = 0; j < m.getRowCount(); j++) {
+                if (m.getValueAt(j, 3).toString().equals(cmbProveedor.getEditor().getItem().toString())) {
+                    Constante.mensaje("Este ya existe", Message.Tipo.ERROR);
+                    return;
+                }
+            }
+            tblProveedor.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), null,
+                tipoProveedorActual.getTipoProveedor(), cmbProveedor.getEditor().getItem().toString()});
+        } else {
+            for (int j = 0; j < m.getRowCount(); j++) {
+             
+                if ((int)m.getValueAt(j, 1) == proveedorActual.getIdProveedor()) {
+                    Constante.mensaje("Este ya existe", Message.Tipo.ERROR);
+                  
+                    return;
+                }
+            }
+                tblProveedor.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), proveedorActual.getIdProveedor(),
+                    tipoProveedorActual.getTipoProveedor(), proveedorActual.getNombreEmpresa()});
+           
+
+        }
+    }
+    
+
+    private void btnEliminar(ActionEvent e) {
+        int x = tblProveedor.getSelectedRow();
+        if (x == -1) {
+            return;
+        }
+        m.removeRow(x);
+    }
+
+    private void cbOtro(ActionEvent e) {
+        if (cbOtro.isSelected()) {
+            cmbProveedor.setEditable(true);
+        } else {
+            cmbProveedor.setEditable(false);
+        }
+
+    }
+
+    private void btnFinalizarProveedor(ActionEvent e) {
+        if (eventoActual == null || m.getRowCount() == 0) {
+            return;
+        }
+        ArrayList<ProveedorEvento> proE = new ArrayList<>();
+        for (int j = 0; j < m.getRowCount(); j++) { // comprobrar que existen proveedores nuevo a registrar
+            if (m.getValueAt(j, 1) == null) {
+                Proveedor pro = new Proveedor();
+                pro.setNombreEmpresa(m.getValueAt(j, 3).toString());
+                controladorProveedor.registrar(pro);
+                m.setValueAt(controladorProveedor.obtenerByLast().getIdProveedor(), j, 1);
+            }
+            proE.add(new ProveedorEvento(eventoActual.getIdEvento(), (int)m.getValueAt(j, 1), new Date(), new Date()));
+        }
+        Mensaje m = controladorProveedorEvento.registrarLote(proE);
+        Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+        
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         lblTitutlo = new JLabel();
@@ -172,6 +249,8 @@ public class pnlProveedores extends JPanel {
         lblEditProveedor = new JLabel();
         btnAgregarProveedor = new Button();
         btnFinalizarProveedor = new Button();
+        popupMenu1 = new JPopupMenu();
+        btnEliminar = new JMenuItem();
 
         //======== this ========
         setBackground(Color.white);
@@ -223,6 +302,8 @@ public class pnlProveedores extends JPanel {
                     return columnEditable[columnIndex];
                 }
             });
+            tblProveedor.setComponentPopupMenu(popupMenu1);
+            tblProveedor.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             scrollPane1.setViewportView(tblProveedor);
         }
         add(scrollPane1, "cell 2 1 1 5,grow");
@@ -261,6 +342,7 @@ public class pnlProveedores extends JPanel {
         //---- cbOtro ----
         cbOtro.setText("Otro");
         cbOtro.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        cbOtro.addActionListener(e -> cbOtro(e));
         add(cbOtro, "cell 1 3, split 2, grow 0 0");
 
         //---- lblEditProveedor ----
@@ -276,13 +358,25 @@ public class pnlProveedores extends JPanel {
 
         //---- btnAgregarProveedor ----
         btnAgregarProveedor.setText("Agregar Proveedor");
+        btnAgregarProveedor.addActionListener(e -> btnAgregarProveedor(e));
         add(btnAgregarProveedor, "cell 1 4, hmax 6%");
 
         //---- btnFinalizarProveedor ----
         btnFinalizarProveedor.setText("Finalizar");
         btnFinalizarProveedor.setColorBackground(new Color(0, 204, 0));
         btnFinalizarProveedor.setColorBackground2(new Color(51, 255, 102));
+        btnFinalizarProveedor.addActionListener(e -> btnFinalizarProveedor(e));
         add(btnFinalizarProveedor, "cell 1 5,hmax 6%");
+
+        //======== popupMenu1 ========
+        {
+
+            //---- btnEliminar ----
+            btnEliminar.setText("Remover");
+            btnEliminar.setIcon(new ImageIcon(getClass().getResource("/img/delete.png")));
+            btnEliminar.addActionListener(e -> btnEliminar(e));
+            popupMenu1.add(btnEliminar);
+        }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -302,5 +396,7 @@ public class pnlProveedores extends JPanel {
     private JLabel lblEditProveedor;
     private Button btnAgregarProveedor;
     private Button btnFinalizarProveedor;
+    private JPopupMenu popupMenu1;
+    private JMenuItem btnEliminar;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

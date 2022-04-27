@@ -28,10 +28,23 @@ public class ControladorProveedorArea {
         return ProveedorAreaDAOImp.getInstancia().registrar(t);
     }
 
+    public Mensaje registrarLote(ArrayList<ProveedorArea> t) {
+        return ProveedorAreaDAOImp.getInstancia().registrarLote(t);
+    }
+
+    public Mensaje actualizarLote(ArrayList<ProveedorArea> t, int idProveedor) {
+        return ProveedorAreaDAOImp.getInstancia().actualizarLote(t, idProveedor);
+    }
+
     public ArrayList<ProveedorArea> obtenerListaByIdCiudad(int idCiudad) {
         return ProveedorAreaDAOImp.getInstancia().obtenerListaByIdCiudad(idCiudad);
     }
-     public ArrayList<ProveedorArea> obtenerListaByIdProveedor(int idProveedor){
-         return ProveedorAreaDAOImp.getInstancia().obtenerListaByIdProveedor(idProveedor);
-     }
+
+    public ArrayList<ProveedorArea> obtenerListaByIdProveedor(int idProveedor) {
+        return ProveedorAreaDAOImp.getInstancia().obtenerListaByIdProveedor(idProveedor);
+    }
+
+    public ProveedorArea obtenerByIdCiudadAndIdProveedor(int idCiudad, int idProveedor) {
+        return ProveedorAreaDAOImp.getInstancia().obtenerByIdCiudadAndIdProveedor(idCiudad, idProveedor);
+    }
 }

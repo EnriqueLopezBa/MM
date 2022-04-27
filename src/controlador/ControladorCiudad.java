@@ -18,14 +18,19 @@ public class ControladorCiudad {
     public ArrayList<Ciudad> obtenerListaByCadena(String cadena) {
         return CiudadDAOImp.getInstancia().obtenerListaByCadena(cadena);
     }
+
     public ArrayList<Ciudad> obtenerListaByIDEstado(int idEstado) {
         return CiudadDAOImp.getInstancia().obtenerByIDEstado(idEstado);
     }
-    public Ciudad obtenerById(int idCiudad){
+
+    public Ciudad obtenerByNombre(String nombreCiudad) {
+        return CiudadDAOImp.getInstancia().obtenerByNombre(nombreCiudad);
+    }
+
+    public Ciudad obtenerById(int idCiudad) {
         return CiudadDAOImp.getInstancia().obtenerByID(idCiudad);
     }
 
-   
     public Mensaje registrar(Ciudad et) {
         return CiudadDAOImp.getInstancia().registrar(et);
     }

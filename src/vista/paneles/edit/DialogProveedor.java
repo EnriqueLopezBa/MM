@@ -19,7 +19,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.*;
+import modelo.Ciudad;
 import modelo.Proveedor;
 import modelo.ProveedorArea;
 import modelo.TipoProveedor;
@@ -44,7 +47,7 @@ public class DialogProveedor extends JDialog {
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         super.setSize(new Dimension(new Double(screensize.getWidth() / 2).intValue(), super.getPreferredSize().height));
         super.setLocationRelativeTo(null);
-        p.init(new String[]{"idProveedor", "idTipoProveedor", "Nombre", "Nombre Empresa", "Telefono", "Telefono 2", "Precio Aprox"}, 2, true);
+        p.init(new String[]{"idProveedor", "idTipoProveedor", "Nombre", "Nombre Empresa", "Telefono", "Telefono 2", "Precio Aprox"}, 0, true);
         fProveedorArea.init(new ProveedorArea());
         fProveedor.init();
         llenarTabla();
@@ -90,6 +93,17 @@ public class DialogProveedor extends JDialog {
                 Mensaje m = controladorProveedor.registrar(proveedor);
                 if (m.getTipoMensaje() == Tipo.OK) { //Suponiendo que se agregó el proveedor correctamente
                     llenarTabla();
+                    Proveedor provtemp = controladorProveedor.obtenerByLast();
+                    ArrayList<ProveedorArea> lote = new ArrayList<>();
+                    for(Object objeto : fProveedorArea.listModel.toArray()){
+                        Ciudad ciudad = controladorCiudad.obtenerByNombre((String) objeto);
+                        if (ciudad != null) {
+                            lote.add(new ProveedorArea(provtemp.getIdProveedor(), ciudad.getIdCiudad()));
+                        }
+                    }
+                    Mensaje mm = controladorProveedorArea.registrarLote(lote);
+                    Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
+                    
                 }
                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());// Proveedor Agregado
                 
@@ -100,7 +114,36 @@ public class DialogProveedor extends JDialog {
         p.btnModificar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+              
+                if (!Constante.filaSeleccionada(p.tblBuscar)) {
+                    return;
+                }
+                int x = p.tblBuscar.getSelectedRow();
+                 Proveedor proveedor  = new Proveedor();
+                 proveedor.setIdProveedor(Integer.parseInt(valorTabla(x, 0)));
+                proveedor.setIdtipoProveedor(controladorTipoProveedor.obtenerTipoProveedorByNombre(fProveedor.cmbTipoProveedor.getSelectedItem().toString()).getIdTipoProveedor());
+                proveedor.setNombre(fProveedor.txtNombre.getText());
+                proveedor.setNombreEmpresa(fProveedor.txtNombreEmpresa.getText());
+                proveedor.setTelefono(fProveedor.txtTelefono.getText());
+                proveedor.setTelefono2(fProveedor.txtTelefono2.getText());
+                proveedor.setPrecioAprox(Integer.parseInt(fProveedor.txtPrecioAprox.getText()));
+                Mensaje m = controladorProveedor.actualizar(proveedor);
+                if (m.getTipoMensaje() == Tipo.OK) {
+                    llenarTabla();
+                    
+                    ArrayList<ProveedorArea> lote = new ArrayList<>();
+                       Ciudad ciudad = null;
+                    for(Object objeto : fProveedorArea.listModel.toArray()){
+                         ciudad = controladorCiudad.obtenerByNombre((String) objeto);
+                        if (ciudad != null) {
+                            lote.add(new ProveedorArea(proveedor.getIdProveedor(), ciudad.getIdCiudad()));
+                        }
+                    }
+                    
+                    Mensaje mm = controladorProveedorArea.actualizarLote(lote, proveedor.getIdProveedor());
+                    Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
+                }
+                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
             }
         });
         // ------------------------- ELIMINAR -----------------------------//
@@ -144,6 +187,7 @@ public class DialogProveedor extends JDialog {
 
     private void llenarAreaDeProveedor(int idProveedor) {
         fProveedorArea.listModel.clear();
+     
         for (ProveedorArea prov : controladorProveedorArea.obtenerListaByIdProveedor(idProveedor)) {
             fProveedorArea.listModel.addElement(controladorCiudad.obtenerById(prov.getIdCiudad()).getCiudad());
         }

@@ -138,4 +138,16 @@ public class CiudadDAOImp implements ICiudadDAO {
         return null;
     }
 
+    @Override
+    public Ciudad obtenerByNombre(String nombreCiudad) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CIUDAD WHERE CIUDAD = '"+nombreCiudad+"'")) {
+            if (rs.next()) {
+                return new Ciudad(rs.getInt(1), rs.getInt(2), rs.getString(3));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerByNombre Ciudad, " + e.getMessage());
+        } 
+        return null;
+    }
+
 }

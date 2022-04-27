@@ -7,9 +7,11 @@ import Componentes.*;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import controlador.ControladorCliente;
 import modelo.Cliente;
+import vista.paneles.pnlAbono;
 import vista.paneles.pnlCliente;
 import vista.paneles.pnlEventos;
 import vista.paneles.pnlProveedores;
+import vista.paneles.pnlQuiz;
 
 /**
  * @author das
@@ -91,7 +93,7 @@ public class Principal extends JFrame {
     }
 
     private void btnPago(ActionEvent e) {
-        // TODO add your code here
+       cambiarPanel(new pnlAbono());
     }
 
     private void btnModoOscuro(ActionEvent e) {
@@ -116,6 +118,10 @@ public class Principal extends JFrame {
         this.setState(ICONIFIED);
     }
 
+    private void btnQuiz(ActionEvent e) {
+        cambiarPanel(new pnlQuiz());
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         pnlOpciones = new JPanel();
@@ -127,6 +133,7 @@ public class Principal extends JFrame {
         btnProveedores = new Buttont();
         btnPago = new Buttont();
         btnModoOscuro = new Buttont();
+        btnQuiz = new Buttont();
         pnlMenu = new JPanel();
         lblCliente = new JLabel();
         panel1 = new JPanel();
@@ -224,6 +231,13 @@ public class Principal extends JFrame {
             btnModoOscuro.addActionListener(e -> btnModoOscuro(e));
             pnlOpciones.add(btnModoOscuro);
             btnModoOscuro.setBounds(0, 425, 150, 35);
+
+            //---- btnQuiz ----
+            btnQuiz.setText("Quiz");
+            btnQuiz.setHoverColor(new Color(102, 153, 255));
+            btnQuiz.addActionListener(e -> btnQuiz(e));
+            pnlOpciones.add(btnQuiz);
+            btnQuiz.setBounds(0, 270, 150, 35);
         }
         contentPane.add(pnlOpciones, BorderLayout.WEST);
 
@@ -304,6 +318,7 @@ public class Principal extends JFrame {
         buttonGroup1.add(btnAgenda);
         buttonGroup1.add(btnProveedores);
         buttonGroup1.add(btnPago);
+        buttonGroup1.add(btnQuiz);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -326,6 +341,7 @@ public class Principal extends JFrame {
     private Buttont btnProveedores;
     private Buttont btnPago;
     private Buttont btnModoOscuro;
+    private Buttont btnQuiz;
     public JPanel pnlMenu;
     public JLabel lblCliente;
     private JPanel panel1;

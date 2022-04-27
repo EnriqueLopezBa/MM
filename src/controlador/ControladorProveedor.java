@@ -19,6 +19,14 @@ public class ControladorProveedor {
         return ProveedorDAOImp.getInstancia().obtenerListaByIdTipoProveedor(idTipoProveedor);
     }
 
+    public Proveedor obtenerByLast() {
+        return ProveedorDAOImp.getInstancia().obtenerByLast();
+    }
+    
+    public Proveedor obtenerByID(int id) {
+        return ProveedorDAOImp.getInstancia().obtenerByID(id);
+    }
+
     public Mensaje registrar(Proveedor t) {
         return ProveedorDAOImp.getInstancia().registrar(t);
     }

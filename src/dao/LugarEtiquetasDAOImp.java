@@ -107,21 +107,18 @@ public class LugarEtiquetasDAOImp implements ILugarEtiquetasDAO {
                 return null;
             }
         }
-
         return new Mensaje(Message.Tipo.OK, "Registrado correctamente");
     }
 
     @Override
     public Mensaje actualizarLote(ArrayList<LugarEtiquetas> lote, int idLugar) {
-        
-            ArrayList<LugarEtiquetas> temp = obtenerEtiquetasByIDLugar(idLugar);
-            for (LugarEtiquetas l : temp) {
-                if (!lote.contains(l)) {
-                    eliminar(l);
-                }
-            }
-        
 
+        ArrayList<LugarEtiquetas> temp = obtenerEtiquetasByIDLugar(idLugar);
+        for (LugarEtiquetas l : temp) {
+            if (!lote.contains(l)) {
+                eliminar(l);
+            }
+        }
         for (LugarEtiquetas et : lote) {
             if (!yaExiste(et).isEmpty()) {
                 continue;

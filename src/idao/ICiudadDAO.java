@@ -10,4 +10,5 @@ import modelo.Ciudad;
 public interface ICiudadDAO extends CRUD<Ciudad> {
     
     ArrayList<Ciudad> obtenerByIDEstado(int idEstado);
+    Ciudad obtenerByNombre (String nombreCiudad);
 }

@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import modelo.Proveedor;
 import modelo.ProveedorArea;
 
@@ -49,10 +50,6 @@ public class ProveedorAreaDAOImp implements IProveedorAreaDAO {
 
     @Override
     public Mensaje registrar(ProveedorArea t) {
-        String x = yaExiste(t);
-        if (!x.isEmpty()) {
-            return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
-        }
         try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDORAREA VALUES(?,?)")) {
             ps.setInt(1, t.getIdProveedor());
             ps.setInt(2, t.getIdCiudad());
@@ -92,43 +89,97 @@ public class ProveedorAreaDAOImp implements IProveedorAreaDAO {
     }
 
     @Override
-    public String yaExiste(ProveedorArea t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDORAREA WHERE IDPROVEEDOR =" + t.getIdProveedor() + " "
-                + "AND IDCIUDAD = " + t.getIdCiudad())) {
-            if (rs.next()) {
-                return "Proveedor en esta ciudad";
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        }
-        return "";
-    }
-
-    @Override
     public ArrayList<ProveedorArea> obtenerListaByIdCiudad(int idCiudad) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDORAREA WHERE IDCIUDAD ="+idCiudad)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDORAREA WHERE IDCIUDAD =" + idCiudad)) {
             ArrayList<ProveedorArea> temp = new ArrayList<>();
-            while(rs.next()){
+            while (rs.next()) {
                 temp.add(new ProveedorArea(rs.getInt(1), rs.getInt(2)));
             }
             return temp;
         } catch (SQLException e) {
-            System.err.println("Error obtenerListaByIdCiudad ProveedorArea, "+ e.getMessage());
-        }        
+            System.err.println("Error obtenerListaByIdCiudad ProveedorArea, " + e.getMessage());
+        }
         return null;
     }
 
     @Override
     public ArrayList<ProveedorArea> obtenerListaByIdProveedor(int idProveedor) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDORAREA WHERE IDPROVEEDOR ="+idProveedor)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDORAREA WHERE IDPROVEEDOR =" + idProveedor)) {
             ArrayList<ProveedorArea> temp = new ArrayList<>();
-            while(rs.next()){
+            while (rs.next()) {
                 temp.add(new ProveedorArea(rs.getInt(1), rs.getInt(2)));
             }
             return temp;
         } catch (SQLException e) {
-            System.err.println("Error obtenerListaByIdProveedor ProveedorArea, "+ e.getMessage());
-        }        
+            System.err.println("Error obtenerListaByIdProveedor ProveedorArea, " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public String yaExiste(ProveedorArea t) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDORAREA WHERE IDPROVEEDOR = " + t.getIdProveedor()
+                + " AND IDCIUDAD = " + t.getIdCiudad())) {
+            if (rs.next()) {
+                return t.getIdProveedor() + "";
+            }
+        } catch (SQLException e) {
+            System.err.println("Error yaExiste LugarEtiqeuetas, " + e.getMessage());
+        }
+        return "";
+    }
+
+    @Override
+    public Mensaje registrarLote(ArrayList<ProveedorArea> lote) {
+        for (ProveedorArea et : lote) {
+            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDORAREA VALUES(?,?)")) {
+                ps.setInt(1, et.getIdProveedor());
+                ps.setInt(2, et.getIdCiudad());
+                ps.execute();
+            } catch (SQLException e) {
+                System.err.println("Error registroLote LugarEtiquetas, " + e.getMessage());
+                return null;
+            }
+        }
+        return new Mensaje(Message.Tipo.OK, "Registrado correctamente");
+    }
+
+    @Override
+    public Mensaje actualizarLote(ArrayList<ProveedorArea> lote, int idProveedor) {
+        String ar = "";
+        for (ProveedorArea et : lote) {
+            ProveedorArea temp = obtenerByIdCiudadAndIdProveedor(et.getIdCiudad(), et.getIdProveedor());
+            ar += et.getIdCiudad() + ",";
+            if (temp == null) {
+                System.out.println("registrar");
+                registrar(et);
+            }
+        }
+        if (!ar.isEmpty()) {
+            ar = ar.substring(0, ar.length() - 1);
+        } else {
+            ar = "0";
+        }
+        try (PreparedStatement ps = cn.prepareStatement(" DELETE FROM proveedorArea WHERE idProveedor = " + idProveedor
+                + "AND idCiudad NOT IN(" + ar + ")")) {
+            ps.execute();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return new Mensaje(Message.Tipo.OK, "Actualizado correctamente");
+    }
+
+    @Override
+    public ProveedorArea obtenerByIdCiudadAndIdProveedor(int idCiudad, int idProveedor) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDORAREA WHERE IDPROVEEDOR = " + idProveedor + " and "
+                + "idCiudad = " + idCiudad)) {
+            if (rs.next()) {
+                return new ProveedorArea(idProveedor, idCiudad);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerByIdCiudadAndIdProveedor ProveedoorArea, " + e.getMessage());
+        }
         return null;
     }
 

@@ -276,7 +276,7 @@ public class pnlEventos extends JPanel {
     }
 
     private void cbOtro(ActionEvent e) {
-        // TODO add your code here
+       cmbLugar.setEditable(cbOtro.isSelected());
     }
 
     private void btnAceptar(ActionEvent e) {

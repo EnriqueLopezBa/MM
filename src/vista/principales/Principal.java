@@ -13,11 +13,9 @@ import vista.paneles.pnlEventos;
 import vista.paneles.pnlProveedores;
 import vista.paneles.pnlQuiz;
 
-/**
- * @author das
- */
 public class Principal extends JFrame {
 
+    private int hola = 10;
     private static Principal instancia;
     private int mouseX, mouseY;
 

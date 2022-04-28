@@ -21,6 +21,7 @@ public class Principal extends JFrame {
 
     public boolean admin = false;
     public pnlEventos pnlEventos = null;
+    private String hola;
     
     private ControladorCliente controladorCliente = new ControladorCliente();
 
@@ -33,6 +34,7 @@ public class Principal extends JFrame {
 
     private Principal() {
         initComponents();
+     hola = "sapo";
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         setMinimumSize(screensize.getSize());
         setLocationRelativeTo(null);

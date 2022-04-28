@@ -15,7 +15,7 @@ import vista.paneles.pnlQuiz;
 
 public class Principal extends JFrame {
 
-    private int hola = 10;
+    private final int hola = 10;
     private static Principal instancia;
     private int mouseX, mouseY;
 

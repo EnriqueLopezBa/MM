@@ -18,7 +18,6 @@ public class Principal extends JFrame {
  
     private static Principal instancia;
     private int mouseX, mouseY;
-    private String hola = "asdas";
 
     public boolean admin = false;
     public pnlEventos pnlEventos = null;

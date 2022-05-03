@@ -11,6 +11,17 @@ import modelo.LugarEtiquetas;
  */
 public class ControladorLugarEtiquetas {
 
+    private static ControladorLugarEtiquetas instancia;
+    private ControladorLugarEtiquetas() {
+    }
+    public static ControladorLugarEtiquetas getInstancia(){
+        if (instancia == null) {
+            instancia = new ControladorLugarEtiquetas();
+        }
+        return instancia;
+    }
+
+    
     public Mensaje registrarLote(ArrayList<LugarEtiquetas> lote) {
         return LugarEtiquetasDAOImp.getInstancia().registrarLote(lote);
     }

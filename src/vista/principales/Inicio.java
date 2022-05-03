@@ -14,7 +14,6 @@ import modelo.Usuario;
  */
 public class Inicio extends JDialog {
 
-    private ControladorUsuario controlador = new ControladorUsuario();
     private Usuario u;
     private Principal p;
     public Inicio(Principal owner, boolean modal) {
@@ -27,7 +26,7 @@ public class Inicio extends JDialog {
         u = new Usuario();
         u.setCorreo(txtCorreo.getText());
         u.setClave(new String(txtClave.getPassword()));
-        u = controlador.inicioSesion(u);
+        u = ControladorUsuario.getInstancia().inicioSesion(u);
         if (u == null) {
             lblError.setVisible(true);
         }else{

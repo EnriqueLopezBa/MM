@@ -11,6 +11,17 @@ import modelo.Ciudad;
  */
 public class ControladorCiudad {
 
+    private static ControladorCiudad instancia;
+    private ControladorCiudad() {
+    }
+    public static ControladorCiudad getInstancia(){
+        if (instancia == null) {
+            instancia = new ControladorCiudad();
+        }
+        return instancia;
+    }
+
+    
     public ArrayList<Ciudad> obtenerLista() {
         return CiudadDAOImp.getInstancia().obtenerLista();
     }

@@ -20,11 +20,11 @@ import net.miginfocom.swing.MigLayout;
 
 public class ImageSlider extends javax.swing.JPanel {
 
-    private ControladorLugarImagenes controladorLugarImagenes = new ControladorLugarImagenes();
-    private ControladorLugar controladorLugar = new ControladorLugar();
-    private ControladorEtiqueta controladorEtiqueta = new ControladorEtiqueta();
-    private ControladorProveedorImagenes controladorProvImagenes = new ControladorProveedorImagenes();
-    private ControladorProveedor controladorProveedor = new ControladorProveedor();
+ 
+ 
+
+
+ 
 
     private MigLayout imageLayout;
 
@@ -51,7 +51,7 @@ public class ImageSlider extends javax.swing.JPanel {
         panelItem.removeAll();
         panelItem.revalidate();
         panelItem.repaint();
-        for (LugarImagenes lu : controladorLugarImagenes.obtenerListaByIDLugar(lugar.getIdLugar())) {
+        for (LugarImagenes lu : ControladorLugarImagenes.getInstancia().obtenerListaByIDLugar(lugar.getIdLugar())) {
             panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 250, h 200");
         }
     }
@@ -60,17 +60,17 @@ public class ImageSlider extends javax.swing.JPanel {
         panelItem.removeAll();
         panelItem.revalidate();
         panelItem.repaint();
-        for (ProveedorImagenes lu : controladorProvImagenes.obtenerListabyIdProveedor(proveedor.getIdProveedor())) {
+        for (ProveedorImagenes lu : ControladorProveedorImagenes.getInstancia().obtenerListabyIdProveedor(proveedor.getIdProveedor())) {
             panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 250, h 200");
         }
     }
 
-    public void proveedorImagenesByCiudad(int idCiudad) {
+    public void proveedorImagenesByCiudadAndTipoProveedor(int idCiudad, int idTipoProveedor) {
         panelItem.removeAll();
         panelItem.revalidate();
         panelItem.repaint();
-        for (ProveedorImagenes lu : controladorProvImagenes.obtenerListabyIdCiudad(idCiudad)) {
-            Proveedor proveedor = controladorProveedor.obtenerByID(lu.getIdProveedor());
+        for (ProveedorImagenes lu : ControladorProveedorImagenes.getInstancia().obtenerobtenerListabyIdCiudadAndTipoProveedor(idCiudad, idTipoProveedor)) {
+            Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(lu.getIdProveedor());
             panelItem.add(getItem(new ImageIcon(lu.getImagen()), proveedor, lu), "w 250, h 200");
         }
     }
@@ -85,16 +85,16 @@ public class ImageSlider extends javax.swing.JPanel {
         String arr = "";
         if (!arrayList.isEmpty()) {
             for (String ee : arrayList) {
-                Etiqueta etiqueta = controladorEtiqueta.obtenerByEtiquetaNombre(ee);
+                Etiqueta etiqueta = ControladorEtiqueta.getInstancia().obtenerByEtiquetaNombre(ee);
                 arr += etiqueta.getIdEtiqueta() + ",";
             }
             arr = arr.substring(0, arr.length() - 1);
         } else {
             arr = "0";
         }
-        for (LugarImagenes lu : controladorLugarImagenes.obtenerListaByIDCiudad(idCiudad, arr)) {
-            Lugar lugar = controladorLugar.obtenerByID(lu.getIdLugar());
-            panelItem.add(getItem(new ImageIcon(lu.getImagen()), lugar, lu), "w 250, h 200");
+        for (LugarImagenes lugarimg : ControladorLugarImagenes.getInstancia().obtenerListaByIDCiudad(idCiudad, arr)) {
+            Lugar lugar = ControladorLugar.getInstancia().obtenerByID(lugarimg.getIdLugar());
+            panelItem.add(getItem(new ImageIcon(lugarimg.getImagen()), lugar, lugarimg), "w 250, h 200");
         }
     }
 

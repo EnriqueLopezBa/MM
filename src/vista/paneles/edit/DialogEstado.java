@@ -22,7 +22,7 @@ import vista.paneles.*;
  */
 public class DialogEstado extends JDialog {
 
-    ControladorEstado controlador = new ControladorEstado();
+
 
     public DialogEstado(JFrame owner) {
         super(owner);
@@ -46,7 +46,7 @@ public class DialogEstado extends JDialog {
             }
             Estado tipo = new Estado();
             tipo.setEstado(txtEstado.getText());
-            Mensaje m = controlador.registrar(tipo);
+            Mensaje m =  ControladorEstado.getInstancia().registrar(tipo);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -67,7 +67,7 @@ public class DialogEstado extends JDialog {
             Estado tipo = new Estado();
             tipo.setIdEstado((int) p.tblModel.getValueAt(x, 0));
             tipo.setEstado(txtEstado.getText());
-            Mensaje m = controlador.actualizar(tipo);
+            Mensaje m =  ControladorEstado.getInstancia().actualizar(tipo);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -85,7 +85,7 @@ public class DialogEstado extends JDialog {
             int x = p.tblBuscar.getSelectedRow();
             Estado tipo = new Estado();
             tipo.setIdEstado((int) p.tblModel.getValueAt(x, 0));
-            Mensaje m = controlador.eliminar(tipo);
+            Mensaje m =  ControladorEstado.getInstancia().eliminar(tipo);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -116,7 +116,7 @@ public class DialogEstado extends JDialog {
 
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
-        for (Estado e : controlador.obtenerListaByCadena(p.txtBusqueda.getText())) {
+        for (Estado e :  ControladorEstado.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdEstado(), e.getEstado()});
         }
     }

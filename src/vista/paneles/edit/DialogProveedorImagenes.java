@@ -6,8 +6,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import Componentes.TextField;
-import controlador.ControladorLugar;
-import controlador.ControladorLugarImagenes;
 import controlador.ControladorProveedor;
 import controlador.ControladorProveedorImagenes;
 import independientes.Constante;
@@ -20,8 +18,6 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import modelo.Lugar;
-import modelo.LugarImagenes;
 import modelo.Proveedor;
 import modelo.ProveedorImagenes;
 import net.miginfocom.swing.*;
@@ -35,9 +31,6 @@ public class DialogProveedorImagenes extends JDialog {
 
     private byte[] imagen = null;
     private File abre = null;
-
-    private ControladorProveedorImagenes controladorProvImagenes = new ControladorProveedorImagenes();
-    private ControladorProveedor controladorProveedor = new ControladorProveedor();
 
     public byte[] getImagen() {
         return imagen;
@@ -54,33 +47,33 @@ public class DialogProveedorImagenes extends JDialog {
         }
     }
 
-    public DialogProveedorImagenes(Principal owner, Proveedor lugar) {
+    public DialogProveedorImagenes(Principal owner, Proveedor proveedor) {
         super(owner);
         initComponents();
         getContentPane().setBackground(Color.white);
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.2).intValue()));
         setLocationRelativeTo(null);
-        p.init(new String[]{"idLugar", "id2", "Descripcion"}, 2, true);
-        llenarTabla(lugar.getIdLugar());
-        Proveedor temp = controladorProveedor.obtenerByID(lugar.getIdProveedor());
+        p.init(new String[]{"idProveedor", "id2", "Descripcion"}, 2, true);
+        llenarTabla(proveedor.getIdProveedor());
+        Proveedor temp = ControladorProveedor.getInstancia().obtenerByID(proveedor.getIdProveedor());
         i.init(ScrollBar.HORIZONTAL);
-        i.lugarImagenes(temp);
+        i.proveedorImagenes(temp);
 
         p.btnAgregar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     validaDatos();
-                    LugarImagenes temp = new LugarImagenes();
-                    temp.setIdLugar(lugar.getIdLugar());
+                    ProveedorImagenes temp = new ProveedorImagenes();
+                    temp.setIdProveedor(proveedor.getIdProveedor());
                     temp.setImagen(getImagen());
                     temp.setDescripcion(txtDescripcion.getText());
                     temp.setPredeterminada(cbPredeterminada.isSelected());
-                    Mensaje m = controladorLugarImagenes.registrar(temp);
+                    Mensaje m = ControladorProveedorImagenes.getInstancia().registrar(temp);
                     Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-                    llenarTabla(lugar.getIdLugar());
-                    i.lugarImagenes(lugar);
+                    llenarTabla(proveedor.getIdProveedor());
+                    i.proveedorImagenes(proveedor);
                 } catch (MMException ee) {
                     Constante.mensaje(ee.getMessage(), Tipo.ADVERTENCIA);
                 }
@@ -94,16 +87,16 @@ public class DialogProveedorImagenes extends JDialog {
                     int x = p.tblBuscar.getSelectedRow();
                     if (x != -1) {
                         validaDatos();
-                        LugarImagenes temp = new LugarImagenes();
-                        temp.setIdLugar((int)p.tblModel.getValueAt(x, 0));
+                        ProveedorImagenes temp = new ProveedorImagenes();
+                        temp.setIdProveedor((int)p.tblModel.getValueAt(x, 0));
                         temp.setId2(p.tblModel.getValueAt(x, 1).toString());
                         temp.setImagen(getImagen());
                         temp.setDescripcion(txtDescripcion.getText());
                         temp.setPredeterminada(cbPredeterminada.isSelected());
-                        Mensaje m = controladorLugarImagenes.actualizar(temp);
+                        Mensaje m = ControladorProveedorImagenes.getInstancia().actualizar(temp);
                         if (m.getTipoMensaje() == Tipo.OK) {
-                            llenarTabla(lugar.getIdLugar());
-                            i.lugarImagenes(lugar);
+                            llenarTabla(proveedor.getIdProveedor());
+                            i.proveedorImagenes(proveedor);
                         }
                         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
                     } else {
@@ -121,7 +114,7 @@ public class DialogProveedorImagenes extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 int x = p.tblBuscar.getSelectedRow();
                 if (x != -1) {
-                    LugarImagenes temp = controladorLugarImagenes.obtenerById2(p.tblModel.getValueAt(x, 1).toString());
+                    ProveedorImagenes temp = ControladorProveedorImagenes.getInstancia().obtenerByID2(p.tblModel.getValueAt(x, 1).toString());
                     lblIMG.setIcon(new ImageIcon(new ImageIcon(temp.getImagen()).getImage().getScaledInstance(lblIMG.getWidth() - 10, lblIMG.getHeight() - 10, Image.SCALE_DEFAULT)));
                     imagen = temp.getImagen();
                     cbPredeterminada.setSelected(temp.isPredeterminada());
@@ -134,7 +127,7 @@ public class DialogProveedorImagenes extends JDialog {
 
     private void llenarTabla(int id) {
         p.tblModel.setRowCount(0);
-        for (ProveedorImagenes lu : controladorProvImagenes.obtenerListabyIdProveedor(id)) {
+        for (ProveedorImagenes lu : ControladorProveedorImagenes.getInstancia().obtenerListabyIdProveedor(id)) {
             p.tblModel.addRow(new Object[]{lu.getIdProveedor(), lu.getId2(), lu.getDescripcion()});
         }
     }

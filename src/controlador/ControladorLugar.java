@@ -10,7 +10,18 @@ import modelo.Lugar;
  * @author Enrique
  */
 public class ControladorLugar {
+    
+    private static ControladorLugar instancia;
+    private ControladorLugar() {
+    }
+    public static ControladorLugar getInstancia(){
+        if (instancia == null) {
+            instancia = new ControladorLugar();
+        }
+        return instancia;
+    }
 
+    
     public Lugar obtenerByID(int id) {
         return LugarDAOImp.getInstancia().obtenerByID(id);
     }

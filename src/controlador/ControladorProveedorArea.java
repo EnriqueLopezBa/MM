@@ -16,6 +16,17 @@ import modelo.ProveedorArea;
  */
 public class ControladorProveedorArea {
 
+    private static ControladorProveedorArea instancia;
+    private ControladorProveedorArea() {
+    }
+    public static ControladorProveedorArea getInstancia(){
+        if (instancia == null) {
+            instancia = new ControladorProveedorArea();
+        }
+        return instancia;
+    }
+
+    
     public Mensaje eliminar(ProveedorArea t) {
         return ProveedorAreaDAOImp.getInstancia().eliminar(t);
     }

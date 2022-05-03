@@ -70,6 +70,9 @@ new FormModel {
 			add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
 				name: "btnGaleria"
 				"text": "Galeria"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnGaleria", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 2, spanx, aligny top, grow"

@@ -13,17 +13,12 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import modelo.TipoEvento;
 import modelo.TipoProveedor;
 import net.miginfocom.swing.*;
 import vista.paneles.*;
 
-/**
- * @author das
- */
 public class DialogTipoProveedor extends JDialog {
 
-    ControladorTipoProveedor controlador= new ControladorTipoProveedor();
 
     public DialogTipoProveedor(JFrame owner) {
         super(owner);
@@ -47,7 +42,7 @@ public class DialogTipoProveedor extends JDialog {
             }
             TipoProveedor tipoProveedor = new TipoProveedor();
             tipoProveedor.setTipoProveedor(txtTipoProveedor.getText());
-            Mensaje m = controlador.registrar(tipoProveedor);
+            Mensaje m = ControladorTipoProveedor.getInstancia().registrar(tipoProveedor);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -68,7 +63,7 @@ public class DialogTipoProveedor extends JDialog {
             TipoProveedor tipo = new TipoProveedor();
             tipo.setIdTipoProveedor((int) p.tblModel.getValueAt(x, 0));
             tipo.setTipoProveedor(txtTipoProveedor.getText());
-            Mensaje m = controlador.actualizar(tipo);
+            Mensaje m = ControladorTipoProveedor.getInstancia().actualizar(tipo);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -86,7 +81,7 @@ public class DialogTipoProveedor extends JDialog {
             }
             TipoProveedor tipo = new TipoProveedor();
             tipo.setIdTipoProveedor((int) p.tblModel.getValueAt(x, 0));
-            Mensaje m = controlador.eliminar(tipo);
+            Mensaje m = ControladorTipoProveedor.getInstancia().eliminar(tipo);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -117,7 +112,7 @@ public class DialogTipoProveedor extends JDialog {
 
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
-        for (TipoProveedor e : controlador.obtenerListaByCadena(p.txtBusqueda.getText())) {
+        for (TipoProveedor e : ControladorTipoProveedor.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdTipoProveedor(), e.getTipoProveedor()});
         }
     }

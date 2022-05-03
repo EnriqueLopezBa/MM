@@ -30,9 +30,7 @@ import vista.principales.Principal;
 public class pnlAbono extends JPanel {
 
     private DefaultTableModel m;
-    private ControladorCliente controladorCliente = new ControladorCliente();
-    private ControladorAbono controladorAbono = new ControladorAbono();
-    private ControladorEvento controladorEvento = new ControladorEvento();
+
 
     private Evento eventoActual = null;
 
@@ -60,8 +58,8 @@ public class pnlAbono extends JPanel {
             protected void finalize() throws Throwable {
                 super.finalize(); //To change body of generated methods, choose Tools | Templates.
                 Constante.clienteTemporal = null;
-                if (controladorCliente.obtenerClienteActivo() != null) {
-                    Principal.getInstancia().lblCliente.setText("Cliente Activo: " + controladorCliente.obtenerClienteActivo().getCorreo());
+                if (ControladorCliente.getInstancia().obtenerClienteActivo() != null) {
+                    Principal.getInstancia().lblCliente.setText("Cliente Activo: " + ControladorCliente.getInstancia().obtenerClienteActivo().getCorreo());
                 }
 
             }
@@ -75,11 +73,11 @@ public class pnlAbono extends JPanel {
                 }
                 int x = p.tblBuscar.getSelectedRow();
 
-                Cliente temp = controladorCliente.obtenerByID((int) p.tblModel.getValueAt(x, 0));
+                Cliente temp = ControladorCliente.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 0));
                 Constante.clienteTemporal = temp;
                 Principal.getInstancia().lblCliente.setText("Cliente Activo (SOLO ADMIN) : " + temp.getCorreo() + " - " + temp.getNombre());
                 cmbEvento.removeAllItems();
-                for (Evento ev : controladorEvento.obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
+                for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
                     cmbEvento.addItem(ev.getNombreEvento());
                 }
 
@@ -89,7 +87,7 @@ public class pnlAbono extends JPanel {
 
     private void cargarTablaAbono() {
 
-        ArrayList<Abono> temp = controladorAbono.obtenerListaByIdEvento(eventoActual.getIdEvento());
+        ArrayList<Abono> temp =  ControladorAbono.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento());
         if (temp == null) {
             return;
         }
@@ -101,7 +99,7 @@ public class pnlAbono extends JPanel {
 
     private void cargarClientes() {
         p.tblModel.setRowCount(0);
-        for (Cliente c : controladorCliente.obtenerClientes(p.txtBusqueda.getText())) {
+        for (Cliente c : ControladorCliente.getInstancia().obtenerClientes(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{c.getIdCliente(), c.getNombre(), c.getApellido(), c.getCorreo(), c.getTelefono(), c.getTelefono2()});
         }
     }
@@ -136,7 +134,7 @@ public class pnlAbono extends JPanel {
         abono.setImporte(Integer.parseInt(txtImporte.getText().replaceAll(",", "")));
         abono.setCantidadADeber(eventoActual.getPresupuesto() - abono.getImporte());
         abono.setFecha(getFecha());
-        Mensaje m = controladorAbono.registrar(abono);
+        Mensaje m = ControladorAbono.getInstancia().registrar(abono);
         if (m.getTipoMensaje() == Tipo.OK) {
             cargarTablaAbono();
 
@@ -162,7 +160,7 @@ public class pnlAbono extends JPanel {
         if (cmbEvento.getSelectedIndex() == -1) {
             return;
         }
-        for (Evento ev : controladorEvento.obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
+        for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
             if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
                 eventoActual = ev;
                 lblTotal.setText("Total : " + eventoActual.getPresupuesto());

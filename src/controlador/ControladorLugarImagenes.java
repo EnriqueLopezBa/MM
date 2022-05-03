@@ -11,6 +11,17 @@ import modelo.LugarImagenes;
  */
 public class ControladorLugarImagenes {
 
+    private static ControladorLugarImagenes instancia;
+    private ControladorLugarImagenes() {
+    }
+    public static ControladorLugarImagenes getInstancia(){
+        if (instancia == null) {
+            instancia = new ControladorLugarImagenes();
+        }
+        return instancia;
+    }
+
+    
     public Mensaje registrar(LugarImagenes lugarimagen) {
         return LugarImagenesDAOImp.getInstancia().registrar(lugarimagen);
     }

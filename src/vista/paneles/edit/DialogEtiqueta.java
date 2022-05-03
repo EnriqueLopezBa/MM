@@ -25,7 +25,7 @@ import vista.paneles.*;
  */
 public class DialogEtiqueta extends JDialog {
 
-    ControladorEtiqueta controlador = new ControladorEtiqueta();
+
 
     public DialogEtiqueta(java.awt.Frame parent) {
         super(parent);
@@ -70,7 +70,7 @@ public class DialogEtiqueta extends JDialog {
                 }
                 Etiqueta etiqueta = new Etiqueta();
                 etiqueta.setEtiqueta(f.txtEtiqueta.getText());
-                Mensaje m = controlador.registrar(etiqueta);
+                Mensaje m = ControladorEtiqueta.getInstancia().registrar(etiqueta);
                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
                 if (m.getTipoMensaje() == Message.Tipo.OK) {
                     llenarTabla();
@@ -89,7 +89,7 @@ public class DialogEtiqueta extends JDialog {
                 Etiqueta etiqueta = new Etiqueta();
                 etiqueta.setIdEtiqueta((int) p.tblModel.getValueAt(x, 0));
                 etiqueta.setEtiqueta(p.tblModel.getValueAt(x, 1).toString());
-                Mensaje m = controlador.actualizar(etiqueta);
+                Mensaje m = ControladorEtiqueta.getInstancia().actualizar(etiqueta);
                 if (m.getTipoMensaje() == Tipo.OK) {
                     llenarTabla();
                 }
@@ -107,7 +107,7 @@ public class DialogEtiqueta extends JDialog {
             int x = p.tblBuscar.getSelectedRow();
             Etiqueta etiqueta = new Etiqueta();
             etiqueta.setIdEtiqueta((int) p.tblModel.getValueAt(x, 0));
-            Mensaje m = controlador.eliminar(etiqueta);
+            Mensaje m = ControladorEtiqueta.getInstancia().eliminar(etiqueta);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -118,7 +118,7 @@ public class DialogEtiqueta extends JDialog {
 
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
-        for (Etiqueta et : controlador.obtenerListaByCadena(p.txtBusqueda.getText())) {
+        for (Etiqueta et : ControladorEtiqueta.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{et.getIdEtiqueta(), et.getEtiqueta()});
         }
     }

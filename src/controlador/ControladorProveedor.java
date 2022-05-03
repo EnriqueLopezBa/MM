@@ -10,7 +10,18 @@ import modelo.Proveedor;
  * @author Enrique
  */
 public class ControladorProveedor {
+    
+    private static ControladorProveedor instancia;
+    private ControladorProveedor() {
+    }
+    public static ControladorProveedor getInstancia(){
+        if (instancia == null) {
+            instancia = new ControladorProveedor();
+        }
+        return instancia;
+    }
 
+    
     public ArrayList<Proveedor> obtenerListaByCadena(String cadena) {
         return ProveedorDAOImp.getInstancia().obtenerListaByCadena(cadena);
     }

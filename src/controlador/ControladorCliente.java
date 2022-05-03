@@ -10,7 +10,18 @@ import modelo.Cliente;
  * @author Enrique
  */
 public class ControladorCliente {
+    
+    private static ControladorCliente instancia;
+    private ControladorCliente() {
+    }
+    public static ControladorCliente getInstancia(){
+        if (instancia == null) {
+            instancia = new ControladorCliente();
+        }
+        return instancia;
+    }
 
+    
     public ArrayList<Cliente> obtenerClientes(String cadena) {
         return ClienteDAOImp.getInstancia().obtenerListaByCadena(cadena);
     }

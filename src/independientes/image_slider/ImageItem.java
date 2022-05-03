@@ -4,7 +4,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -45,7 +44,7 @@ public class ImageItem extends JComponent {
     public ImageItem(Icon image, MigLayout mig, Object clase, Object claseIMG) {
         this.image = image;
         if (clase instanceof Lugar) {
-            this.lugar = (Lugar) lugar;
+            this.lugar = (Lugar) clase;
         } else if (clase instanceof Proveedor) {
             this.proveedor = (Proveedor) clase;
         }
@@ -134,6 +133,13 @@ public class ImageItem extends JComponent {
                 g2.drawString("Precio Aprox.: " + lugar.getPrecio() + "", 15, height - shadowSize + 45);
             } else if (lugarIMG != null) {
                 g2.drawString(lugarIMG.getDescripcion(), 15, height - shadowSize + 15);
+            }
+            if (proveedor != null && proveedorIMG != null) {
+                g2.setFont(new Font("Times Roman", Font.PLAIN, 14));
+                g2.drawString("Nombre: " + proveedor.getNombreEmpresa(), 15, height - shadowSize + 15);
+                g2.drawString("Precio Aprox.: " + proveedor.getPrecioAprox()+ "", 15, height - shadowSize + 35);
+            } else if (proveedorIMG != null) {
+                g2.drawString(proveedorIMG.getDescripcion(), 15, height - shadowSize + 15);
             }
             g2.dispose();
         }

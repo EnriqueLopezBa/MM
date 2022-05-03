@@ -147,7 +147,7 @@ new FormModel {
 						"JavaCodeGenerator.variableModifiers": 1
 					}
 				}, new FormLayoutConstraints( class java.lang.String ) {
-					"value": "Center"
+					"value": "Before"
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 					name: "panel1"
@@ -186,6 +186,16 @@ new FormModel {
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "After"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblPresupuesto"
+					"text": "Presupuesto:"
+					"horizontalAlignment": 4
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "Center"
 				} )
 			}, new FormLayoutConstraints( class java.lang.String ) {
 				"value": "North"

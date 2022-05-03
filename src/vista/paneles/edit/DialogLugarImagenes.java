@@ -32,8 +32,8 @@ public class DialogLugarImagenes extends JDialog {
     private byte[] imagen = null;
     private File abre = null;
 
-    private ControladorLugarImagenes controladorLugarImagenes = new ControladorLugarImagenes();
-    private ControladorLugar controladorLugar = new ControladorLugar();
+
+
 
     public byte[] getImagen() {
         return imagen;
@@ -59,7 +59,7 @@ public class DialogLugarImagenes extends JDialog {
         setLocationRelativeTo(null);
         p.init(new String[]{"idLugar", "id2", "Descripcion"}, 2, true);
         llenarTabla(lugar.getIdLugar());
-        Lugar temp = controladorLugar.obtenerByID(lugar.getIdLugar());
+        Lugar temp = ControladorLugar.getInstancia().obtenerByID(lugar.getIdLugar());
         i.init(ScrollBar.HORIZONTAL);
         i.lugarImagenes(temp);
 
@@ -73,9 +73,9 @@ public class DialogLugarImagenes extends JDialog {
                     temp.setImagen(getImagen());
                     temp.setDescripcion(txtDescripcion.getText());
                     temp.setPredeterminada(cbPredeterminada.isSelected());
-                    Mensaje m = controladorLugarImagenes.registrar(temp);
+                    Mensaje m = ControladorLugarImagenes.getInstancia().registrar(temp);
                     Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-                    llenarTabla(lugar.getIdLugar());
+                    llenarTabla(temp.getIdLugar());
                     i.lugarImagenes(lugar);
                 } catch (MMException ee) {
                     Constante.mensaje(ee.getMessage(), Tipo.ADVERTENCIA);
@@ -96,7 +96,7 @@ public class DialogLugarImagenes extends JDialog {
                         temp.setImagen(getImagen());
                         temp.setDescripcion(txtDescripcion.getText());
                         temp.setPredeterminada(cbPredeterminada.isSelected());
-                        Mensaje m = controladorLugarImagenes.actualizar(temp);
+                        Mensaje m = ControladorLugarImagenes.getInstancia().actualizar(temp);
                         if (m.getTipoMensaje() == Tipo.OK) {
                             llenarTabla(lugar.getIdLugar());
                             i.lugarImagenes(lugar);
@@ -117,7 +117,7 @@ public class DialogLugarImagenes extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 int x = p.tblBuscar.getSelectedRow();
                 if (x != -1) {
-                    LugarImagenes temp = controladorLugarImagenes.obtenerById2(p.tblModel.getValueAt(x, 1).toString());
+                    LugarImagenes temp = ControladorLugarImagenes.getInstancia().obtenerById2(p.tblModel.getValueAt(x, 1).toString());
                     lblIMG.setIcon(new ImageIcon(new ImageIcon(temp.getImagen()).getImage().getScaledInstance(lblIMG.getWidth() - 10, lblIMG.getHeight() - 10, Image.SCALE_DEFAULT)));
                     imagen = temp.getImagen();
                     cbPredeterminada.setSelected(temp.isPredeterminada());
@@ -130,7 +130,7 @@ public class DialogLugarImagenes extends JDialog {
 
     private void llenarTabla(int id) {
         p.tblModel.setRowCount(0);
-        for (LugarImagenes lu : controladorLugarImagenes.obtenerListaByIDLugar(id)) {
+        for (LugarImagenes lu : ControladorLugarImagenes.getInstancia().obtenerListaByIDLugar(id)) {
             p.tblModel.addRow(new Object[]{lu.getIdLugar(), lu.getId2(), lu.getDescripcion()});
         }
     }

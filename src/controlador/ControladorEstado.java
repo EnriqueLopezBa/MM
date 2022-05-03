@@ -11,6 +11,17 @@ import modelo.Estado;
  */
 public class ControladorEstado {
 
+    private static ControladorEstado instancia;
+    private ControladorEstado() {
+    }
+    
+    public static ControladorEstado getInstancia(){
+        if (instancia == null) {
+            instancia = new ControladorEstado();
+        }
+        return instancia;
+    }
+
 
     public ArrayList<Estado> obtenerListaByCadena(String cadena) {
         return EstadoDAOImp.getInstancia().obtenerListaByCadena(cadena);

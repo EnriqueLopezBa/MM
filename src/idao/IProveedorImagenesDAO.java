@@ -9,5 +9,6 @@ import modelo.ProveedorImagenes;
  */
 public interface IProveedorImagenesDAO extends CRUD<ProveedorImagenes> {
     ArrayList<ProveedorImagenes> obtenerListabyIdProveedor(int idProveedor);
-    ArrayList<ProveedorImagenes> obtenerListabyIdCiudad(int idCiudad);
+    ArrayList<ProveedorImagenes> obtenerListabyIdCiudadAndTipoProveedor(int idCiudad, int idTipoProveedor);
+    ProveedorImagenes obtenerByID2(String id2);
 }

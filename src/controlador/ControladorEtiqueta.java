@@ -11,6 +11,17 @@ import modelo.Etiqueta;
  */
 public class ControladorEtiqueta {
 
+    private static ControladorEtiqueta instancia;
+    private ControladorEtiqueta() {
+    }
+    public static ControladorEtiqueta getInstancia(){
+        if (instancia == null) {
+            instancia = new ControladorEtiqueta();
+        }
+        return instancia;
+    }
+
+    
     public ArrayList<Etiqueta> obtenerLista() {
         return EtiquetaDAOImp.getInstancia().obtenerLista();
     }

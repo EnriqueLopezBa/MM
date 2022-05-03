@@ -19,7 +19,6 @@ import vista.principales.Principal;
 
 public class pnlCliente extends JPanel {
 
-    private ControladorCliente controlador = new ControladorCliente();
     private pnlCRUD pnlCrud;
 
     public pnlCliente() {
@@ -50,7 +49,7 @@ public class pnlCliente extends JPanel {
                         cliente.setTelefono(txtTelefono.getText());
                         cliente.setTelefono2(txtTelefono2.getText());
                         cliente.setIdCliente((int) pnlCrud.tblModel.getValueAt(x, 0));
-                        Mensaje m = controlador.actualizarCliente(cliente);
+                        Mensaje m = ControladorCliente.getInstancia().actualizarCliente(cliente);
 
                         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
                         if (m.getTipoMensaje() == Message.Tipo.OK) {
@@ -107,7 +106,7 @@ public class pnlCliente extends JPanel {
                     if (showConfirmDialog(null, "Seguro que desea a " + cliente.getNombre() + " ? ") != 0) {
                         return;
                     }
-                    Mensaje m = controlador.eliminarCliente(cliente);
+                    Mensaje m = ControladorCliente.getInstancia().eliminarCliente(cliente);
                     Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
                     if (m.getTipoMensaje() == Message.Tipo.OK) {
                         cargarClientes();
@@ -124,8 +123,8 @@ public class pnlCliente extends JPanel {
                     return;
                 }
                 int x = pnlCrud.tblBuscar.getSelectedRow();
-                if (controlador.setClienteActivoById((int) pnlCrud.tblModel.getValueAt(x, 0))) {
-                    Cliente cliente = controlador.obtenerClienteActivo();
+                if (ControladorCliente.getInstancia().setClienteActivoById((int) pnlCrud.tblModel.getValueAt(x, 0))) {
+                    Cliente cliente = ControladorCliente.getInstancia().obtenerClienteActivo();
                     Principal.getInstancia().lblCliente.setText("Cliente Activo: " + cliente.getCorreo()
                             + " - " + cliente.getNombre() + " " + cliente.getApellido());
                 }
@@ -135,7 +134,7 @@ public class pnlCliente extends JPanel {
 
     private void cargarClientes() {
         pnlCrud.tblModel.setRowCount(0);
-        for (Cliente c : controlador.obtenerClientes(pnlCrud.txtBusqueda.getText())) {
+        for (Cliente c : ControladorCliente.getInstancia().obtenerClientes(pnlCrud.txtBusqueda.getText())) {
             pnlCrud.tblModel.addRow(new Object[]{c.getIdCliente(), c.getNombre(), c.getApellido(), c.getCorreo(), c.getTelefono(), c.getTelefono2()});
         }
     }
@@ -171,7 +170,7 @@ public class pnlCliente extends JPanel {
             cliente.setCorreo(txtCorreo.getText());
             cliente.setTelefono(txtTelefono.getText());
             cliente.setTelefono2(txtTelefono2.getText());
-            Mensaje m = controlador.registrarCliente(cliente);
+            Mensaje m = ControladorCliente.getInstancia().registrarCliente(cliente);
             Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
             if (m.getTipoMensaje() == Message.Tipo.OK) {
                 cargarClientes();

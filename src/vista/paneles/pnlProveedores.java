@@ -33,14 +33,6 @@ import vista.principales.Principal;
 
 public class pnlProveedores extends JPanel {
 
-    private ControladorCliente controladorCliente = new ControladorCliente();
-    private ControladorEvento controladorEvento = new ControladorEvento();
-    private ControladorTipoProveedor controladorTipoProveedor = new ControladorTipoProveedor();
-    private ControladorProveedor controladorProveedor = new ControladorProveedor();
-    private ControladorProveedorArea controladorProveedorArea = new ControladorProveedorArea();
-    private ControladorLugar controladorLugar = new ControladorLugar();
-    private ControladorProveedorEvento controladorProveedorEvento = new ControladorProveedorEvento();
-
     private Cliente clienteTemp = null;
 
     private TipoProveedor tipoProveedorActual;
@@ -63,7 +55,7 @@ public class pnlProveedores extends JPanel {
 
     private void cargarTipoProveedor() {
         cmbTipoProveedor.removeAllItems();
-        for (TipoProveedor tipo : controladorTipoProveedor.obtenerListaByCadena("")) {
+        for (TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")) {
             cmbTipoProveedor.addItem(tipo.getTipoProveedor());
         }
     }
@@ -71,9 +63,9 @@ public class pnlProveedores extends JPanel {
     private void cargarProveedores() {
         cmbProveedor.removeAllItems();
         //Cargar proveedores dependiendo del area donde trabajan los proveedores
-        int idCiudad = controladorLugar.obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
-        for (ProveedorArea prov : controladorProveedorArea.obtenerListaByIdCiudad(idCiudad)) {
-            for (Proveedor pro : controladorProveedor.obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())) {
+        int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
+        for (ProveedorArea prov : ControladorProveedorArea.getInstancia().obtenerListaByIdCiudad(idCiudad)) {
+            for (Proveedor pro : ControladorProveedor.getInstancia().obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())) {
                 if (prov.getIdProveedor() == pro.getIdProveedor()) {
                     cmbProveedor.addItem(pro.getNombreEmpresa());
                 }
@@ -86,7 +78,7 @@ public class pnlProveedores extends JPanel {
         if (Constante.clienteTemporal == null) {
             cmbNombreEvento.removeAllItems();
       
-            for (Evento e : controladorEvento.obtenerEventoByIDCliente(controladorCliente.obtenerClienteActivo().getIdCliente())) {
+            for (Evento e : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
                 cmbNombreEvento.addItem(e.getNombreEvento());
             }
             return;
@@ -96,7 +88,7 @@ public class pnlProveedores extends JPanel {
         }
         clienteTemp = Constante.clienteTemporal;
         cmbNombreEvento.removeAllItems();
-        for (Evento e : controladorEvento.obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
+        for (Evento e : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
             cmbNombreEvento.addItem(e.getNombreEvento());
         }
 
@@ -106,10 +98,12 @@ public class pnlProveedores extends JPanel {
         if (cmbTipoProveedor.getSelectedIndex() == -1) {
             return;
         }
-        for (TipoProveedor tipo : controladorTipoProveedor.obtenerListaByCadena("")) {
+        for (TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")) {
             if (tipo.getTipoProveedor().equals(cmbTipoProveedor.getSelectedItem().toString())) {
                 tipoProveedorActual = tipo;
                 cargarProveedores();
+               int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
+                i.proveedorImagenesByCiudadAndTipoProveedor(idCiudad, tipo.getIdTipoProveedor());
             }
         }
     }
@@ -119,13 +113,13 @@ public class pnlProveedores extends JPanel {
             return;
         }
         if (Constante.clienteTemporal == null) {
-            for (Evento eve : controladorEvento.obtenerEventoByIDCliente(controladorCliente.obtenerClienteActivo().getIdCliente())) {
+            for (Evento eve : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
                 if (eve.getNombreEvento().equals(cmbNombreEvento.getSelectedItem().toString())) {
                     eventoActual = eve;
                 }
             }
         } else {
-            for (Evento eve : controladorEvento.obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
+            for (Evento eve : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
                 if (eve.getNombreEvento().equals(cmbNombreEvento.getSelectedItem().toString())) {
                     eventoActual = eve;
                 }
@@ -135,13 +129,13 @@ public class pnlProveedores extends JPanel {
 
     }
     private void cargarProveedorEvento(){
-        if (eventoActual == null || controladorProveedorEvento.obtenerListaByIdEvento(eventoActual.getIdEvento()) == null) {
+        if (eventoActual == null || ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento()) == null) {
             return;
         }
         m.setRowCount(0);
-        for(ProveedorEvento pro : controladorProveedorEvento.obtenerListaByIdEvento(eventoActual.getIdEvento())){
-          Proveedor proveedor = controladorProveedor.obtenerByID(pro.getIdProveedor());
-          TipoProveedor tipo = controladorTipoProveedor.obtenerByID(proveedor.getIdtipoProveedor());
+        for(ProveedorEvento pro : ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento())){
+          Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(pro.getIdProveedor());
+          TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID(proveedor.getIdtipoProveedor());
             m.addRow(new Object[]{tipo.getIdTipoProveedor(), proveedor.getIdProveedor(), tipo.getTipoProveedor(), proveedor.getNombreEmpresa()});
         }
     }
@@ -150,7 +144,7 @@ public class pnlProveedores extends JPanel {
         if (cmbProveedor.getSelectedIndex() == -1 || tipoProveedorActual == null) {
             return;
         }
-        for (Proveedor pro : controladorProveedor.obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())) {
+        for (Proveedor pro : ControladorProveedor.getInstancia().obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())) {
             if (pro.getNombreEmpresa().equals(cmbProveedor.getSelectedItem().toString())) {
                 proveedorActual = pro;
             }
@@ -221,12 +215,12 @@ public class pnlProveedores extends JPanel {
             if (m.getValueAt(j, 1) == null) {
                 Proveedor pro = new Proveedor();
                 pro.setNombreEmpresa(m.getValueAt(j, 3).toString());
-                controladorProveedor.registrar(pro);
-                m.setValueAt(controladorProveedor.obtenerByLast().getIdProveedor(), j, 1);
+                ControladorProveedor.getInstancia().registrar(pro);
+                m.setValueAt(ControladorProveedor.getInstancia().obtenerByLast().getIdProveedor(), j, 1);
             }
             proE.add(new ProveedorEvento(eventoActual.getIdEvento(), (int)m.getValueAt(j, 1), new Date(), new Date()));
         }
-        Mensaje m = controladorProveedorEvento.registrarLote(proE);
+        Mensaje m = ControladorProveedorEvento.getInstancia().registrarLote(proE);
         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
         
     }

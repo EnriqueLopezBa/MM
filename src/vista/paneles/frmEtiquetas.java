@@ -1,6 +1,3 @@
-/*
- * Created by JFormDesigner on Mon Apr 18 16:37:34 MDT 2022
- */
 package vista.paneles;
 
 import controlador.ControladorCiudad;
@@ -23,9 +20,8 @@ public class frmEtiquetas extends JPanel {
 
     ArrayList<String> lista;
 
-    ControladorProveedorArea controladorProveedorArea = new ControladorProveedorArea();
-    ControladorCiudad controladorCiudad = new ControladorCiudad();
-    ControladorEtiqueta controlador = new ControladorEtiqueta();
+
+
 
     public frmEtiquetas() {
         initComponents();
@@ -35,11 +31,11 @@ public class frmEtiquetas extends JPanel {
 
         ArrayList<String> lista = new ArrayList<>();
         if (objeto instanceof Etiqueta) {
-            for (Etiqueta as : controlador.obtenerLista()) {
+            for (Etiqueta as : ControladorEtiqueta.getInstancia().obtenerLista()) {
                 lista.add(as.getEtiqueta().toLowerCase());
             }
         }else if (objeto instanceof ProveedorArea) {
-            for(Ciudad ciudad : controladorCiudad.obtenerListaByCadena("")){
+            for(Ciudad ciudad : ControladorCiudad.getInstancia().obtenerListaByCadena("")){
                 lista.add(ciudad.getCiudad().toLowerCase());
             }
         }

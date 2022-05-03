@@ -1,16 +1,12 @@
 package vista.paneles.edit;
 
 import java.awt.event.*;
-import Componentes.Sweet_Alert.Message;
 import Componentes.Sweet_Alert.Message.Tipo;
-import com.raven.datechooser.SelectedDate;
 import controlador.ControladorCiudad;
 import controlador.ControladorCliente;
 import controlador.ControladorEstado;
-import controlador.ControladorEtiqueta;
 import controlador.ControladorEvento;
 import controlador.ControladorLugar;
-import controlador.ControladorLugarEtiquetas;
 import controlador.ControladorTipoEvento;
 import independientes.Constante;
 import independientes.Mensaje;
@@ -31,7 +27,6 @@ import modelo.Ciudad;
 import modelo.Cliente;
 import modelo.Evento;
 import modelo.Lugar;
-import modelo.LugarEtiquetas;
 import net.miginfocom.swing.*;
 import vista.paneles.*;
 import vista.principales.Principal;
@@ -41,15 +36,9 @@ import vista.principales.Principal;
  */
 public class DialogEvento extends JDialog {
     
-    private ControladorEtiqueta controladorEtiqueta = new ControladorEtiqueta();
-    private ControladorLugarEtiquetas controladorLugEti = new ControladorLugarEtiquetas();
-    private ControladorEvento controladorEvento = new ControladorEvento();
-    private ControladorTipoEvento controladortipoEvento = new ControladorTipoEvento();
-    private ControladorLugar controladorLugar = new ControladorLugar();
-    private ControladorEstado controladorEstado = new ControladorEstado();
-    private ControladorCiudad controladorCiudad = new ControladorCiudad();
-    private ControladorCliente controladorCliente = new ControladorCliente();
-    
+
+
+
     pnlEventos pun;
     
     public DialogEvento(Principal owner, pnlEventos puntero) {
@@ -88,13 +77,13 @@ public class DialogEvento extends JDialog {
                 try {
                     Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(p.tblModel.getValueAt(x, 4).toString());
                     pun.dateChooser.setSelectedDate(date1);
-                    pun.cmbTipoEvento.setSelectedItem(controladortipoEvento.obtenerByID((int) p.tblModel.getValueAt(x, 2)).getTematica());
-                    Lugar lug = controladorLugar.obtenerByID((int) p.tblModel.getValueAt(x, 3));
-                    Ciudad ciudad = controladorCiudad.obtenerById(lug.getIdCiudad());
-                    pun.cmbEstado.setSelectedItem(controladorEstado.obtenerByID(ciudad.getIdEstado()).getEstado());
+                    pun.cmbTipoEvento.setSelectedItem(ControladorTipoEvento.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 2)).getTematica());
+                    Lugar lug = ControladorLugar.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 3));
+                    Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lug.getIdCiudad());
+                    pun.cmbEstado.setSelectedItem( ControladorEstado.getInstancia().obtenerByID(ciudad.getIdEstado()).getEstado());
                     pun.cmbCiudad.setSelectedItem(ciudad.getCiudad());
                     pun.cmbLugar.setSelectedItem(lug.getNombreLocal());
-                    Cliente cliente = controladorCliente.obtenerByID((int) p.tblModel.getValueAt(x, 1));
+                    Cliente cliente = ControladorCliente.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 1));
                     Principal.getInstancia().lblCliente.setText("Cliente activo (SOLO ADMIN): "
                             + cliente.getCorreo() + " - " + cliente.getNombre() + " " + cliente.getApellido());
                     lblCliente.setText("Cliente: " + cliente.getCorreo() + " - "
@@ -121,15 +110,15 @@ public class DialogEvento extends JDialog {
                 if (Constante.clienteTemporal != null) {
                     evento.setIdCliente(Constante.clienteTemporal.getIdCliente());
                 } else {
-                    evento.setIdCliente(controladorCliente.obtenerClienteActivo().getIdCliente());
+                    evento.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
                 }
                 evento.setIdTipoEvento(pun.tipoEventoActual.getIdTipoEvento());
                 if (pun.lugarActual == null) {
                     Lugar lugar = new Lugar();
                     lugar.setIdCiudad(pun.ciudadActual.getIdCiudad());
                     lugar.setNombreLocal(pun.cmbLugar.getEditor().getItem().toString());
-                    controladorLugar.registrar(lugar);
-                    evento.setIdLugar(controladorLugar.obtenerLugarByLast().getIdLugar());
+                    ControladorLugar.getInstancia().registrar(lugar);
+                    evento.setIdLugar(ControladorLugar.getInstancia().obtenerLugarByLast().getIdLugar());
                 } else {
                     evento.setIdLugar(pun.lugarActual.getIdLugar());
                 }
@@ -138,7 +127,7 @@ public class DialogEvento extends JDialog {
                 evento.setPresupuesto(Integer.parseInt(pun.txtPresupuesto.getText()));
                 evento.setEstilo(pun.txtEstilo.getText());
                 evento.setNombreEvento(pun.txtNombreEvento.getText());
-              Mensaje m =  controladorEvento.actualizar(evento);
+              Mensaje m =  ControladorEvento.getInstancia().actualizar(evento);
                 if (m.getTipoMensaje() == Tipo.OK) {
                     llenarTabla();
                 }
@@ -159,7 +148,7 @@ public class DialogEvento extends JDialog {
                 }
                 Evento ev = new Evento();
                 ev.setIdEvento((int)p.tblModel.getValueAt(x, 0));
-                Mensaje m = controladorEvento.eliminar(ev);
+                Mensaje m = ControladorEvento.getInstancia().eliminar(ev);
                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
             }
         });
@@ -167,7 +156,7 @@ public class DialogEvento extends JDialog {
     
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
-        for (Evento e : controladorEvento.obtenerListaByCadena(p.txtBusqueda.getText())) {
+        for (Evento e : ControladorEvento.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdEvento(), e.getIdCliente(), e.getIdTipoEvento(),
                 e.getIdLugar(), e.getFecha(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo(), e.getNombreEvento()});
         }

@@ -11,6 +11,7 @@ public class Evento {
     private Date fecha;
     private int noInvitados, presupuesto;
     private String estilo, nombreEvento;
+    private int precioFinal;
     
     public Evento() {
     }

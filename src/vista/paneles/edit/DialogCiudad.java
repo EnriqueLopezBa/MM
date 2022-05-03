@@ -25,9 +25,8 @@ import vista.paneles.*;
  */
 public class DialogCiudad extends JDialog {
 
-    private ControladorCiudad controladorCiudad = new ControladorCiudad();
-    private ControladorEstado controladorEstado = new ControladorEstado();
-    
+
+   
     private Estado estadoActual = null;
     
     
@@ -57,7 +56,7 @@ public class DialogCiudad extends JDialog {
 
     public void init() {
         
-        for(Estado e : controladorEstado.obtenerListaByCadena("")){
+        for(Estado e :  ControladorEstado.getInstancia().obtenerListaByCadena("")){
             cmbEstado.addItem(e.getEstado());
         }
         llenarTabla();
@@ -70,7 +69,7 @@ public class DialogCiudad extends JDialog {
             Ciudad ciudad = new Ciudad();
             ciudad.setIdEstado(estadoActual.getIdEstado());
             ciudad.setCiudad(txtCiudad.getText());
-            Mensaje m = controladorCiudad.registrar(ciudad);
+            Mensaje m = ControladorCiudad.getInstancia().registrar(ciudad);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -90,7 +89,7 @@ public class DialogCiudad extends JDialog {
             ciudad.setIdCiudad((int) p.tblModel.getValueAt(x, 0));
             ciudad.setIdEstado(estadoActual.getIdEstado());
             ciudad.setCiudad(txtCiudad.getText());
-            Mensaje m = controladorCiudad.actualizar(ciudad);
+            Mensaje m = ControladorCiudad.getInstancia().actualizar(ciudad);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -108,7 +107,7 @@ public class DialogCiudad extends JDialog {
             int x = p.tblBuscar.getSelectedRow();
             Ciudad ciudad = new Ciudad();
             ciudad.setIdCiudad((int) p.tblModel.getValueAt(x, 0));
-            Mensaje m = controladorCiudad.eliminar(ciudad);
+            Mensaje m = ControladorCiudad.getInstancia().eliminar(ciudad);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -138,14 +137,14 @@ public class DialogCiudad extends JDialog {
 
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
-        for (Ciudad e : controladorCiudad.obtenerListaByCadena(p.txtBusqueda.getText())) {
+        for (Ciudad e : ControladorCiudad.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdCiudad(),e.getIdEstado(), e.getCiudad()});
         }
     }
 
     private void cmbEstado(ActionEvent e) {
         if (cmbEstado.getSelectedIndex() != -1) {
-            for(Estado estado : controladorEstado.obtenerListaByCadena("")){
+            for(Estado estado :  ControladorEstado.getInstancia().obtenerListaByCadena("")){
                 if (estado.getEstado().equals(cmbEstado.getSelectedItem().toString())) {
                     estadoActual = estado;
                 }

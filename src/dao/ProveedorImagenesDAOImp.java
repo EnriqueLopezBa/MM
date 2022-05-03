@@ -34,7 +34,7 @@ public class ProveedorImagenesDAOImp implements IProveedorImagenesDAO {
     
     @Override
     public Mensaje registrar(ProveedorImagenes t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO LUGARIMAGENES VALUES(?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDORIMAGENES VALUES(?,?,?,?,?)")) {
             if (t.getImagen() != null) {
                 String id2 = UUID.nameUUIDFromBytes(t.getImagen()).toString().toUpperCase();
                 t.setId2(id2);
@@ -58,7 +58,7 @@ public class ProveedorImagenesDAOImp implements IProveedorImagenesDAO {
     
     @Override
     public Mensaje actualizar(ProveedorImagenes t) {
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE LUGARIMAGENES SET IMAGEN = ?, DESCRIPCION = ?, PREDETERMINADA = ? WHERE ID2 = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE PROVEEDORIMAGENES SET IMAGEN = ?, DESCRIPCION = ?, PREDETERMINADA = ? WHERE ID2 = ?")) {
             String id2 = UUID.nameUUIDFromBytes(t.getImagen()).toString().toUpperCase();
             t.setId2(id2);
             //A traves de un dispaarador se quitan la predeterminada anterior     
@@ -80,7 +80,7 @@ public class ProveedorImagenesDAOImp implements IProveedorImagenesDAO {
             ps.setString(1, t.getId2());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
-            System.err.println("Error eliminar LugarImagenes, " + e.getMessage());
+            System.err.println("Error eliminar ProveedorImagenes, " + e.getMessage());
         }
         return new Mensaje(Message.Tipo.ERROR, "Error");
     }
@@ -93,7 +93,7 @@ public class ProveedorImagenesDAOImp implements IProveedorImagenesDAO {
                 return "Esta imagen ya existe";
             }
         } catch (SQLException e) {
-            System.err.println("Error yaExiste LugarImaagenes, " + e.getMessage());
+            System.err.println("Error yaExiste ProveedorImagenes, " + e.getMessage());
         }
         return "";
     }
@@ -128,17 +128,11 @@ public class ProveedorImagenesDAOImp implements IProveedorImagenesDAO {
     }
     
     @Override
-    public ArrayList<ProveedorImagenes> obtenerListabyIdCiudad(int idCiudad) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT\n"
-                + "	proveedorImagenes.*\n"
-                + "FROM\n"
-                + "	dbo.proveedorImagenes\n"
-                + "	INNER JOIN\n"
-                + "	dbo.proveedorArea\n"
-                + "	ON \n"
-                + "		proveedorImagenes.idProveedor = proveedorArea.idProveedor\n"
-                + "WHERE\n"
-                + "	proveedorArea.idCiudad = "+ idCiudad)) {
+    public ArrayList<ProveedorImagenes> obtenerListabyIdCiudadAndTipoProveedor(int idCiudad, int idTipoProveedor) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT p.* FROM proveedorImagenes p "
+                + "INNER JOIN proveedorArea pa ON p.idProveedor = pa.idProveedor "
+                + "INNER JOIN proveedor p1 ON p1.idProveedor = p.idProveedor "
+                + "WHERE pa.idCiudad = "+idCiudad+" AND p1.idTipoProveedor = "+ idTipoProveedor)) {
             ArrayList<ProveedorImagenes> temp = new ArrayList<>();
             while(rs.next()){
                 temp.add(new ProveedorImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), rs.getBoolean(5)));
@@ -147,6 +141,18 @@ public class ProveedorImagenesDAOImp implements IProveedorImagenesDAO {
         } catch (SQLException e) {
             System.err.println("Error obtenerListabyIdCiudad proveedorImagenes, " + e.getMessage());
         }      
+        return null;
+    }
+
+    @Override
+    public ProveedorImagenes obtenerByID2(String id2) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDORIMAGENES WHERE ID2 = '" + id2 + "'")) {
+            if (rs.next()) {
+                return new ProveedorImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), rs.getBoolean(5));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerByID ProveedorImagenes, " + e.getMessage());
+        }
         return null;
     }
     

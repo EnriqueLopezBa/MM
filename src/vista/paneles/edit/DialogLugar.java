@@ -37,11 +37,8 @@ import vista.principales.Principal;
  */
 public class DialogLugar extends JDialog {
 
-    private ControladorCiudad controladorCiudad = new ControladorCiudad();
-    private ControladorLugar controladorLugar = new ControladorLugar();
-    private ControladorEstado controladorEstado = new ControladorEstado();
-    private ControladorLugarEtiquetas controladorLugarEtiquetas = new ControladorLugarEtiquetas();
-    private ControladorEtiqueta controladorEtiqueta = new ControladorEtiqueta();
+ 
+
 
     private Estado estadoActual = null;
     private Ciudad ciudadActual = null;
@@ -62,7 +59,7 @@ public class DialogLugar extends JDialog {
             return;
         }
         f.cmbCiudad.removeAllItems();
-        for (Ciudad ciudad : controladorCiudad.obtenerListaByIDEstado(estadoActual.getIdEstado())) {
+        for (Ciudad ciudad : ControladorCiudad.getInstancia().obtenerListaByIDEstado(estadoActual.getIdEstado())) {
             f.cmbCiudad.addItem(ciudad.getCiudad());
         }
     }
@@ -88,7 +85,7 @@ public class DialogLugar extends JDialog {
 
     public void init() {
 
-        for (Estado e : controladorEstado.obtenerListaByCadena("")) {
+        for (Estado e :  ControladorEstado.getInstancia().obtenerListaByCadena("")) {
             f.cmbEstado.addItem(e.getEstado());
         }
         cargarCiduades();
@@ -107,20 +104,20 @@ public class DialogLugar extends JDialog {
             lugar.setDomicilio(f.txtDomicilio.getText());
             lugar.setCapacidad(Integer.parseInt(f.txtCapacidad.getText()));
             lugar.setPrecio(Integer.parseInt(f.txtPrecioAprox.getText()));
-            Mensaje m = controladorLugar.registrar(lugar);
+            Mensaje m = ControladorLugar.getInstancia().registrar(lugar);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
 
                 //Registro de las etiquetas
-                Lugar lug = controladorLugar.obtenerLugarByLast();
+                Lugar lug = ControladorLugar.getInstancia().obtenerLugarByLast();
                 ArrayList<LugarEtiquetas> loteEtiquetas = new ArrayList<>();
                 for (Object etique : f.frmEtiquetas1.listModel.toArray()) {
-                    Etiqueta temp = controladorEtiqueta.obtenerByEtiquetaNombre((String) etique);
+                    Etiqueta temp = ControladorEtiqueta.getInstancia().obtenerByEtiquetaNombre((String) etique);
                     if (temp != null) {
                         loteEtiquetas.add(new LugarEtiquetas(temp.getIdEtiqueta(), lug.getIdLugar()));
                     }
                 }
-                Mensaje mm = controladorLugarEtiquetas.registrarLote(loteEtiquetas);
+                Mensaje mm = ControladorLugarEtiquetas.getInstancia().registrarLote(loteEtiquetas);
                 Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
                 //Fin registro de etiquetas
             }
@@ -143,18 +140,18 @@ public class DialogLugar extends JDialog {
             lugar.setDomicilio(f.txtDomicilio.getText());
             lugar.setCapacidad(Integer.parseInt(f.txtCapacidad.getText()));
             lugar.setPrecio(Integer.parseInt(f.txtPrecioAprox.getText()));
-            Mensaje m = controladorLugar.actualizar(lugar);
+            Mensaje m = ControladorLugar.getInstancia().actualizar(lugar);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
                 //Actualizar etiquetas
                 ArrayList<LugarEtiquetas> loteEtiquetas = new ArrayList<>();
                 for (Object etique : f.frmEtiquetas1.listModel.toArray()) {
-                    Etiqueta temp = controladorEtiqueta.obtenerByEtiquetaNombre((String) etique);
+                    Etiqueta temp = ControladorEtiqueta.getInstancia().obtenerByEtiquetaNombre((String) etique);
                     if (temp != null) {
                         loteEtiquetas.add(new LugarEtiquetas(temp.getIdEtiqueta(), lugar.getIdLugar()));
                     }
                 } //SE BUSCA CADA UNO DE LOS REGISTROS PARA INGRESARLOS AL ARRAY
-                controladorLugarEtiquetas.actualizarLote(loteEtiquetas, lugar.getIdLugar()); //SE ACTUALIZAN LAS ETIQUETAS 
+                ControladorLugarEtiquetas.getInstancia().actualizarLote(loteEtiquetas, lugar.getIdLugar()); //SE ACTUALIZAN LAS ETIQUETAS 
 
                 //Fin actualizar etiquetas
             }
@@ -172,7 +169,7 @@ public class DialogLugar extends JDialog {
             int x = p.tblBuscar.getSelectedRow();
             Lugar lugar = new Lugar();
             lugar.setIdLugar((int) p.tblModel.getValueAt(x, 0));
-            Mensaje m = controladorLugar.eliminar(lugar);
+            Mensaje m = ControladorLugar.getInstancia().eliminar(lugar);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -191,14 +188,14 @@ public class DialogLugar extends JDialog {
                 f.txtDomicilio.setText(p.tblModel.getValueAt(x, 3).toString());
                 f.txtCapacidad.setText(p.tblModel.getValueAt(x, 4).toString());
                 f.txtPrecioAprox.setText(p.tblModel.getValueAt(x, 5).toString());
-                Ciudad city = controladorCiudad.obtenerById((int) p.tblModel.getValueAt(x, 1));
-                f.cmbEstado.setSelectedItem(controladorEstado.obtenerByID(city.getIdEstado()).getEstado());
+                Ciudad city = ControladorCiudad.getInstancia().obtenerById((int) p.tblModel.getValueAt(x, 1));
+                f.cmbEstado.setSelectedItem( ControladorEstado.getInstancia().obtenerByID(city.getIdEstado()).getEstado());
                 refreshEstado();
                 f.cmbCiudad.setSelectedItem(city.getCiudad());
-                ArrayList<LugarEtiquetas> temp = controladorLugarEtiquetas.obtenerEtiquetasByIDLugar((int) p.tblModel.getValueAt(x, 0));
+                ArrayList<LugarEtiquetas> temp = ControladorLugarEtiquetas.getInstancia().obtenerEtiquetasByIDLugar((int) p.tblModel.getValueAt(x, 0));
                 f.frmEtiquetas1.listModel.clear();
                 for (LugarEtiquetas as : temp) {
-                    f.frmEtiquetas1.listModel.addElement(controladorEtiqueta.obtenerByID(as.getIdEtiqueta()).getEtiqueta());
+                    f.frmEtiquetas1.listModel.addElement(ControladorEtiqueta.getInstancia().obtenerByID(as.getIdEtiqueta()).getEtiqueta());
                 }
             }
         });
@@ -210,7 +207,7 @@ public class DialogLugar extends JDialog {
                     return;
                 }
                 int x = p.tblBuscar.getSelectedRow();
-                DialogLugarImagenes temp = new DialogLugarImagenes(Principal.getInstancia(), controladorLugar.obtenerByID((int) p.tblModel.getValueAt(x, 0)));
+                DialogLugarImagenes temp = new DialogLugarImagenes(Principal.getInstancia(), ControladorLugar.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 0)));
                 temp.setVisible(true);
                 temp.addWindowListener(new WindowAdapter() {
                     @Override
@@ -232,7 +229,7 @@ public class DialogLugar extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (f.cmbCiudad.getSelectedIndex() != -1 && estadoActual != null) {
-                    for (Ciudad ciudad : controladorCiudad.obtenerListaByIDEstado(estadoActual.getIdEstado())) {
+                    for (Ciudad ciudad : ControladorCiudad.getInstancia().obtenerListaByIDEstado(estadoActual.getIdEstado())) {
                         if (ciudad.getCiudad().equals(f.cmbCiudad.getSelectedItem().toString())) {
                             ciudadActual = ciudad;
                             break;
@@ -253,7 +250,7 @@ public class DialogLugar extends JDialog {
 
     private void refreshEstado() {
         if (f.cmbEstado.getSelectedIndex() != -1) {
-            for (Estado estado : controladorEstado.obtenerListaByCadena("")) {
+            for (Estado estado :  ControladorEstado.getInstancia().obtenerListaByCadena("")) {
                 if (estado.getEstado().equals(f.cmbEstado.getSelectedItem().toString())) {
                     estadoActual = estado;
                     cargarCiduades();
@@ -265,7 +262,7 @@ public class DialogLugar extends JDialog {
 
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
-        for (Lugar e : controladorLugar.obtenerListaByCadena(p.txtBusqueda.getText())) {
+        for (Lugar e : ControladorLugar.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdLugar(), e.getIdCiudad(), e.getNombreLocal(), e.getDomicilio(), e.getCapacidad(), e.getPrecio()});
         }
     }

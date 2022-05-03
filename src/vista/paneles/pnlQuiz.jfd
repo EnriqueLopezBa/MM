@@ -10,19 +10,26 @@ new FormModel {
 		} ) {
 			name: "this"
 			"background": new java.awt.Color( 255, 255, 255, 255 )
-			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-				name: "scrollPane2"
-				add( new FormComponent( "javax.swing.JTextPane" ) {
-					name: "txtPregunta"
-					"text": "<html><p style=\"text-align:center\">Center this text!</p></html>"
-					"editable": false
-					"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
-					"disabledTextColor": new java.awt.Color( 0, 0, 0, 255 )
-					"contentType": "text/html"
-					"font": new java.awt.Font( "Segoe UI", 1, 20 )
-				} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbEvento"
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 0, spanx, grow"
+				"value": "pos 0.01al 0.03al"
+			} )
+			add( new FormComponent( "ProgressCircle.CircleProgressBar" ) {
+				name: "circleProgressBar1"
+				"background": sfield java.awt.Color white
+				"foreground": new java.awt.Color( 51, 153, 0, 255 )
+				"enabled": false
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0 2 1"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblPregunta"
+				"text": "text"
+				"horizontalAlignment": 0
+				"font": new java.awt.Font( "Segoe UI", 1, 22 )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1 2 1,aligny top"
 			} )
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "scrollPane1"
@@ -30,13 +37,25 @@ new FormModel {
 					name: "txtRespuesta"
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 1, spanx, grow"
+				"value": "cell 0 2 2 1,grow"
+			} )
+			add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
+				name: "btnAtras"
+				"text": "Atras"
+				"colorBackground": new java.awt.Color( 255, 102, 102, 255 )
+				"colorBackground2": new java.awt.Color( 255, 153, 102, 255 )
+				"font": new java.awt.Font( "Segoe UI", 0, 20 )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAtras", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 3,align left top,height 10%!"
 			} )
 			add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
 				name: "btnSiguiente"
 				"text": "Siguiente"
+				"font": new java.awt.Font( "Segoe UI", 0, 20 )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnSiguiente", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 2,aligny top, alignx right"
+				"value": "cell 1 3,align right top,height 10%!"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )

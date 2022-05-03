@@ -25,8 +25,6 @@ import vista.paneles.*;
  */
 public class DialogTipoEvento extends JDialog {
 
-    ControladorTipoEvento controlador = new ControladorTipoEvento();
-
     public DialogTipoEvento(JFrame owner) {
         super(owner);
         initComponents();
@@ -49,7 +47,7 @@ public class DialogTipoEvento extends JDialog {
             }
             TipoEvento tipo = new TipoEvento();
             tipo.setTematica(txtTipoEvento.getText());
-            Mensaje m = controlador.registrar(tipo);
+            Mensaje m = ControladorTipoEvento.getInstancia().registrar(tipo);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -70,7 +68,7 @@ public class DialogTipoEvento extends JDialog {
             TipoEvento tipo = new TipoEvento();
             tipo.setIdTipoEvento((int) p.tblModel.getValueAt(x, 0));
             tipo.setTematica(txtTipoEvento.getText());
-            Mensaje m = controlador.actualizar(tipo);
+            Mensaje m = ControladorTipoEvento.getInstancia().actualizar(tipo);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -85,7 +83,7 @@ public class DialogTipoEvento extends JDialog {
             int x = p.tblBuscar.getSelectedRow();
             TipoEvento tipo = new TipoEvento();
             tipo.setIdTipoEvento((int) p.tblModel.getValueAt(x, 0));
-            Mensaje m = controlador.eliinar(tipo);
+            Mensaje m = ControladorTipoEvento.getInstancia().eliinar(tipo);
             if (m.getTipoMensaje() == Tipo.OK) {
                 llenarTabla();
             }
@@ -116,7 +114,7 @@ public class DialogTipoEvento extends JDialog {
 
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
-        for (TipoEvento e : controlador.obtenerListaByCadena(p.txtBusqueda.getText())) {
+        for (TipoEvento e : ControladorTipoEvento.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdTipoEvento(), e.getTematica()});
         }
     }

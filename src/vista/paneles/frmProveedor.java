@@ -11,15 +11,13 @@ import modelo.TipoProveedor;
 import net.miginfocom.swing.*;
 
 public class frmProveedor extends JPanel{
-
-    private ControladorTipoProveedor controladorTipoProveedor = new ControladorTipoProveedor();
     
     public frmProveedor() {
         initComponents();
     }
     
     public void init(){
-        for(TipoProveedor tipo : controladorTipoProveedor.obtenerListaByCadena("")){
+        for(TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")){
             cmbTipoProveedor.addItem(tipo.getTipoProveedor());
         }
     }
@@ -145,7 +143,7 @@ public class frmProveedor extends JPanel{
     public TextField txtPrecioAprox;
     public TextField txtTelefono;
     public TextField txtTelefono2;
-    private Button btnGaleria;
+    public Button btnGaleria;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controlador;
 
 import dao.TipoProveedorDAOImp;
@@ -16,6 +11,17 @@ import modelo.TipoProveedor;
  */
 public class ControladorTipoProveedor {
 
+    private static ControladorTipoProveedor instancia;
+    private ControladorTipoProveedor() {
+    }
+    public static ControladorTipoProveedor getInstancia(){
+        if (instancia == null) {
+            instancia = new ControladorTipoProveedor();
+        }
+        return instancia;
+    }
+
+    
     public ArrayList<TipoProveedor> obtenerListaByCadena(String cadena) {
         return TipoProveedorDAOImp.getInstancia().obtenerListaByCadena(cadena);
     }

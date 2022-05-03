@@ -30,11 +30,6 @@ import vista.principales.Principal;
  */
 public class DialogProveedor extends JDialog {
 
-    private ControladorProveedor controladorProveedor = new ControladorProveedor();
-    private ControladorTipoProveedor controladorTipoProveedor = new ControladorTipoProveedor();
-    private ControladorCiudad controladorCiudad = new ControladorCiudad();
-    private ControladorProveedorArea controladorProveedorArea = new ControladorProveedorArea();
-
     public DialogProveedor(Principal owner) {
         super(owner);
         initComponents();
@@ -63,7 +58,7 @@ public class DialogProveedor extends JDialog {
                 if (x == -1) {
                     return;
                 }
-                TipoProveedor tipoProv = controladorTipoProveedor.obtenerByID((int) p.tblModel.getValueAt(x, 1));
+                TipoProveedor tipoProv = ControladorTipoProveedor.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 1));
                 fProveedor.txtNombre.setText(valorTabla(x, 2));
                 fProveedor.txtNombreEmpresa.setText(valorTabla(x, 3));
                 fProveedor.txtTelefono.setText(valorTabla(x, 4));
@@ -79,24 +74,24 @@ public class DialogProveedor extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Proveedor proveedor  = new Proveedor();
-                proveedor.setIdtipoProveedor(controladorTipoProveedor.obtenerTipoProveedorByNombre(fProveedor.cmbTipoProveedor.getSelectedItem().toString()).getIdTipoProveedor());
+                proveedor.setIdtipoProveedor(ControladorTipoProveedor.getInstancia().obtenerTipoProveedorByNombre(fProveedor.cmbTipoProveedor.getSelectedItem().toString()).getIdTipoProveedor());
                 proveedor.setNombre(fProveedor.txtNombre.getText());
                 proveedor.setNombreEmpresa(fProveedor.txtNombreEmpresa.getText());
                 proveedor.setTelefono(fProveedor.txtTelefono.getText());
                 proveedor.setTelefono2(fProveedor.txtTelefono2.getText());
                 proveedor.setPrecioAprox(Integer.parseInt(fProveedor.txtPrecioAprox.getText()));
-                Mensaje m = controladorProveedor.registrar(proveedor);
+                Mensaje m = ControladorProveedor.getInstancia().registrar(proveedor);
                 if (m.getTipoMensaje() == Tipo.OK) { //Suponiendo que se agregó el proveedor correctamente
                     llenarTabla();
-                    Proveedor provtemp = controladorProveedor.obtenerByLast();
+                    Proveedor provtemp = ControladorProveedor.getInstancia().obtenerByLast();
                     ArrayList<ProveedorArea> lote = new ArrayList<>();
                     for(Object objeto : fProveedorArea.listModel.toArray()){
-                        Ciudad ciudad = controladorCiudad.obtenerByNombre((String) objeto);
+                        Ciudad ciudad = ControladorCiudad.getInstancia().obtenerByNombre((String) objeto);
                         if (ciudad != null) {
                             lote.add(new ProveedorArea(provtemp.getIdProveedor(), ciudad.getIdCiudad()));
                         }
                     }
-                    Mensaje mm = controladorProveedorArea.registrarLote(lote);
+                    Mensaje mm = ControladorProveedorArea.getInstancia().registrarLote(lote);
 //                    Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
                     
                 }
@@ -116,26 +111,26 @@ public class DialogProveedor extends JDialog {
                 int x = p.tblBuscar.getSelectedRow();
                  Proveedor proveedor  = new Proveedor();
                  proveedor.setIdProveedor(Integer.parseInt(valorTabla(x, 0)));
-                proveedor.setIdtipoProveedor(controladorTipoProveedor.obtenerTipoProveedorByNombre(fProveedor.cmbTipoProveedor.getSelectedItem().toString()).getIdTipoProveedor());
+                proveedor.setIdtipoProveedor(ControladorTipoProveedor.getInstancia().obtenerTipoProveedorByNombre(fProveedor.cmbTipoProveedor.getSelectedItem().toString()).getIdTipoProveedor());
                 proveedor.setNombre(fProveedor.txtNombre.getText());
                 proveedor.setNombreEmpresa(fProveedor.txtNombreEmpresa.getText());
                 proveedor.setTelefono(fProveedor.txtTelefono.getText());
                 proveedor.setTelefono2(fProveedor.txtTelefono2.getText());
                 proveedor.setPrecioAprox(Integer.parseInt(fProveedor.txtPrecioAprox.getText()));
-                Mensaje m = controladorProveedor.actualizar(proveedor);
+                Mensaje m = ControladorProveedor.getInstancia().actualizar(proveedor);
                 if (m.getTipoMensaje() == Tipo.OK) {
                     llenarTabla();
                     
                     ArrayList<ProveedorArea> lote = new ArrayList<>();
                        Ciudad ciudad = null;
                     for(Object objeto : fProveedorArea.listModel.toArray()){
-                         ciudad = controladorCiudad.obtenerByNombre((String) objeto);
+                         ciudad = ControladorCiudad.getInstancia().obtenerByNombre((String) objeto);
                         if (ciudad != null) {
                             lote.add(new ProveedorArea(proveedor.getIdProveedor(), ciudad.getIdCiudad()));
                         }
                     }
                     
-                    Mensaje mm = controladorProveedorArea.actualizarLote(lote, proveedor.getIdProveedor());
+                    Mensaje mm = ControladorProveedorArea.getInstancia().actualizarLote(lote, proveedor.getIdProveedor());
 //                    Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
                 }
                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
@@ -154,11 +149,25 @@ public class DialogProveedor extends JDialog {
                 }
                 Proveedor pro = new Proveedor();
                 pro.setIdProveedor(Integer.parseInt(valorTabla(x, 0)));
-                Mensaje m = controladorProveedor.eliminar(pro);
+                Mensaje m = ControladorProveedor.getInstancia().eliminar(pro);
                 if (m.getTipoMensaje() == Tipo.OK) {
                     llenarTabla();
                 }
                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+            }
+        });
+        
+        // BOTON para acceder a la galeria de proveedores
+        fProveedor.btnGaleria.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!Constante.filaSeleccionada(p.tblBuscar)) {
+                    return;
+                }
+                int x = p.tblBuscar.getSelectedRow();
+                Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID((int)p.tblModel.getValueAt(x, 0));
+                DialogProveedorImagenes dia = new DialogProveedorImagenes(Principal.getInstancia(), proveedor);
+                dia.setVisible(true);
             }
         });
     }
@@ -174,7 +183,7 @@ public class DialogProveedor extends JDialog {
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
        
-        for (Proveedor pro : controladorProveedor.obtenerListaByCadena(p.txtBusqueda.getText())) {
+        for (Proveedor pro : ControladorProveedor.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{pro.getIdProveedor(), pro.getIdtipoProveedor(), pro.getNombre(), pro.getNombreEmpresa(),
                 pro.getTelefono(), pro.getTelefono2(), pro.getPrecioAprox()});
         }
@@ -183,8 +192,8 @@ public class DialogProveedor extends JDialog {
     private void llenarAreaDeProveedor(int idProveedor) {
         fProveedorArea.listModel.clear();
      
-        for (ProveedorArea prov : controladorProveedorArea.obtenerListaByIdProveedor(idProveedor)) {
-            fProveedorArea.listModel.addElement(controladorCiudad.obtenerById(prov.getIdCiudad()).getCiudad());
+        for (ProveedorArea prov : ControladorProveedorArea.getInstancia().obtenerListaByIdProveedor(idProveedor)) {
+            fProveedorArea.listModel.addElement(ControladorCiudad.getInstancia().obtenerById(prov.getIdCiudad()).getCiudad());
         }
 
     }

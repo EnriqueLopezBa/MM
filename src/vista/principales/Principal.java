@@ -21,9 +21,8 @@ public class Principal extends JFrame {
 
     public boolean admin = false;
     public pnlEventos pnlEventos = null;
-    private String hola;
     
-    private ControladorCliente controladorCliente = new ControladorCliente();
+
 
     public static Principal getInstancia() {
         if (instancia == null) {
@@ -34,7 +33,6 @@ public class Principal extends JFrame {
 
     private Principal() {
         initComponents();
-     hola = "sapo";
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         setMinimumSize(screensize.getSize());
         setLocationRelativeTo(null);
@@ -52,7 +50,7 @@ public class Principal extends JFrame {
     }
 
     public void getClienteActivo() {
-        Cliente cliente = controladorCliente.obtenerClienteActivo();
+        Cliente cliente = ControladorCliente.getInstancia().obtenerClienteActivo();
         if (cliente != null) {
             lblCliente.setText("Cliente activo: " + cliente.getCorreo() + " - " + cliente.getNombre() + " " + cliente.getApellido());
         }else{
@@ -139,6 +137,7 @@ public class Principal extends JFrame {
         panel1 = new JPanel();
         btnCerrar = new JButton();
         btnMinimizar = new JButton();
+        lblPresupuesto = new JLabel();
         pnlContenido = new JPanel();
 
         //======== this ========
@@ -262,7 +261,7 @@ public class Principal extends JFrame {
 
             //---- lblCliente ----
             lblCliente.setText("Cliente Activo: ");
-            pnlMenu.add(lblCliente, BorderLayout.CENTER);
+            pnlMenu.add(lblCliente, BorderLayout.LINE_START);
 
             //======== panel1 ========
             {
@@ -298,6 +297,11 @@ public class Principal extends JFrame {
                 panel1.add(btnMinimizar, BorderLayout.WEST);
             }
             pnlMenu.add(panel1, BorderLayout.LINE_END);
+
+            //---- lblPresupuesto ----
+            lblPresupuesto.setText("Presupuesto:");
+            lblPresupuesto.setHorizontalAlignment(SwingConstants.RIGHT);
+            pnlMenu.add(lblPresupuesto, BorderLayout.CENTER);
         }
         contentPane.add(pnlMenu, BorderLayout.NORTH);
 
@@ -324,7 +328,7 @@ public class Principal extends JFrame {
 
     public static void main(String[] args) {
         try {
-            UIManager.setLookAndFeel(new FlatIntelliJLaf());
+                UIManager.setLookAndFeel(new FlatIntelliJLaf());
         } catch (UnsupportedLookAndFeelException e) {
             System.err.println(e.getMessage());
         }
@@ -347,6 +351,7 @@ public class Principal extends JFrame {
     private JPanel panel1;
     private JButton btnCerrar;
     private JButton btnMinimizar;
+    public JLabel lblPresupuesto;
     protected JPanel pnlContenido;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

@@ -11,6 +11,17 @@ import modelo.TipoEvento;
  */
 public class ControladorTipoEvento {
 
+    private static ControladorTipoEvento instancia;
+    private ControladorTipoEvento() {
+    }
+    public static ControladorTipoEvento getInstancia(){
+        if (instancia == null) {
+            instancia = new ControladorTipoEvento();
+        }
+        return instancia;
+    }
+
+    
     public Mensaje registrar(TipoEvento t) {
         return TipoEventoDAOImp.getInstancia().registrar(t);
     }

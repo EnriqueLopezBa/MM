@@ -43,7 +43,6 @@ import independientes.image_slider.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import modelo.Ciudad;
-import modelo.Cliente;
 import modelo.Estado;
 import modelo.Etiqueta;
 import modelo.Evento;
@@ -61,12 +60,6 @@ import vista.principales.Principal;
 public class pnlEventos extends JPanel {
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    private ControladorTipoEvento controladortipoEvento = new ControladorTipoEvento();
-    private ControladorEstado controladorEstado = new ControladorEstado();
-    private ControladorCiudad controladorCiudad = new ControladorCiudad();
-    private ControladorLugar controladorLugar = new ControladorLugar();
-    private ControladorEvento controladorEvento = new ControladorEvento();
-    private ControladorCliente controladorCliente = new ControladorCliente();
 
     public Estado estadoActual = null;
     public Ciudad ciudadActual = null;
@@ -104,18 +97,21 @@ public class pnlEventos extends JPanel {
         frm = new frmEtiquetas();
         pnlListEtiquetas.add(frm);
         frm.init(new Etiqueta());
+        pnlListEtiquetas.revalidate();
+        pnlListEtiquetas.repaint();
+        
     }
 
     public void cargarTipoEvento() {
         cmbTipoEvento.removeAllItems();
-        for (TipoEvento e : controladortipoEvento.obtenerListaByCadena("")) {
+        for (TipoEvento e : ControladorTipoEvento.getInstancia().obtenerListaByCadena("")) {
             cmbTipoEvento.addItem(e.getTematica());
         }
     }
 
     public void cargarEstado() {
         cmbEstado.removeAllItems();
-        for (Estado e : controladorEstado.obtenerListaByCadena("")) {
+        for (Estado e : ControladorEstado.getInstancia().obtenerListaByCadena("")) {
             cmbEstado.addItem(e.getEstado());
         }
     }
@@ -125,7 +121,7 @@ public class pnlEventos extends JPanel {
             return;
         }
         cmbCiudad.removeAllItems();
-        for (Ciudad c : controladorCiudad.obtenerListaByIDEstado(estadoActual.getIdEstado())) {
+        for (Ciudad c : ControladorCiudad.getInstancia().obtenerListaByIDEstado(estadoActual.getIdEstado())) {
             cmbCiudad.addItem(c.getCiudad());
         }
     }
@@ -135,7 +131,7 @@ public class pnlEventos extends JPanel {
             return;
         }
         cmbLugar.removeAllItems();
-        for (Lugar c : controladorLugar.obtenerListaByIDCIudad(ciudadActual.getIdCiudad())) {
+        for (Lugar c : ControladorLugar.getInstancia().obtenerListaByIDCIudad(ciudadActual.getIdCiudad())) {
             cmbLugar.addItem(c.getNombreLocal());
         }
     }
@@ -147,7 +143,7 @@ public class pnlEventos extends JPanel {
 
     private void cmbTipoEvento(ActionEvent e) {
         if (cmbTipoEvento.getSelectedIndex() != -1) {
-            for(TipoEvento evento : controladortipoEvento.obtenerListaByCadena("")){
+            for(TipoEvento evento : ControladorTipoEvento.getInstancia().obtenerListaByCadena("")){
                 if (evento.getTematica().equals(cmbTipoEvento.getSelectedItem().toString())) {
                     tipoEventoActual = evento;
                 }
@@ -157,7 +153,7 @@ public class pnlEventos extends JPanel {
 
     private void cmbEstado(ActionEvent e) {
         if (cmbEstado.getSelectedIndex() != -1) {
-            for (Estado estado : controladorEstado.obtenerListaByCadena("")) {
+            for (Estado estado : ControladorEstado.getInstancia().obtenerListaByCadena("")) {
                 if (estado.getEstado().equals(cmbEstado.getSelectedItem().toString())) {
                     estadoActual = estado;
                 }
@@ -221,7 +217,7 @@ public class pnlEventos extends JPanel {
 
     private void cmbCiudad() {
         if (cmbCiudad.getSelectedItem() != null && estadoActual != null) {
-            for (Ciudad ciudad : controladorCiudad.obtenerListaByIDEstado(estadoActual.getIdEstado())) {
+            for (Ciudad ciudad : ControladorCiudad.getInstancia().obtenerListaByIDEstado(estadoActual.getIdEstado())) {
                 if (ciudad.getCiudad().equals(cmbCiudad.getSelectedItem().toString())) {
                     ciudadActual = ciudad;
                     cargarLugarImagenes();
@@ -254,7 +250,7 @@ public class pnlEventos extends JPanel {
             return;
         }
         if (cmbLugar.getSelectedIndex() != -1) {
-            for(Lugar lu : controladorLugar.obtenerListaByIDCIudad(ciudadActual.getIdCiudad())){
+            for(Lugar lu : ControladorLugar.getInstancia().obtenerListaByIDCIudad(ciudadActual.getIdCiudad())){
                 if (lu.getNombreLocal().equals(cmbLugar.getSelectedItem().toString())) {
                     lugarActual = lu;
                 }
@@ -277,6 +273,8 @@ public class pnlEventos extends JPanel {
 
     private void cbOtro(ActionEvent e) {
        cmbLugar.setEditable(cbOtro.isSelected());
+       cmbLugar.getEditor().setItem("");
+       cmbLugar.requestFocus();
     }
 
     private void btnAceptar(ActionEvent e) {
@@ -286,9 +284,9 @@ public class pnlEventos extends JPanel {
             if (Constante.clienteTemporal != null) {
                 evento.setIdCliente(Constante.clienteTemporal.getIdCliente());
             }else{
-                evento.setIdCliente(controladorCliente.obtenerClienteActivo().getIdCliente());
+                evento.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
             }
-            evento.setIdTipoEvento(controladortipoEvento.obtenerListaByCadena(cmbTipoEvento.getSelectedItem().toString()).get(0).getIdTipoEvento());
+            evento.setIdTipoEvento(ControladorTipoEvento.getInstancia().obtenerListaByCadena(cmbTipoEvento.getSelectedItem().toString()).get(0).getIdTipoEvento());
             evento.setFecha(getFecha());
             evento.setNoInvitados(Integer.parseInt(txtCantInvitados.getText().replaceAll(",", "")));
             evento.setPresupuesto(Integer.parseInt(txtPresupuesto.getText().replaceAll(",", "")));
@@ -298,14 +296,14 @@ public class pnlEventos extends JPanel {
             lu.setIdCiudad(ciudadActual.getIdCiudad());
             if (cbOtro.isSelected()) {
                 lu.setNombreLocal(cmbLugar.getEditor().getItem().toString());
-                controladorLugar.registrar(lu);
-                evento.setIdLugar(controladorLugar.obtenerLugarByLast().getIdLugar());
+                ControladorLugar.getInstancia().registrar(lu);
+                evento.setIdLugar(ControladorLugar.getInstancia().obtenerLugarByLast().getIdLugar());
             } else {
                 lu.setNombreLocal(cmbLugar.getSelectedItem().toString());
-                evento.setIdLugar(controladorLugar.obtenerLugarByCadena(lu).getIdLugar());
+                evento.setIdLugar(ControladorLugar.getInstancia().obtenerLugarByCadena(lu).getIdLugar());
             }
 
-            Mensaje m = controladorEvento.registrar(evento);
+            Mensaje m = ControladorEvento.getInstancia().registrar(evento);
             Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
         } catch (MMException ee) {
             Constante.mensaje(ee.getMessage(), Message.Tipo.ERROR);
@@ -331,7 +329,7 @@ public class pnlEventos extends JPanel {
             txtNombreEvento.requestFocus();
             throw new MMException("Nombre de evento vacio");
         }
-        if (controladorCliente.obtenerClienteActivo() == null) {
+        if (ControladorCliente.getInstancia().obtenerClienteActivo() == null) {
             throw new MMException("Sin cliente activo");
         }
     }

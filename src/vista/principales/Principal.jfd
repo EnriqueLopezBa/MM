@@ -73,6 +73,7 @@ new FormModel {
 					"text": "Agenda"
 					"hoverColor": #Color0
 					"$buttonGroup": #FormReference0
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAgenda", true ) )
 				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
 					"width": 150
 					"height": 35
@@ -102,18 +103,6 @@ new FormModel {
 					"y": 350
 					"width": 150
 					"height": 35
-				} )
-				add( new FormComponent( "Componentes.Buttont" ) {
-					name: "btnModoOscuro"
-					"text": "Modo Oscuro"
-					"hoverColor": #Color0
-					"selected": true
-					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnModoOscuro", true ) )
-				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
-					"width": 150
-					"height": 35
-					"x": 0
-					"y": 425
 				} )
 				add( new FormComponent( "Componentes.Buttont" ) {
 					name: "btnQuiz"
@@ -191,6 +180,7 @@ new FormModel {
 					name: "lblPresupuesto"
 					"text": "Presupuesto:"
 					"horizontalAlignment": 4
+					"font": new java.awt.Font( "Segoe UI", 1, 16 )
 					auxiliary() {
 						"JavaCodeGenerator.variableModifiers": 1
 					}

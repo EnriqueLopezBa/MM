@@ -16,7 +16,19 @@ public class Evento {
     public Evento() {
     }
 
-    public Evento(int idEvento, int idCliente, int idTipoEvento, int idLugar, Date fecha, int noInvitados, int presupuesto, String estilo, String nombreEvento) {
+//    public Evento(int idEvento, int idCliente, int idTipoEvento, int idLugar, Date fecha, int noInvitados, int presupuesto, String estilo, String nombreEvento) {
+//        this.idEvento = idEvento;
+//        this.idCliente = idCliente;
+//        this.idTipoEvento = idTipoEvento;
+//        this.idLugar = idLugar;
+//        this.fecha = fecha;
+//        this.noInvitados = noInvitados;
+//        this.presupuesto = presupuesto;
+//        this.estilo = estilo;
+//        this.nombreEvento = nombreEvento;
+//    }
+
+    public Evento(int idEvento, int idCliente, int idTipoEvento, int idLugar, Date fecha, int noInvitados, int presupuesto, String estilo, String nombreEvento, int precioFinal) {
         this.idEvento = idEvento;
         this.idCliente = idCliente;
         this.idTipoEvento = idTipoEvento;
@@ -26,8 +38,11 @@ public class Evento {
         this.presupuesto = presupuesto;
         this.estilo = estilo;
         this.nombreEvento = nombreEvento;
+        this.precioFinal = precioFinal;
     }
+    
 
+    
     public int getIdEvento() {
         return idEvento;
     }
@@ -98,6 +113,14 @@ public class Evento {
 
     public void setNombreEvento(String nombreEvento) {
         this.nombreEvento = nombreEvento;
+    }
+
+    public int getPrecioFinal() {
+        return precioFinal;
+    }
+
+    public void setPrecioFinal(int precioFinal) {
+        this.precioFinal = precioFinal;
     }
 
  

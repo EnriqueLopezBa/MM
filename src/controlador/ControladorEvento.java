@@ -22,6 +22,9 @@ public class ControladorEvento {
     }
 
     
+    public ArrayList<Evento> obtenerEventoByAnio(int anio){
+        return EventoDAOImp.getInstancia().obtenerEventoByAnio(anio);
+    }
     public ArrayList<Evento> obtenerListaByCadena(String cadena) {
         return EventoDAOImp.getInstancia().obtenerListaByCadena(cadena);
     }

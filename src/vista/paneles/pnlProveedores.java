@@ -2,12 +2,16 @@ package vista.paneles;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import Componentes.Sweet_Alert.Button;
 import Componentes.Sweet_Alert.Message;
 import Componentes.tableC.*;
+import com.raven.swing.*;
+import controlador.ControladorCiudad;
 import controlador.ControladorCliente;
+import controlador.ControladorEstado;
 import controlador.ControladorEvento;
 import controlador.ControladorLugar;
 import controlador.ControladorProveedor;
@@ -20,8 +24,14 @@ import independientes.image_slider.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Date;
+import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import modelo.Ciudad;
 import modelo.Cliente;
+import modelo.Estado;
 import modelo.Evento;
+import modelo.Lugar;
 import modelo.Proveedor;
 import modelo.ProveedorArea;
 import modelo.ProveedorEvento;
@@ -43,14 +53,27 @@ public class pnlProveedores extends JPanel {
 
     public pnlProveedores() {
         initComponents();
-            m = (DefaultTableModel) tblProveedor.getModel();
-      
+        m = (DefaultTableModel) tblProveedor.getModel();
+        int presuInicial = Constante.getPresupuesto();
+        m.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                Constante.setPresupuesto(presuInicial);
+                Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presuInicial);
+                for (int j = 0; j < m.getRowCount(); j++) {
+                    if (m.getValueAt(j, 1) != null) {
+                        Proveedor prov = ControladorProveedor.getInstancia().obtenerByID((int)m.getValueAt(j, 1));
+                        Constante.setPresupuesto(prov.getPrecioAprox(), true);
+                    }
+                }
+            }
+        });
         cargarNombreEvento();
         cargarTipoProveedor();
         cargarProveedores();
-    
-         tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
-         tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
+
+        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
+        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
     }
 
     private void cargarTipoProveedor() {
@@ -73,11 +96,11 @@ public class pnlProveedores extends JPanel {
         }
 
     }
-  
+
     private void cargarNombreEvento() {
         if (Constante.clienteTemporal == null) {
             cmbNombreEvento.removeAllItems();
-      
+
             for (Evento e : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
                 cmbNombreEvento.addItem(e.getNombreEvento());
             }
@@ -102,7 +125,7 @@ public class pnlProveedores extends JPanel {
             if (tipo.getTipoProveedor().equals(cmbTipoProveedor.getSelectedItem().toString())) {
                 tipoProveedorActual = tipo;
                 cargarProveedores();
-               int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
+                int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
                 i.proveedorImagenesByCiudadAndTipoProveedor(idCiudad, tipo.getIdTipoProveedor());
             }
         }
@@ -116,6 +139,11 @@ public class pnlProveedores extends JPanel {
             for (Evento eve : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
                 if (eve.getNombreEvento().equals(cmbNombreEvento.getSelectedItem().toString())) {
                     eventoActual = eve;
+                    Lugar lugar = ControladorLugar.getInstancia().obtenerByID(eve.getIdLugar());
+                    Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lugar.getIdCiudad());
+                    Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdCiudad());
+                    lblInfo.setText(estado.getEstado()+ ", " +ciudad.getCiudad());
+                   
                 }
             }
         } else {
@@ -128,14 +156,15 @@ public class pnlProveedores extends JPanel {
         cargarProveedorEvento();
 
     }
-    private void cargarProveedorEvento(){
+
+    private void cargarProveedorEvento() {
         if (eventoActual == null || ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento()) == null) {
             return;
         }
         m.setRowCount(0);
-        for(ProveedorEvento pro : ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento())){
-          Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(pro.getIdProveedor());
-          TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID(proveedor.getIdtipoProveedor());
+        for (ProveedorEvento pro : ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento())) {
+            Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(pro.getIdProveedor());
+            TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID(proveedor.getIdtipoProveedor());
             m.addRow(new Object[]{tipo.getIdTipoProveedor(), proveedor.getIdProveedor(), tipo.getTipoProveedor(), proveedor.getNombreEmpresa()});
         }
     }
@@ -147,6 +176,7 @@ public class pnlProveedores extends JPanel {
         for (Proveedor pro : ControladorProveedor.getInstancia().obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())) {
             if (pro.getNombreEmpresa().equals(cmbProveedor.getSelectedItem().toString())) {
                 proveedorActual = pro;
+                lblInfoProv.setText("Precio aprox: " + pro.getPrecioAprox()+"");
             }
         }
     }
@@ -170,24 +200,23 @@ public class pnlProveedores extends JPanel {
                     return;
                 }
             }
+
             tblProveedor.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), null,
                 tipoProveedorActual.getTipoProveedor(), cmbProveedor.getEditor().getItem().toString()});
         } else {
             for (int j = 0; j < m.getRowCount(); j++) {
-             
-                if ((int)m.getValueAt(j, 1) == proveedorActual.getIdProveedor()) {
+
+                if ((int) m.getValueAt(j, 1) == proveedorActual.getIdProveedor()) {
                     Constante.mensaje("Este ya existe", Message.Tipo.ERROR);
-                  
+
                     return;
                 }
             }
-                tblProveedor.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), proveedorActual.getIdProveedor(),
-                    tipoProveedorActual.getTipoProveedor(), proveedorActual.getNombreEmpresa()});
-           
+            tblProveedor.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), proveedorActual.getIdProveedor(),
+                tipoProveedorActual.getTipoProveedor(), proveedorActual.getNombreEmpresa()});
 
         }
     }
-    
 
     private void btnEliminar(ActionEvent e) {
         int x = tblProveedor.getSelectedRow();
@@ -218,11 +247,19 @@ public class pnlProveedores extends JPanel {
                 ControladorProveedor.getInstancia().registrar(pro);
                 m.setValueAt(ControladorProveedor.getInstancia().obtenerByLast().getIdProveedor(), j, 1);
             }
-            proE.add(new ProveedorEvento(eventoActual.getIdEvento(), (int)m.getValueAt(j, 1), new Date(), new Date()));
+            proE.add(new ProveedorEvento(eventoActual.getIdEvento(), (int) m.getValueAt(j, 1), new Date(), new Date(), 0));
         }
         Mensaje m = ControladorProveedorEvento.getInstancia().registrarLote(proE);
         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-        
+
+    }
+
+    private void txtHoraEntradaMouseClicked(MouseEvent e) {
+       timePicker1.showPopup(txtHoraEntrada, txtHoraEntrada.getLocationOnScreen().x, txtHoraEntrada.getLocationOnScreen().y);
+    }
+
+    private void txtHoraSalidaMouseClicked(MouseEvent e) {
+         timePicker2.showPopup(txtHoraSalida, txtHoraSalida.getLocationOnScreen().x, txtHoraSalida.getLocationOnScreen().y);
     }
 
     private void initComponents() {
@@ -233,6 +270,8 @@ public class pnlProveedores extends JPanel {
         scrollPane1 = new JScrollPane();
         tblProveedor = new Table();
         i = new ImageSlider();
+        label1 = new JLabel();
+        lblInfo = new JLabel();
         lblTipoProveedor = new JLabel();
         cmbTipoProveedor = new JComboBox();
         lblEditTipoProveedor = new JLabel();
@@ -240,10 +279,18 @@ public class pnlProveedores extends JPanel {
         cmbProveedor = new JComboBox();
         cbOtro = new JCheckBox();
         lblEditProveedor = new JLabel();
+        label2 = new JLabel();
+        lblInfoProv = new JLabel();
+        label3 = new JLabel();
+        txtHoraEntrada = new JTextField();
+        label4 = new JLabel();
+        txtHoraSalida = new JTextField();
         btnAgregarProveedor = new Button();
         btnFinalizarProveedor = new Button();
         popupMenu1 = new JPopupMenu();
         btnEliminar = new JMenuItem();
+        timePicker1 = new TimePicker();
+        timePicker2 = new TimePicker();
 
         //======== this ========
         setBackground(Color.white);
@@ -255,12 +302,16 @@ public class pnlProveedores extends JPanel {
             "[fill]" +
             "[fill]",
             // rows
-            "[grow, fill]" +
-            "[grow, fill]" +
             "[grow,fill]" +
-            "[grow, fill]" +
-            "[grow, fill]" +
-            "[grow, fill]unrel"));
+            "[grow,fill]0" +
+            "[]" +
+            "[grow,fill]" +
+            "[grow,fill]" +
+            "[]" +
+            "[]" +
+            "[]" +
+            "[grow,fill]" +
+            "[grow,fill]unrel"));
 
         //---- lblTitutlo ----
         lblTitutlo.setText("Agregar Proveedores");
@@ -274,7 +325,7 @@ public class pnlProveedores extends JPanel {
 
         //---- cmbNombreEvento ----
         cmbNombreEvento.addItemListener(e -> cmbNombreEventoItemStateChanged(e));
-        add(cmbNombreEvento, "cell 1 1, hmax 6%");
+        add(cmbNombreEvento, "cell 1 1,hmax 6%");
 
         //======== scrollPane1 ========
         {
@@ -284,11 +335,11 @@ public class pnlProveedores extends JPanel {
                 new Object[][] {
                 },
                 new String[] {
-                    "idTipoProveedor", "idProveedor", "Tipo Proveedor", "Proveedor"
+                    "idTipoProveedor", "idProveedor", "Tipo Proveedor", "Proveedor", "Hora Entrada", "Hora Salida"
                 }
             ) {
                 boolean[] columnEditable = new boolean[] {
-                    false, false, false, false
+                    false, false, false, false, true, true
                 };
                 @Override
                 public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -299,19 +350,30 @@ public class pnlProveedores extends JPanel {
             tblProveedor.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             scrollPane1.setViewportView(tblProveedor);
         }
-        add(scrollPane1, "cell 2 1 1 5,grow");
+        add(scrollPane1, "cell 2 1 1 9,grow");
 
         //---- i ----
         i.setBackground(Color.white);
-        add(i, "cell 3 1 1 5,grow");
+        add(i, "cell 3 1 1 9,grow 50 100");
+
+        //---- label1 ----
+        label1.setIcon(new ImageIcon(getClass().getResource("/img/icons8_info_40px.png")));
+        label1.setHorizontalAlignment(SwingConstants.RIGHT);
+        add(label1, "cell 0 2");
+
+        //---- lblInfo ----
+        lblInfo.setText("text");
+        lblInfo.setHorizontalAlignment(SwingConstants.LEFT);
+        lblInfo.setFont(lblInfo.getFont().deriveFont(lblInfo.getFont().getStyle() | Font.BOLD));
+        add(lblInfo, "cell 1 2");
 
         //---- lblTipoProveedor ----
         lblTipoProveedor.setText("Tipo Proveeedor");
-        add(lblTipoProveedor, "cell 0 2");
+        add(lblTipoProveedor, "cell 0 3");
 
         //---- cmbTipoProveedor ----
         cmbTipoProveedor.addItemListener(e -> cmbTipoProveedorItemStateChanged(e));
-        add(cmbTipoProveedor, "cell 1 2, hmax 6%, split 2");
+        add(cmbTipoProveedor, "split 2,cell 1 3,hmax 6%");
 
         //---- lblEditTipoProveedor ----
         lblEditTipoProveedor.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
@@ -322,21 +384,21 @@ public class pnlProveedores extends JPanel {
                 lblEditTipoProveedorMouseClicked(e);
             }
         });
-        add(lblEditTipoProveedor, "cell 1 2, grow 0 0");
+        add(lblEditTipoProveedor, "cell 1 3,grow 0 0");
 
         //---- lblProveedor ----
         lblProveedor.setText("Proveedor");
-        add(lblProveedor, "cell 0 3");
+        add(lblProveedor, "cell 0 4");
 
         //---- cmbProveedor ----
         cmbProveedor.addItemListener(e -> cmbProveedorItemStateChanged(e));
-        add(cmbProveedor, "cell 1 3, hmax 6%, split 2");
+        add(cmbProveedor, "split 2,cell 1 4,hmax 6%");
 
         //---- cbOtro ----
         cbOtro.setText("Otro");
         cbOtro.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         cbOtro.addActionListener(e -> cbOtro(e));
-        add(cbOtro, "cell 1 3, split 2, grow 0 0");
+        add(cbOtro, "split 2,cell 1 4,grow 0 0");
 
         //---- lblEditProveedor ----
         lblEditProveedor.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
@@ -347,19 +409,57 @@ public class pnlProveedores extends JPanel {
                 lblEditProveedorMouseClicked(e);
             }
         });
-        add(lblEditProveedor, "cell 1 3, grow 0 0");
+        add(lblEditProveedor, "cell 1 4,grow 0 0");
+
+        //---- label2 ----
+        label2.setHorizontalAlignment(SwingConstants.RIGHT);
+        label2.setIcon(new ImageIcon(getClass().getResource("/img/icons8_info_40px.png")));
+        add(label2, "cell 0 5");
+
+        //---- lblInfoProv ----
+        lblInfoProv.setText("text");
+        lblInfoProv.setFont(lblInfoProv.getFont().deriveFont(lblInfoProv.getFont().getStyle() | Font.BOLD));
+        add(lblInfoProv, "cell 1 5");
+
+        //---- label3 ----
+        label3.setText("Hora Entrada");
+        add(label3, "cell 0 6");
+
+        //---- txtHoraEntrada ----
+        txtHoraEntrada.setEnabled(false);
+        txtHoraEntrada.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                txtHoraEntradaMouseClicked(e);
+            }
+        });
+        add(txtHoraEntrada, "cell 1 6");
+
+        //---- label4 ----
+        label4.setText("Hora Salida");
+        add(label4, "cell 0 7");
+
+        //---- txtHoraSalida ----
+        txtHoraSalida.setEnabled(false);
+        txtHoraSalida.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                txtHoraSalidaMouseClicked(e);
+            }
+        });
+        add(txtHoraSalida, "cell 1 7");
 
         //---- btnAgregarProveedor ----
         btnAgregarProveedor.setText("Agregar Proveedor");
         btnAgregarProveedor.addActionListener(e -> btnAgregarProveedor(e));
-        add(btnAgregarProveedor, "cell 1 4, hmax 6%");
+        add(btnAgregarProveedor, "cell 1 8,hmax 6%");
 
         //---- btnFinalizarProveedor ----
         btnFinalizarProveedor.setText("Finalizar");
         btnFinalizarProveedor.setColorBackground(new Color(0, 204, 0));
         btnFinalizarProveedor.setColorBackground2(new Color(51, 255, 102));
         btnFinalizarProveedor.addActionListener(e -> btnFinalizarProveedor(e));
-        add(btnFinalizarProveedor, "cell 1 5,hmax 6%");
+        add(btnFinalizarProveedor, "cell 1 9,hmax 6%");
 
         //======== popupMenu1 ========
         {
@@ -370,6 +470,14 @@ public class pnlProveedores extends JPanel {
             btnEliminar.addActionListener(e -> btnEliminar(e));
             popupMenu1.add(btnEliminar);
         }
+
+        //---- timePicker1 ----
+        timePicker1.setDisplayText(txtHoraEntrada);
+        timePicker1.setForeground(Color.pink);
+
+        //---- timePicker2 ----
+        timePicker2.setForeground(Color.pink);
+        timePicker2.setDisplayText(txtHoraSalida);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -380,6 +488,8 @@ public class pnlProveedores extends JPanel {
     private JScrollPane scrollPane1;
     private Table tblProveedor;
     private ImageSlider i;
+    private JLabel label1;
+    private JLabel lblInfo;
     private JLabel lblTipoProveedor;
     private JComboBox cmbTipoProveedor;
     private JLabel lblEditTipoProveedor;
@@ -387,9 +497,17 @@ public class pnlProveedores extends JPanel {
     private JComboBox cmbProveedor;
     private JCheckBox cbOtro;
     private JLabel lblEditProveedor;
+    private JLabel label2;
+    private JLabel lblInfoProv;
+    private JLabel label3;
+    private JTextField txtHoraEntrada;
+    private JLabel label4;
+    private JTextField txtHoraSalida;
     private Button btnAgregarProveedor;
     private Button btnFinalizarProveedor;
     private JPopupMenu popupMenu1;
     private JMenuItem btnEliminar;
+    private TimePicker timePicker1;
+    private TimePicker timePicker2;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

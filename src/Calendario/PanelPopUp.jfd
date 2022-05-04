@@ -1,0 +1,118 @@
+JFDML JFormDesigner: "7.0.5.0.404" Java: "1.8.0_261" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"background": new java.awt.Color( 255, 255, 255, 255 )
+			"opaque": false
+			add( new FormContainer( "Componentes.DropShadow.PanelShadow", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "fill"
+				"$columnConstraints": "para[grow,fill]para"
+				"$rowConstraints": "[fill][grow,fill][grow,fill][grow,fill][grow,fill][grow,fill]unrel"
+			} ) {
+				name: "panelShadow1"
+				"background": sfield java.awt.Color white
+				"shadowSize": 5
+				"shadowType": enum Componentes.DropShadow.ShadowType BOT
+				"shadowOpacity": 0.4f
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label1"
+					"horizontalAlignment": 0
+					"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/icons8_info_100px_1.png" )
+					"horizontalTextPosition": 0
+					"verticalTextPosition": 3
+					"font": new java.awt.Font( "Segoe UI", 1, 16 )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label2"
+					"text": "Nombre evento:"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 1, w 25%!, sg 1"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblNombreEvento"
+					"text": "text"
+					"font": new java.awt.Font( "Source Sans Pro", 1, 16 )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 1,push"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label6"
+					"text": "Cliente:"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 2,sizegroup 1"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblCliente"
+					"text": "text"
+					"font": new java.awt.Font( "Source Sans Pro", 1, 16 )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 2,growx 80"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label3"
+					"text": "Nombre Local:"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 3,sizegroup 1"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblLugar"
+					"text": "text"
+					"font": new java.awt.Font( "Source Sans Pro", 1, 16 )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 3,growx 80"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label4"
+					"text": "Localidad:"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 4,sizegroup 1"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblDireccion"
+					"text": "text"
+					"font": new java.awt.Font( "Source Sans Pro", 1, 16 )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 4,growx 80"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label7"
+					"text": "Adeudo:"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 5,sizegroup 1"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblAdeudo"
+					"text": "text"
+					"font": new java.awt.Font( "Source Sans Pro", 1, 16 )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 5,growx 80"
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 455, 435 )
+			"location": new java.awt.Point( 0, 0 )
+		} )
+	}
+}

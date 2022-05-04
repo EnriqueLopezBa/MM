@@ -48,12 +48,11 @@ public class AbonoDAOImp implements IAbonoDAO {
 
     @Override
     public Mensaje registrar(Abono t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO ABONOS VALUES(?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO ABONOS VALUES(?,?,?,?)")) {
             ps.setInt(1, t.getIdCliente());
             ps.setInt(2, t.getIdEvento());
             ps.setInt(3, t.getImporte());
-            ps.setInt(4, t.getCantidadADeber());
-            ps.setDate(5, new Date(t.getFecha().getTime()));
+            ps.setDate(4, new Date(t.getFecha().getTime()));
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
         } catch (SQLException e) {
             System.err.println("Error registar Abono, " + e.getMessage());
@@ -88,16 +87,29 @@ public class AbonoDAOImp implements IAbonoDAO {
 
     @Override
     public ArrayList<Abono> obtenerListaByIdEvento(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ABONOS WHERE IDEVENTO = " +idEvento)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ABONOS WHERE IDEVENTO = " +idEvento + " ORDER BY FECHA")) {
             ArrayList<Abono> temp = new ArrayList<>();
             while(rs.next()){
-                temp.add(new Abono(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getDate(6)));
+                temp.add(new Abono(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getDate(5)));
             }
             return temp;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }   
         return null;
+    }
+
+    @Override
+    public int obtenerCantidadADeber(int idCliente, int idEvento) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT (e.precioEvento - SUM(a.Importe)) FROM abonos a JOIN evento e ON a.idEvento = e.idEvento"
+                + " WHERE a.idCliente = "+idCliente+" AND a.idEvento = "+idEvento+" GROUP BY e.precioEvento")) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerCantidadADeber AbonoCliente," + e.getMessage());
+        }       
+        return -1;
     }
 
 }

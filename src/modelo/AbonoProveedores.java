@@ -7,20 +7,20 @@ import java.util.Date;
  * @author Enrique
  */
 public class AbonoProveedores {
-    private int idAbono, idProveedor, idEvento, importe, cantidadADeber;
+    private int idAbono, idProveedor, idEvento, importe;
     private Date fecha;
 
     public AbonoProveedores() {
     }
 
-    public AbonoProveedores(int idAbono, int idProveedor, int idEvento, int importe, int cantidadADeber, Date fecha) {
+    public AbonoProveedores(int idAbono, int idProveedor, int idEvento, int importe, Date fecha) {
         this.idAbono = idAbono;
         this.idProveedor = idProveedor;
         this.idEvento = idEvento;
         this.importe = importe;
-        this.cantidadADeber = cantidadADeber;
         this.fecha = fecha;
     }
+  
 
     public int getIdAbono() {
         return idAbono;
@@ -54,14 +54,7 @@ public class AbonoProveedores {
         this.importe = importe;
     }
 
-    public int getCantidadADeber() {
-        return cantidadADeber;
-    }
-
-    public void setCantidadADeber(int cantidadADeber) {
-        this.cantidadADeber = cantidadADeber;
-    }
-
+ 
     public Date getFecha() {
         return fecha;
     }

@@ -38,6 +38,8 @@ public class DialogProveedor extends JDialog {
         super.setSize(new Dimension(new Double(screensize.getWidth() / 2).intValue(), super.getPreferredSize().height));
         super.setLocationRelativeTo(null);
         p.init(new String[]{"idProveedor", "idTipoProveedor", "Nombre", "Nombre Empresa", "Telefono", "Telefono 2", "Precio Aprox"}, 0, true);
+        p.tblBuscar.removeColumn(p.tblBuscar.getColumnModel().getColumn(0));
+        p.tblBuscar.removeColumn(p.tblBuscar.getColumnModel().getColumn(0));
         fProveedorArea.init(new ProveedorArea());
         fProveedor.init();
         llenarTabla();

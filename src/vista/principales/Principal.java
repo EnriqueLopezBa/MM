@@ -8,6 +8,7 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 import controlador.ControladorCliente;
 import modelo.Cliente;
 import vista.paneles.pnlAbono;
+import vista.paneles.pnlAgenda;
 import vista.paneles.pnlCliente;
 import vista.paneles.pnlEventos;
 import vista.paneles.pnlProveedores;
@@ -120,6 +121,10 @@ public class Principal extends JFrame {
         cambiarPanel(new pnlQuiz());
     }
 
+    private void btnAgenda(ActionEvent e) {
+        cambiarPanel(new pnlAgenda());
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         pnlOpciones = new JPanel();
@@ -130,7 +135,6 @@ public class Principal extends JFrame {
         btnAgenda = new Buttont();
         btnProveedores = new Buttont();
         btnPago = new Buttont();
-        btnModoOscuro = new Buttont();
         btnQuiz = new Buttont();
         pnlMenu = new JPanel();
         lblCliente = new JLabel();
@@ -206,6 +210,7 @@ public class Principal extends JFrame {
             //---- btnAgenda ----
             btnAgenda.setText("Agenda");
             btnAgenda.setHoverColor(new Color(102, 153, 255));
+            btnAgenda.addActionListener(e -> btnAgenda(e));
             pnlOpciones.add(btnAgenda);
             btnAgenda.setBounds(0, 385, 150, 35);
 
@@ -222,14 +227,6 @@ public class Principal extends JFrame {
             btnPago.addActionListener(e -> btnPago(e));
             pnlOpciones.add(btnPago);
             btnPago.setBounds(0, 350, 150, 35);
-
-            //---- btnModoOscuro ----
-            btnModoOscuro.setText("Modo Oscuro");
-            btnModoOscuro.setHoverColor(new Color(102, 153, 255));
-            btnModoOscuro.setSelected(true);
-            btnModoOscuro.addActionListener(e -> btnModoOscuro(e));
-            pnlOpciones.add(btnModoOscuro);
-            btnModoOscuro.setBounds(0, 425, 150, 35);
 
             //---- btnQuiz ----
             btnQuiz.setText("Quiz");
@@ -301,6 +298,7 @@ public class Principal extends JFrame {
             //---- lblPresupuesto ----
             lblPresupuesto.setText("Presupuesto:");
             lblPresupuesto.setHorizontalAlignment(SwingConstants.RIGHT);
+            lblPresupuesto.setFont(new Font("Segoe UI", Font.BOLD, 16));
             pnlMenu.add(lblPresupuesto, BorderLayout.CENTER);
         }
         contentPane.add(pnlMenu, BorderLayout.NORTH);
@@ -344,7 +342,6 @@ public class Principal extends JFrame {
     private Buttont btnAgenda;
     private Buttont btnProveedores;
     private Buttont btnPago;
-    private Buttont btnModoOscuro;
     private Buttont btnQuiz;
     public JPanel pnlMenu;
     public JLabel lblCliente;

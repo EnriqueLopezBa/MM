@@ -10,4 +10,5 @@ import modelo.Evento;
  */
 public interface IEventoDAO extends CRUD<Evento>{
     ArrayList<Evento> obtenerEventoByIDCliente(int idCliente);
+    ArrayList<Evento> obtenerEventoByAnio(int anio);
 }

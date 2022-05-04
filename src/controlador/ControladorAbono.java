@@ -15,17 +15,23 @@ import modelo.Abono;
  * @author Enrique
  */
 public class ControladorAbono {
+
     private static ControladorAbono instancia;
+
     private ControladorAbono() {
     }
-    
-    public static ControladorAbono getInstancia(){
+
+    public static ControladorAbono getInstancia() {
         if (instancia == null) {
             instancia = new ControladorAbono();
         }
         return instancia;
     }
-    
+
+    public int obtenerCantidadADeber(int idCliente, int idEvento) {
+        return AbonoDAOImp.getInstancia().obtenerCantidadADeber(idCliente, idEvento);
+    }
+
     public ArrayList<Abono> obtenerListaByIdEvento(int idEvento) {
         return AbonoDAOImp.getInstancia().obtenerListaByIdEvento(idEvento);
     }

@@ -1,0 +1,224 @@
+JFDML JFormDesigner: "7.0.5.0.404" Java: "1.8.0_261" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"background": new java.awt.Color( 255, 255, 255, 255 )
+			"name": "prin"
+			add( new FormContainer( "javax.swing.JLayeredPane", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+				name: "layered"
+				"background": new java.awt.Color( 255, 255, 255, 255 )
+				"name": "layered"
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "fill"
+					"$columnConstraints": "para[fill]para[fill]para[fill]para[fill]para"
+					"$rowConstraints": "[grow 10][][grow 30][][grow 30][][grow 30]"
+				} ) {
+					name: "mi"
+					"background": new java.awt.Color( 255, 255, 255, 255 )
+					"name": "miglayout"
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "btnAtras"
+						"contentAreaFilled": false
+						"borderPainted": false
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/back.png" )
+						"text": "Anterior"
+						"cursor": &Cursor0 new java.awt.Cursor( 12 )
+						"font": &SwingDerivedFont0 new com.jformdesigner.model.SwingDerivedFont( "Source Sans Pro", 1, 5, false )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAtras", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0, grow 0 0, align left"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "lblYear"
+						"text": "text"
+						"horizontalAlignment": 0
+						"font": new com.jformdesigner.model.SwingDerivedFont( "Source Sans Pro", 1, 6, false )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 0, spanx 2"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "btnSiguiente"
+						"text": "Siguiente"
+						"borderPainted": false
+						"contentAreaFilled": false
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/next.png" )
+						"cursor": #Cursor0
+						"font": #SwingDerivedFont0
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnSiguiente", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 0, grow 0 0, align right"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "Enero"
+						"text": "Enero"
+						"horizontalAlignment": 0
+						"font": new java.awt.Font( "Segoe UI", 1, 15 )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 1"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label1"
+						"text": "Febrero"
+						"font": &Font0 new java.awt.Font( "Segoe UI", 1, 15 )
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 1"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label2"
+						"text": "Marzo"
+						"font": #Font0
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 1"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label3"
+						"text": "Abril"
+						"font": #Font0
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 1"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateEnero"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 2,dock center"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateFebrero"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 2,dock center"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateMarzo"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 2,dock center"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateAbril"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 2,dock center"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label4"
+						"text": "Mayo"
+						"font": #Font0
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 3"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label5"
+						"text": "Junio"
+						"font": #Font0
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 3"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label6"
+						"text": "Julio"
+						"font": #Font0
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 3"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label7"
+						"text": "Agosto"
+						"font": #Font0
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 3"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateMayo"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 4,dock center"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateJunio"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 4,dock center"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateJulio"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 4,dock center"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateAgosto"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 4,dock center"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label8"
+						"text": "Septiembre"
+						"font": #Font0
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 5"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label9"
+						"text": "Octubre"
+						"font": #Font0
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 5"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label10"
+						"text": "Noviembre"
+						"font": #Font0
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 5"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label11"
+						"text": "Diciembre"
+						"font": #Font0
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 5"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateSeptiembre"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 6,dock center"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateOctubre"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 6,dock center"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateNoviembre"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 6,dock center"
+					} )
+					add( new FormContainer( "Calendario.PanelDate", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+						name: "panelDateDiciembre"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 6,dock center"
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"location": new java.awt.Point( 0, 220 )
+					"x": 0
+					"y": 0
+					"height": 605
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 855, 500 )
+		} )
+	}
+}

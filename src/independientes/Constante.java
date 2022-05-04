@@ -16,21 +16,51 @@ import vista.principales.Principal;
  * @author Enrique
  */
 public class Constante {
-    
-    public static void mensaje(String texto, Tipo tipo){
+
+    public static void mensaje(String texto, Tipo tipo) {
         new Message(Principal.getInstancia(), true, texto, tipo).showAlert();
     }
-    
-    public static boolean filaSeleccionada(JTable tbl){
-        if (tbl.getSelectedRow() !=-1) {
+
+    public static boolean filaSeleccionada(JTable tbl) {
+        if (tbl.getSelectedRow() != -1) {
             return true;
         }
         mensaje("Seleccionada una fila", Tipo.ERROR);
         return false;
     }
-    public static boolean getAdmin(){
+
+    public static boolean getAdmin() {
         return Principal.getInstancia().admin;
     }
-    
+
     public static Cliente clienteTemporal;
+
+    private static int presupuesto = 0;
+
+    public static int getPresupuesto() {
+        return presupuesto;
+    }
+
+    public static void iniciarPresupuesto(int cantidad) {
+        presupuesto = cantidad;
+        Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presupuesto);
+    }
+    
+    public static void setPresupuesto(int cantidad, boolean restar){
+        if (presupuesto == 0 ) {
+            return;
+        }
+        if (restar) {
+            presupuesto -= cantidad;
+        }else{
+            presupuesto += cantidad;
+        }
+         Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presupuesto);
+    }
+    
+    public static void setPresupuesto(int cantidad){
+        presupuesto = cantidad;
+    }
+    
+
 }

@@ -12,16 +12,21 @@ import modelo.ProveedorEvento;
 public class ControladorProveedorEvento {
 
     private static ControladorProveedorEvento instancia;
+
     private ControladorProveedorEvento() {
     }
-    public static ControladorProveedorEvento getInstancia(){
+
+    public static ControladorProveedorEvento getInstancia() {
         if (instancia == null) {
             instancia = new ControladorProveedorEvento();
         }
         return instancia;
     }
 
-    
+    public ArrayList<ProveedorEvento> obtenerListaByIdProveedor(int idProveedor) {
+        return ProveedorEventoDAOImp.getInstancia().obtenerListaByIdProveedor(idProveedor);
+    }
+
     public Mensaje registrar(ProveedorEvento t) {
         return ProveedorEventoDAOImp.getInstancia().registrar(t);
     }

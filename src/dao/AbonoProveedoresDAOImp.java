@@ -47,12 +47,11 @@ public class AbonoProveedoresDAOImp implements IAbonoProveedoresDAO{
     }
 
     public Mensaje registrar(AbonoProveedores t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO ABONOSPROVEEDOR VALUES(?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO ABONOSPROVEEDOR VALUES(?,?,?,?)")) {
             ps.setInt(1, t.getIdProveedor());
             ps.setInt(2, t.getIdEvento());
             ps.setInt(3, t.getImporte());
-            ps.setInt(4, t.getCantidadADeber());
-            ps.setDate(5, new Date(t.getFecha().getTime()));
+            ps.setDate(4, new Date(t.getFecha().getTime()));
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
         } catch (SQLException e) {
             System.err.println("Error registar Abono, " + e.getMessage());
@@ -86,7 +85,7 @@ public class AbonoProveedoresDAOImp implements IAbonoProveedoresDAO{
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ABONOSPROVEEDOR WHERE IDEVENTO = " +idEvento)) {
             ArrayList<AbonoProveedores> temp = new ArrayList<>();
             while(rs.next()){
-                temp.add(new AbonoProveedores(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getDate(6)));
+                temp.add(new AbonoProveedores(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getDate(5)));
             }
             return temp;
         } catch (SQLException e) {

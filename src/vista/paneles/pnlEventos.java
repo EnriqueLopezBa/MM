@@ -1,5 +1,6 @@
 package vista.paneles;
 
+import java.awt.event.*;
 import java.beans.*;
 import Componentes.Sweet_Alert.Button;
 import Componentes.Sweet_Alert.Message;
@@ -42,6 +43,12 @@ import java.util.Date;
 import independientes.image_slider.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.SwingUtilities;
 import modelo.Ciudad;
 import modelo.Estado;
 import modelo.Etiqueta;
@@ -65,9 +72,8 @@ public class pnlEventos extends JPanel {
     public Ciudad ciudadActual = null;
     public TipoEvento tipoEventoActual = null;
     public Lugar lugarActual = null;
-            
+
     public frmEtiquetas frm;
-  
 
     public pnlEventos() {
         initComponents();
@@ -99,7 +105,7 @@ public class pnlEventos extends JPanel {
         frm.init(new Etiqueta());
         pnlListEtiquetas.revalidate();
         pnlListEtiquetas.repaint();
-        
+
     }
 
     public void cargarTipoEvento() {
@@ -143,7 +149,7 @@ public class pnlEventos extends JPanel {
 
     private void cmbTipoEvento(ActionEvent e) {
         if (cmbTipoEvento.getSelectedIndex() != -1) {
-            for(TipoEvento evento : ControladorTipoEvento.getInstancia().obtenerListaByCadena("")){
+            for (TipoEvento evento : ControladorTipoEvento.getInstancia().obtenerListaByCadena("")) {
                 if (evento.getTematica().equals(cmbTipoEvento.getSelectedItem().toString())) {
                     tipoEventoActual = evento;
                 }
@@ -198,6 +204,7 @@ public class pnlEventos extends JPanel {
             txtPresupuesto.commitEdit();
             txtPresupuesto.setValue(txtPresupuesto.getValue());
             txtPresupuesto.setCaretPosition(txtPresupuesto.getText().length());
+            Constante.iniciarPresupuesto(Integer.parseInt(txtPresupuesto.getText().replaceAll(",", "")));
         } catch (ParseException ee) {
         }
     }
@@ -245,14 +252,30 @@ public class pnlEventos extends JPanel {
         });
     }
 
+    private Lugar lugarTemp = null;
+
     private void cmbLugar(ActionEvent e) {
         if (cbOtro.isSelected()) {
             return;
         }
         if (cmbLugar.getSelectedIndex() != -1) {
-            for(Lugar lu : ControladorLugar.getInstancia().obtenerListaByIDCIudad(ciudadActual.getIdCiudad())){
+            for (Lugar lu : ControladorLugar.getInstancia().obtenerListaByIDCIudad(ciudadActual.getIdCiudad())) {
                 if (lu.getNombreLocal().equals(cmbLugar.getSelectedItem().toString())) {
                     lugarActual = lu;
+                    if (Constante.getPresupuesto() == 0) {
+                        return;
+                    }
+                    if (lugarTemp != null && lugarTemp.getIdLugar() == lu.getIdLugar()) {
+                        return;
+                    }
+                    if (lugarTemp != null && lugarTemp.getIdLugar() != lu.getIdLugar()) {
+                        Constante.setPresupuesto(lugarTemp.getPrecio(), false);
+                        Constante.setPresupuesto(lu.getPrecio(), true);
+                        lugarTemp = lu;
+                        return;
+                    }
+                    Constante.setPresupuesto(lu.getPrecio(), true);
+                    lugarTemp = lu;
                 }
             }
         }
@@ -272,9 +295,9 @@ public class pnlEventos extends JPanel {
     }
 
     private void cbOtro(ActionEvent e) {
-       cmbLugar.setEditable(cbOtro.isSelected());
-       cmbLugar.getEditor().setItem("");
-       cmbLugar.requestFocus();
+        cmbLugar.setEditable(cbOtro.isSelected());
+        cmbLugar.getEditor().setItem("");
+        cmbLugar.requestFocus();
     }
 
     private void btnAceptar(ActionEvent e) {
@@ -283,7 +306,7 @@ public class pnlEventos extends JPanel {
             Evento evento = new Evento();
             if (Constante.clienteTemporal != null) {
                 evento.setIdCliente(Constante.clienteTemporal.getIdCliente());
-            }else{
+            } else {
                 evento.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
             }
             evento.setIdTipoEvento(ControladorTipoEvento.getInstancia().obtenerListaByCadena(cmbTipoEvento.getSelectedItem().toString()).get(0).getIdTipoEvento());
@@ -344,6 +367,27 @@ public class pnlEventos extends JPanel {
         if (txtFecha.getText().length() > 0) {
             LocalDate d1 = LocalDate.parse(format.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
             LocalDate d2 = LocalDate.parse(txtFecha.getText(), DateTimeFormatter.ISO_LOCAL_DATE);
+
+            ArrayList<Evento> eventos = ControladorEvento.getInstancia().obtenerEventoByAnio(d2.getYear());
+            for (Evento eve : eventos) {
+                Date input = null;
+                try {
+                    input = format.parse(eve.getFecha() + "");
+                } catch (ParseException ex) {
+                    Logger.getLogger(pnlEventos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                LocalDate date = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                if (date.getDayOfMonth() == d2.getDayOfMonth()) {
+                    if (date.getMonthValue() == d2.getMonthValue()) {
+                        if (date.getYear() == d2.getYear()) {
+                            Constante.mensaje("Este dia se encuentra ocupado", Message.Tipo.ADVERTENCIA);
+                            setMinDate();
+                            return;
+                        }
+                    }
+                }
+
+            }
             Duration diff = Duration.between(d1.atStartOfDay(), d2.atStartOfDay());
             long diffDays = diff.toDays();
             if (diffDays < 7) {
@@ -371,6 +415,22 @@ public class pnlEventos extends JPanel {
                 cargarEtiquetas();
             }
         });
+    }
+
+    private void txtFechaMouseWheelMoved(MouseWheelEvent e) {
+//        if (e.getWheelRotation() > 0) {
+//            showMessageDialog(null, "abajo");
+//         
+//        }else{
+////            showMessageDialog(null, "arriba");
+////               LocalDate d11 = LocalDate.parse(format.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
+////             d11 = d11.plusMonths(1);
+//             
+////           dateChooser.showPopup(txtFecha, txtFecha.getLocationOnScreen().x/2, txtFecha.getLocationOnScreen().y);
+////             dateChooser.setSelectedDate(new SelectedDate(d11.getDayOfMonth(), d11.getMonthValue(), d11.getYear()));
+//               
+//        }
+
     }
 
     private void initComponents() {
@@ -429,7 +489,7 @@ public class pnlEventos extends JPanel {
             "[fill]" +
             "[fill]" +
             "[fill]" +
-            "[fill]" +
+            "[fill]unrel" +
             "[fill]unrel"));
 
         //---- label1 ----
@@ -517,6 +577,7 @@ public class pnlEventos extends JPanel {
         txtFecha.setHorizontalAlignment(SwingConstants.CENTER);
         txtFecha.setFont(txtFecha.getFont().deriveFont(txtFecha.getFont().getSize() + 3f));
         txtFecha.setNextFocusableComponent(cmbTipoEvento);
+        txtFecha.addMouseWheelListener(e -> txtFechaMouseWheelMoved(e));
         add(txtFecha, "cell 1 6");
 
         //---- btnAdmin ----

@@ -66,7 +66,7 @@ new FormModel {
 					"width": 150
 					"height": 35
 					"x": 0
-					"y": 205
+					"y": 240
 				} )
 				add( new FormComponent( "Componentes.Buttont" ) {
 					name: "btnAgenda"
@@ -78,7 +78,7 @@ new FormModel {
 					"width": 150
 					"height": 35
 					"x": 0
-					"y": 385
+					"y": 420
 				} )
 				add( new FormComponent( "Componentes.Buttont" ) {
 					name: "btnProveedores"
@@ -90,17 +90,17 @@ new FormModel {
 					"width": 150
 					"height": 35
 					"x": 0
-					"y": 240
+					"y": 275
 				} )
 				add( new FormComponent( "Componentes.Buttont" ) {
 					name: "btnPago"
 					"text": "Pago/Abono"
-					"hoverColor": new java.awt.Color( 102, 153, 255, 255 )
-					"$buttonGroup": new FormReference( "buttonGroup1" )
+					"hoverColor": &Color1 new java.awt.Color( 102, 153, 255, 255 )
+					"$buttonGroup": &FormReference1 new FormReference( "buttonGroup1" )
 					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnPago", true ) )
 				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
 					"x": 0
-					"y": 350
+					"y": 385
 					"width": 150
 					"height": 35
 				} )
@@ -114,7 +114,19 @@ new FormModel {
 					"width": 150
 					"height": 35
 					"x": 0
-					"y": 270
+					"y": 205
+				} )
+				add( new FormComponent( "Componentes.Buttont" ) {
+					name: "btnEventosDestacados"
+					"text": "Eventos Destacados"
+					"hoverColor": #Color1
+					"$buttonGroup": #FormReference1
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEventosDestacados", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 150
+					"height": 35
+					"x": 0
+					"y": 335
 				} )
 			}, new FormLayoutConstraints( class java.lang.String ) {
 				"value": "West"

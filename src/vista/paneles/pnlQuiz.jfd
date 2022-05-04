@@ -5,15 +5,27 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$layoutConstraints": "fill"
-			"$columnConstraints": "[grow,fill][grow,fill]"
-			"$rowConstraints": "[][][]"
+			"$columnConstraints": "[grow,fill]para[grow,fill]"
+			"$rowConstraints": "[][][][][]"
 		} ) {
 			name: "this"
 			"background": new java.awt.Color( 255, 255, 255, 255 )
+			"name": "asd"
 			add( new FormComponent( "javax.swing.JComboBox" ) {
 				name: "cmbEvento"
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbEventoItemStateChanged", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "pos 0.01al 0.03al"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblEliminar"
+				"text": "Eliminar Pregunta"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/delete.png" )
+				"font": new java.awt.Font( "Segoe UI", 1, 15 )
+				"cursor": new java.awt.Cursor( 12 )
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblEliminarMouseClicked", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "pos 0.9al 0.03al"
 			} )
 			add( new FormComponent( "ProgressCircle.CircleProgressBar" ) {
 				name: "circleProgressBar1"
@@ -35,6 +47,13 @@ new FormModel {
 				name: "scrollPane1"
 				add( new FormComponent( "javax.swing.JTextArea" ) {
 					name: "txtRespuesta"
+					"font": new java.awt.Font( "Segoe UI", 1, 18 )
+					"lineWrap": true
+					"wrapStyleWord": true
+					"text": "Escribenos tu respuesta"
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "txtRespuestaMouseClicked", true ) )
+					addEvent( new FormEvent( "java.awt.event.FocusListener", "focusGained", "txtRespuestaFocusGained", true ) )
+					addEvent( new FormEvent( "java.awt.event.FocusListener", "focusLost", "txtRespuestaFocusLost", true ) )
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 2 2 1,grow"
@@ -47,7 +66,7 @@ new FormModel {
 				"font": new java.awt.Font( "Segoe UI", 0, 20 )
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAtras", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 3,align left top,height 10%!"
+				"value": "cell 0 3,align left top,height 5%!, w 30%!"
 			} )
 			add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
 				name: "btnSiguiente"
@@ -55,7 +74,19 @@ new FormModel {
 				"font": new java.awt.Font( "Segoe UI", 0, 20 )
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnSiguiente", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 3,align right top,height 10%!"
+				"value": "cell 1 3,align right top,height 5%!, w 30%!"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblModificar"
+				"text": "Edicion"
+				"horizontalAlignment": 0
+				"foreground": new java.awt.Color( 0, 102, 153, 255 )
+				"cursor": new java.awt.Cursor( 12 )
+				"font": new java.awt.Font( "Segoe UI", 1, 22 )
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/admin.png" )
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblModificarMouseClicked", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 4, spanx"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )

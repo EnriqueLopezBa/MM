@@ -3,14 +3,37 @@ package modelo;
 
 public class Quiz {
  
-    private int idPregunta, idCliente;
-    private String respuesta;
+    private int idPregunta, idCliente, idEvento;
+    private String respuesta, opciones;
 
-    public Quiz(int idPregunta, int idCliente, String respuesta) {
+    public Quiz() {
+    }
+
+    public Quiz(int idPregunta, int idCliente, int idEvento, String respuesta, String opciones) {
         this.idPregunta = idPregunta;
         this.idCliente = idCliente;
+        this.idEvento = idEvento;
         this.respuesta = respuesta;
+        this.opciones = opciones;
     }
+
+    public int getIdEvento() {
+        return idEvento;
+    }
+
+    public void setIdEvento(int idEvento) {
+        this.idEvento = idEvento;
+    }
+
+    
+    public String getOpciones() {
+        return opciones;
+    }
+
+    public void setOpciones(String opciones) {
+        this.opciones = opciones;
+    }
+
 
     public int getIdPregunta() {
         return idPregunta;

@@ -11,6 +11,7 @@ import vista.paneles.pnlAbono;
 import vista.paneles.pnlAgenda;
 import vista.paneles.pnlCliente;
 import vista.paneles.pnlEventos;
+import vista.paneles.pnlEventosDestacados;
 import vista.paneles.pnlProveedores;
 import vista.paneles.pnlQuiz;
 
@@ -125,6 +126,10 @@ public class Principal extends JFrame {
         cambiarPanel(new pnlAgenda());
     }
 
+    private void btnEventosDestacados(ActionEvent e) {
+        cambiarPanel(new pnlEventosDestacados());
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         pnlOpciones = new JPanel();
@@ -136,6 +141,7 @@ public class Principal extends JFrame {
         btnProveedores = new Buttont();
         btnPago = new Buttont();
         btnQuiz = new Buttont();
+        btnEventosDestacados = new Buttont();
         pnlMenu = new JPanel();
         lblCliente = new JLabel();
         panel1 = new JPanel();
@@ -205,35 +211,42 @@ public class Principal extends JFrame {
             btnEvento.setHoverColor(new Color(102, 153, 255));
             btnEvento.addActionListener(e -> btnEvento(e));
             pnlOpciones.add(btnEvento);
-            btnEvento.setBounds(0, 205, 150, 35);
+            btnEvento.setBounds(0, 240, 150, 35);
 
             //---- btnAgenda ----
             btnAgenda.setText("Agenda");
             btnAgenda.setHoverColor(new Color(102, 153, 255));
             btnAgenda.addActionListener(e -> btnAgenda(e));
             pnlOpciones.add(btnAgenda);
-            btnAgenda.setBounds(0, 385, 150, 35);
+            btnAgenda.setBounds(0, 420, 150, 35);
 
             //---- btnProveedores ----
             btnProveedores.setText("Proveedores");
             btnProveedores.setHoverColor(new Color(102, 153, 255));
             btnProveedores.addActionListener(e -> btnProveedores(e));
             pnlOpciones.add(btnProveedores);
-            btnProveedores.setBounds(0, 240, 150, 35);
+            btnProveedores.setBounds(0, 275, 150, 35);
 
             //---- btnPago ----
             btnPago.setText("Pago/Abono");
             btnPago.setHoverColor(new Color(102, 153, 255));
             btnPago.addActionListener(e -> btnPago(e));
             pnlOpciones.add(btnPago);
-            btnPago.setBounds(0, 350, 150, 35);
+            btnPago.setBounds(0, 385, 150, 35);
 
             //---- btnQuiz ----
             btnQuiz.setText("Quiz");
             btnQuiz.setHoverColor(new Color(102, 153, 255));
             btnQuiz.addActionListener(e -> btnQuiz(e));
             pnlOpciones.add(btnQuiz);
-            btnQuiz.setBounds(0, 270, 150, 35);
+            btnQuiz.setBounds(0, 205, 150, 35);
+
+            //---- btnEventosDestacados ----
+            btnEventosDestacados.setText("Eventos Destacados");
+            btnEventosDestacados.setHoverColor(new Color(102, 153, 255));
+            btnEventosDestacados.addActionListener(e -> btnEventosDestacados(e));
+            pnlOpciones.add(btnEventosDestacados);
+            btnEventosDestacados.setBounds(0, 335, 150, 35);
         }
         contentPane.add(pnlOpciones, BorderLayout.WEST);
 
@@ -321,6 +334,7 @@ public class Principal extends JFrame {
         buttonGroup1.add(btnProveedores);
         buttonGroup1.add(btnPago);
         buttonGroup1.add(btnQuiz);
+        buttonGroup1.add(btnEventosDestacados);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -343,6 +357,7 @@ public class Principal extends JFrame {
     private Buttont btnProveedores;
     private Buttont btnPago;
     private Buttont btnQuiz;
+    private Buttont btnEventosDestacados;
     public JPanel pnlMenu;
     public JLabel lblCliente;
     private JPanel panel1;

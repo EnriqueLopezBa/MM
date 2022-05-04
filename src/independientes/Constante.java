@@ -7,6 +7,7 @@ package independientes;
 
 import Componentes.Sweet_Alert.Message;
 import Componentes.Sweet_Alert.Message.Tipo;
+import controlador.ControladorCliente;
 import javax.swing.JTable;
 import modelo.Cliente;
 import vista.principales.Principal;
@@ -34,7 +35,27 @@ public class Constante {
     }
 
     public static Cliente clienteTemporal;
+    
+    public static Cliente getClienteTemporal(){
+        return clienteTemporal;
+    }
+    public static void setClienteTemporal(Cliente cliente){
+        clienteTemporal = cliente;
+        Principal.getInstancia().lblCliente.setText("Cliente activo (SOLO ADMIN): " + cliente.getNombre() +" " + cliente.getApellido()+
+                " | "+ cliente.getCorreo());
+    }
 
+    public static void removeClienteTemporal(){
+        clienteTemporal = null;
+        Cliente cliente = ControladorCliente.getInstancia().obtenerClienteActivo();
+        if (cliente != null) {
+             Principal.getInstancia().lblCliente.setText("Cliente activo: " + cliente.getNombre() +" " + cliente.getApellido()+
+                " | "+ cliente.getCorreo());
+        }else{
+                Principal.getInstancia().lblCliente.setText("Sin cliente activo");
+        }
+       
+    }
     private static int presupuesto = 0;
 
     public static int getPresupuesto() {

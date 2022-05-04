@@ -6,6 +6,7 @@
 package controlador;
 
 import dao.PreguntaDAOImp;
+import independientes.Mensaje;
 import java.util.ArrayList;
 import modelo.Pregunta;
 
@@ -16,18 +17,31 @@ import modelo.Pregunta;
 public class ControladorPregunta {
 
     private static ControladorPregunta instancia;
+
     private ControladorPregunta() {
     }
-    
-    public static ControladorPregunta getInstancia(){
+
+    public static ControladorPregunta getInstancia() {
         if (instancia == null) {
             instancia = new ControladorPregunta();
         }
         return instancia;
     }
-    
-      public ArrayList<Pregunta> obtenerListaByCadenaAndIsEncuesta(String cadena, boolean encuesta){
-          return PreguntaDAOImp.getInstancia().obtenerListaByCadenaAndIsEncuesta(cadena, encuesta);
-      }
-    
+
+    public Mensaje eliminar(Pregunta t) {
+        return PreguntaDAOImp.getInstancia().eliminar(t);
+    }
+
+    public Pregunta obtenerByID(int id) {
+        return PreguntaDAOImp.getInstancia().obtenerByID(id);
+    }
+
+    public Mensaje registrar(Pregunta t) {
+        return PreguntaDAOImp.getInstancia().registrar(t);
+    }
+
+    public ArrayList<Pregunta> obtenerListaByCadenaAndIsEncuesta(String cadena, boolean encuesta) {
+        return PreguntaDAOImp.getInstancia().obtenerListaByCadenaAndIsEncuesta(cadena, encuesta);
+    }
+
 }

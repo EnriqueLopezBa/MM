@@ -104,14 +104,22 @@ public class pnlAbono extends JPanel {
 
                 Proveedor temp = ControladorProveedor.getInstancia().obtenerByID((int) p2.tblModel.getValueAt(x, 0));
                 ArrayList<ProveedorEvento> eventos = ControladorProveedorEvento.getInstancia().obtenerListaByIdProveedor(temp.getIdProveedor());
-
-                cmbEventoP.removeAllItems();
-                mProveedores.setRowCount(0);
-                for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(temp.getIdProveedor())) {
-                    cmbEventoP.addItem(ev.getNombreEvento());
+                for (ProveedorEvento ev : eventos) {
+                    Evento evento = ControladorEvento.getInstancia().obtenerByID(ev.getIdEvento());
+                    cmbEventoP.removeAllItems();
+                    mProveedores.setRowCount(0);
+                    cmbEventoP.addItem(evento.getNombreEvento());
                 }
 
             }
+        });
+        p2.txtBusqueda.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                super.keyReleased(e); //To change body of generated methods, choose Tools | Templates.
+                cargarProveedores();
+            }
+
         });
     }
 
@@ -134,7 +142,7 @@ public class pnlAbono extends JPanel {
 
             for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
                 if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
-                     mClientes.setRowCount(0);
+                   
                     eventoActual = ev;
                     lblTotal.setText("Total : " + eventoActual.getPrecioFinal());
                     lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(Constante.clienteTemporal.getIdCliente(), eventoActual.getIdEvento()));
@@ -147,7 +155,7 @@ public class pnlAbono extends JPanel {
     }
 
     private void actualizarTotalADeber() {
-       
+
         lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(Constante.clienteTemporal.getIdCliente(), eventoActual.getIdEvento()));
 
     }
@@ -175,7 +183,7 @@ public class pnlAbono extends JPanel {
 
     private void cargarProveedores() {
         p2.tblModel.setRowCount(0);
-        for (Proveedor c : ControladorProveedor.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
+        for (Proveedor c : ControladorProveedor.getInstancia().obtenerListaByCadena(p2.txtBusqueda.getText())) {
             p2.tblModel.addRow(new Object[]{c.getIdProveedor(), c.getNombre(), c.getNombreEmpresa(), c.getTelefono(), c.getTelefono2()});
         }
     }
@@ -275,7 +283,7 @@ public class pnlAbono extends JPanel {
         if (m.getTipoMensaje() == Tipo.OK) {
             mClientes.setRowCount(0);
             cargarTablaAbono();
-             actualizarTotalADeber();
+            actualizarTotalADeber();
         }
         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
     }

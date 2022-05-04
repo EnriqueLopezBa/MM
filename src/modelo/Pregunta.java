@@ -10,6 +10,10 @@ public class Pregunta {
     private boolean escuestaSatisfaccion;
     private String opciones;
 
+    public Pregunta() {
+    }
+
+    
     public Pregunta(int idPregunta, String pregunta, boolean escuestaSatisfaccion, String opciones) {
         this.idPregunta = idPregunta;
         this.pregunta = pregunta;

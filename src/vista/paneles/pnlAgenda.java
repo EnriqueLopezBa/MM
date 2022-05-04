@@ -7,12 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import Calendario.*;
-import controlador.ControladorEvento;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import static javax.swing.JOptionPane.showMessageDialog;
-import modelo.Evento;
 import net.miginfocom.swing.*;
 
 /**

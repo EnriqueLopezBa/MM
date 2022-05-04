@@ -53,7 +53,15 @@ public class EventoDAOImp implements IEventoDAO {
 
     @Override
     public Evento obtenerByID(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO WHERE IDEVENTO = " + id)) {
+            if (rs.next()) {
+                return new Evento(rs.getInt(1), rs.getInt(2), rs.getInt(3),
+                        rs.getInt(4), rs.getDate(5), rs.getInt(6), rs.getInt(7), rs.getString(8), rs.getString(9), rs.getInt(10));
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }        
+        return null;
     }
 
     @Override

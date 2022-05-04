@@ -84,6 +84,8 @@ public class pnlAbono extends JPanel {
                 Principal.getInstancia().lblCliente.setText("Cliente Activo (SOLO ADMIN) : " + temp.getCorreo() + " - " + temp.getNombre());
                 cmbEvento.removeAllItems();
                 mClientes.setRowCount(0);
+                lblCantADeber.setText("Cant. A Deber:");
+                lblTotal.setText("Total: ");
                 for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
                     cmbEvento.addItem(ev.getNombreEvento());
                 }
@@ -97,12 +99,12 @@ public class pnlAbono extends JPanel {
                 if (!Constante.filaSeleccionada(p2.tblBuscar)) {
                     return;
                 }
-                
+
                 int x = p2.tblBuscar.getSelectedRow();
 
                 Proveedor temp = ControladorProveedor.getInstancia().obtenerByID((int) p2.tblModel.getValueAt(x, 0));
                 ArrayList<ProveedorEvento> eventos = ControladorProveedorEvento.getInstancia().obtenerListaByIdProveedor(temp.getIdProveedor());
-                
+
                 cmbEventoP.removeAllItems();
                 mProveedores.setRowCount(0);
                 for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(temp.getIdProveedor())) {
@@ -123,14 +125,16 @@ public class pnlAbono extends JPanel {
                     eventoActual = ev;
                     lblTotal.setText("Total : " + eventoActual.getPrecioFinal());
                     lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(Constante.clienteTemporal.getIdCliente(), eventoActual.getIdEvento()));
+                    mClientes.setRowCount(0);
                     cargarTablaAbono();
                     break;
                 }
             }
-        }else if (materialTabbed1.getSelectedIndex() == 1) {
-    
-              for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
+        } else if (materialTabbed1.getSelectedIndex() == 1) {
+
+            for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
                 if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
+                     mClientes.setRowCount(0);
                     eventoActual = ev;
                     lblTotal.setText("Total : " + eventoActual.getPrecioFinal());
                     lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(Constante.clienteTemporal.getIdCliente(), eventoActual.getIdEvento()));
@@ -139,6 +143,12 @@ public class pnlAbono extends JPanel {
                 }
             }
         }
+
+    }
+
+    private void actualizarTotalADeber() {
+       
+        lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(Constante.clienteTemporal.getIdCliente(), eventoActual.getIdEvento()));
 
     }
 
@@ -193,8 +203,11 @@ public class pnlAbono extends JPanel {
             format.requestFocus();
             throw new MMException("Abono vacio");
         }
-        if (Constante.clienteTemporal == null && ControladorCliente.getInstancia().obtenerClienteActivo() == null) {
+        if (Constante.clienteTemporal == null) {
             throw new MMException("Sin cliente activo/seleccionado");
+        }
+        if (eventoActual.getPrecioFinal() == 0) {
+            throw new MMException("Es necesario registrar la cotizacion final");
         }
 
     }
@@ -221,6 +234,7 @@ public class pnlAbono extends JPanel {
             if (m.getTipoMensaje() == Tipo.OK) {
                 mClientes.setRowCount(0);
                 cargarTablaAbono();
+                actualizarTotalADeber();
             }
             Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
         } catch (MMException ex) {
@@ -261,6 +275,7 @@ public class pnlAbono extends JPanel {
         if (m.getTipoMensaje() == Tipo.OK) {
             mClientes.setRowCount(0);
             cargarTablaAbono();
+             actualizarTotalADeber();
         }
         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
     }
@@ -373,6 +388,7 @@ public class pnlAbono extends JPanel {
 
                     //---- btnRegistrar ----
                     btnRegistrar.setText("Registrar");
+                    btnRegistrar.setFont(new Font("Segoe UI", Font.BOLD, 16));
                     btnRegistrar.addActionListener(e -> btnRegistrar(e));
                     panel3.add(btnRegistrar, "cell 0 5,grow");
                 }

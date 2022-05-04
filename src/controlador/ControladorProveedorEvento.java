@@ -23,6 +23,10 @@ public class ControladorProveedorEvento {
         return instancia;
     }
 
+    public ProveedorEvento obtenerByIdEventoAndIdProveedor(int idEvento, int idProveedor) {
+        return ProveedorEventoDAOImp.getInstancia().obtenerByIdEventoAndIdProveedor(idEvento, idProveedor);
+    }
+
     public ArrayList<ProveedorEvento> obtenerListaByIdProveedor(int idProveedor) {
         return ProveedorEventoDAOImp.getInstancia().obtenerListaByIdProveedor(idProveedor);
     }

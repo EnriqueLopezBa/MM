@@ -171,13 +171,12 @@ public class pnlCliente extends JPanel {
             cliente.setTelefono(txtTelefono.getText());
             cliente.setTelefono2(txtTelefono2.getText());
             Mensaje m = ControladorCliente.getInstancia().registrarCliente(cliente);
-            Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
             if (m.getTipoMensaje() == Message.Tipo.OK) {
                 cargarClientes();
             }
-
+         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
         } catch (MMException ee) {
-            showMessageDialog(null, ee.getMessage());
+            Constante.mensaje(ee.getMessage(), Message.Tipo.ERROR);
         }
 
     }
@@ -215,6 +214,7 @@ public class pnlCliente extends JPanel {
 
             //---- btnAceptar ----
             btnAceptar.setText("Registrar");
+            btnAceptar.setFont(new Font("Segoe UI", Font.BOLD, 18));
             btnAceptar.addActionListener(e -> btnAceptar(e));
             panel1.add(btnAceptar, "cell 1 0,growx,wmin 20%,height 30%:30%:30%");
 

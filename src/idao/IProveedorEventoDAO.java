@@ -16,4 +16,5 @@ public interface IProveedorEventoDAO extends CRUD<ProveedorEvento> {
     Mensaje actualizarLote(ArrayList<ProveedorEvento> loteProveedores);
     ArrayList<ProveedorEvento> obtenerListaByIdEvento(int idEvento);
     ArrayList<ProveedorEvento> obtenerListaByIdProveedor(int idProveedor);
+    ProveedorEvento obtenerByIdEventoAndIdProveedor(int idEvento, int idProveedor);
 }

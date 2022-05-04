@@ -12,19 +12,25 @@ import modelo.Evento;
 public class ControladorEvento {
 
     private static ControladorEvento instancia;
+
     private ControladorEvento() {
     }
-    public static ControladorEvento getInstancia(){
+
+    public static ControladorEvento getInstancia() {
         if (instancia == null) {
             instancia = new ControladorEvento();
         }
         return instancia;
     }
 
-    
-    public ArrayList<Evento> obtenerEventoByAnio(int anio){
+    public Evento obtenerByID(int id) {
+        return EventoDAOImp.getInstancia().obtenerByID(id);
+    }
+
+    public ArrayList<Evento> obtenerEventoByAnio(int anio) {
         return EventoDAOImp.getInstancia().obtenerEventoByAnio(anio);
     }
+
     public ArrayList<Evento> obtenerListaByCadena(String cadena) {
         return EventoDAOImp.getInstancia().obtenerListaByCadena(cadena);
     }

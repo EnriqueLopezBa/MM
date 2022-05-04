@@ -1,6 +1,7 @@
 package dao;
 
 import Componentes.Sweet_Alert.Message;
+import controlador.ControladorEvento;
 import idao.IAbonoDAO;
 import independientes.Conexion;
 import independientes.Mensaje;
@@ -105,6 +106,8 @@ public class AbonoDAOImp implements IAbonoDAO {
                 + " WHERE a.idCliente = "+idCliente+" AND a.idEvento = "+idEvento+" GROUP BY e.precioEvento")) {
             if (rs.next()) {
                 return rs.getInt(1);
+            }else{
+                return ControladorEvento.getInstancia().obtenerByID(idEvento).getPrecioFinal();
             }
         } catch (SQLException e) {
             System.err.println("Error obtenerCantidadADeber AbonoCliente," + e.getMessage());

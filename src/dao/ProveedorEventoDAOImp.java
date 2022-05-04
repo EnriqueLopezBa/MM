@@ -90,11 +90,12 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
             if (!yaExiste(pro).isEmpty()) {
                 continue;
             }
-            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOREVENTO VALUES(?,?,?,?)")) {
+            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOREVENTO VALUES(?,?,?,?,?)")) {
                 ps.setInt(1, pro.getIdEvento());
-                ps.setInt(2, pro.getIdProveedor());
-                ps.setDate(3, new java.sql.Date(pro.getHoraInicio().getTime()));
-                ps.setDate(4, new java.sql.Date(pro.getHoraFinal().getTime()));
+                ps.setInt(2, pro.getIdProveedor());      
+                ps.setTimestamp(3, new java.sql.Timestamp(pro.getHoraInicio().getTime()));
+                ps.setTimestamp(4, new java.sql.Timestamp(pro.getHoraFinal().getTime()));
+                ps.setInt(5, 0);
                 ps.execute();
             } catch (SQLException e) {
                 System.err.println("Error registrarLote ProveedorEvento, " + e.getMessage());
@@ -154,6 +155,19 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
             return temp;
         } catch (SQLException e) {
             System.err.println("Error obtenerListaByIdEvento ProveedorEvento," + e.getMessage());
+        }        
+        return null;
+    }
+
+    @Override
+    public ProveedorEvento obtenerByIdEventoAndIdProveedor(int idEvento, int idProveedor) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = "+ idEvento+
+                " AND IDPROVEEDOR = " + idProveedor)) {
+            if (rs.next()) {
+                return new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getDate(3), rs.getDate(4), rs.getInt(5));
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
         }        
         return null;
     }

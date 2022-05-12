@@ -40,9 +40,11 @@ public class ImageItem extends JComponent {
 
     private Proveedor proveedor;
     private ProveedorImagenes proveedorIMG;
+    private ImageSlider puntero;
 
-    public ImageItem(Icon image, MigLayout mig, Object clase, Object claseIMG) {
+    public ImageItem(Icon image, MigLayout mig, Object clase, Object claseIMG, ImageSlider puntero) {
         this.image = image;
+        this.puntero = puntero;
         if (clase instanceof Lugar) {
             this.lugar = (Lugar) clase;
         } else if (clase instanceof Proveedor) {
@@ -60,10 +62,14 @@ public class ImageItem extends JComponent {
         timer = new Timer(0, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                float porcentaje = 0F;
+                porcentaje = (puntero.sb.getOrientation() == ScrollBar.VERTICAL) ? 0.45F : 0.90F;
                 if (show) {
+
                     int width = getWidth();
                     int height = getHeight();
-                    if (height < 300) {
+
+                    if (height < getParent().getHeight() * porcentaje) {
                         mig.setComponentConstraints(ImageItem.this, "w " + (width + 1) + ", h " + (height + 1));
                         getParent().revalidate();
                     } else {
@@ -72,7 +78,7 @@ public class ImageItem extends JComponent {
                 } else {
                     int width = getWidth();
                     int height = getHeight();
-                    if (height > 200) {
+                    if (height > getParent().getHeight() * (porcentaje - 0.10)) {
                         mig.setComponentConstraints(ImageItem.this, "w " + (width - 1) + ", h " + (height - 1));
                         getParent().revalidate();
                     } else {
@@ -137,7 +143,7 @@ public class ImageItem extends JComponent {
             if (proveedor != null && proveedorIMG != null) {
                 g2.setFont(new Font("Times Roman", Font.PLAIN, 14));
                 g2.drawString("Nombre: " + proveedor.getNombreEmpresa(), 15, height - shadowSize + 15);
-                g2.drawString("Precio Aprox.: " + proveedor.getPrecioAprox()+ "", 15, height - shadowSize + 35);
+                g2.drawString("Precio Aprox.: " + proveedor.getPrecioAprox() + "", 15, height - shadowSize + 35);
             } else if (proveedorIMG != null) {
                 g2.drawString(proveedorIMG.getDescripcion(), 15, height - shadowSize + 15);
             }

@@ -2,7 +2,6 @@ package vista.paneles;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import Componentes.Sweet_Alert.Button;
@@ -23,14 +22,9 @@ import independientes.Mensaje;
 import independientes.image_slider.*;
 import static java.awt.MouseInfo.getPointerInfo;
 import java.awt.event.ActionEvent;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import modelo.Ciudad;
@@ -49,28 +43,26 @@ import vista.principales.Principal;
 
 public class pnlProveedores extends JPanel {
 
-    private Cliente clienteTemp = null;
-
     private TipoProveedor tipoProveedorActual;
     private Proveedor proveedorActual;
     private Evento eventoActual;
 
     private DefaultTableModel m;
 
-     SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
-     
+    SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
+
     public pnlProveedores() {
         initComponents();
         m = (DefaultTableModel) tblProveedor.getModel();
         int presuInicial = Constante.getPresupuesto();
-        m.addTableModelListener(new TableModelListener() {
+        m.addTableModelListener(new TableModelListener() { // PARA RECALCULAR EL PRESUPUESTO
             @Override
             public void tableChanged(TableModelEvent e) {
                 Constante.setPresupuesto(presuInicial);
                 Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presuInicial);
                 for (int j = 0; j < m.getRowCount(); j++) {
                     if (m.getValueAt(j, 1) != null) {
-                        Proveedor prov = ControladorProveedor.getInstancia().obtenerByID((int)m.getValueAt(j, 1));
+                        Proveedor prov = ControladorProveedor.getInstancia().obtenerByID((int) m.getValueAt(j, 1));
                         Constante.setPresupuesto(prov.getPrecioAprox(), true);
                     }
                 }
@@ -92,7 +84,7 @@ public class pnlProveedores extends JPanel {
     }
 
     private void cargarProveedores() {
-        if (eventoActual  == null) {
+        if (eventoActual == null) {
             return;
         }
         cmbProveedor.removeAllItems();
@@ -109,20 +101,8 @@ public class pnlProveedores extends JPanel {
     }
 
     private void cargarNombreEvento() {
-        if (Constante.clienteTemporal == null) {
-            cmbNombreEvento.removeAllItems();
-
-            for (Evento e : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
-                cmbNombreEvento.addItem(e.getNombreEvento());
-            }
-            return;
-        }
-        if (Constante.clienteTemporal == clienteTemp) {
-            return;
-        }
-        clienteTemp = Constante.clienteTemporal;
         cmbNombreEvento.removeAllItems();
-        for (Evento e : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
+        for (Evento e : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
             cmbNombreEvento.addItem(e.getNombreEvento());
         }
 
@@ -146,29 +126,22 @@ public class pnlProveedores extends JPanel {
         if (cmbNombreEvento.getSelectedIndex() == -1) {
             return;
         }
-        if (Constante.clienteTemporal == null) {
-            for (Evento eve : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
-                if (eve.getNombreEvento().equals(cmbNombreEvento.getSelectedItem().toString())) {
-                    eventoActual = eve;
-                    Lugar lugar = ControladorLugar.getInstancia().obtenerByID(eve.getIdLugar());
-                    Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lugar.getIdCiudad());
-                    Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdCiudad());
-                    lblInfo.setText(estado.getEstado()+ ", " +ciudad.getCiudad());
-                   
-                }
-            }
-        } else {
-            for (Evento eve : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
-                if (eve.getNombreEvento().equals(cmbNombreEvento.getSelectedItem().toString())) {
-                    eventoActual = eve;
-                }
+        for (Evento eve : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
+            if (eve.getNombreEvento().equals(cmbNombreEvento.getSelectedItem().toString())) {
+                eventoActual = eve;
+                Lugar lugar = ControladorLugar.getInstancia().obtenerByID(eve.getIdLugar());
+                Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lugar.getIdCiudad());
+                Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdCiudad());
+                lblInfo.setText(estado.getEstado() + ", " + ciudad.getCiudad());
             }
         }
+
         cargarProveedorEvento();
 
     }
 
     private void cargarProveedorEvento() {
+
         if (eventoActual == null || ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento()) == null) {
             return;
         }
@@ -177,10 +150,8 @@ public class pnlProveedores extends JPanel {
             Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(pro.getIdProveedor());
             TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID(proveedor.getIdtipoProveedor());
             ProveedorEvento provE = ControladorProveedorEvento.getInstancia().obtenerByIdEventoAndIdProveedor(eventoActual.getIdEvento(), proveedor.getIdProveedor());
-               
-        String timeInicio = localDateFormat.format(provE.getHoraInicio());
-        String timeFinal = localDateFormat.format(provE.getHoraFinal());
-   
+            String timeInicio = localDateFormat.format(provE.getHoraInicio());
+            String timeFinal = localDateFormat.format(provE.getHoraFinal());
             m.addRow(new Object[]{tipo.getIdTipoProveedor(), proveedor.getIdProveedor(),
                 tipo.getTipoProveedor(), proveedor.getNombreEmpresa(), timeInicio, timeFinal});
         }
@@ -193,7 +164,7 @@ public class pnlProveedores extends JPanel {
         for (Proveedor pro : ControladorProveedor.getInstancia().obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())) {
             if (pro.getNombreEmpresa().equals(cmbProveedor.getSelectedItem().toString())) {
                 proveedorActual = pro;
-                lblInfoProv.setText("Precio aprox: " + pro.getPrecioAprox()+"");
+                lblInfoProv.setText("Precio aprox: " + pro.getPrecioAprox() + "");
             }
         }
     }
@@ -218,7 +189,7 @@ public class pnlProveedores extends JPanel {
                 }
             }
 
-            tblProveedor.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), null,
+            m.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), null,
                 tipoProveedorActual.getTipoProveedor(), cmbProveedor.getEditor().getItem().toString(), txtHoraEntrada.getText(), txtHoraSalida.getText()});
         } else {
             for (int j = 0; j < m.getRowCount(); j++) {
@@ -229,7 +200,8 @@ public class pnlProveedores extends JPanel {
                     return;
                 }
             }
-            tblProveedor.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), proveedorActual.getIdProveedor(),
+
+            m.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), proveedorActual.getIdProveedor(),
                 tipoProveedorActual.getTipoProveedor(), proveedorActual.getNombreEmpresa(), txtHoraEntrada.getText(), txtHoraSalida.getText()});
 
         }
@@ -266,16 +238,16 @@ public class pnlProveedores extends JPanel {
             }
             Calendar ca = Calendar.getInstance();
             Calendar ca2 = Calendar.getInstance();
-            
-            ca.setTime(eventoActual.getFecha());
-            ca2.setTime(eventoActual.getFecha());
+
+            ca.setTime(eventoActual.getFechaInicio());
+            ca2.setTime(eventoActual.getFechaInicio());
             String timesplit[] = m.getValueAt(j, 4).toString().replaceAll(" ", "").split(":");
             ca.set(Calendar.HOUR, Integer.parseInt(timesplit[0]));
-            ca.set(Calendar.MINUTE, Integer.parseInt(timesplit[1].substring(0,2)));
-            
-            String timesplit2[] =  m.getValueAt(j, 5).toString().replaceAll(" ", "").split(":");
+            ca.set(Calendar.MINUTE, Integer.parseInt(timesplit[1].substring(0, 2)));
+
+            String timesplit2[] = m.getValueAt(j, 5).toString().replaceAll(" ", "").split(":");
             ca2.set(Calendar.HOUR, Integer.parseInt(timesplit2[0]));
-            ca2.set(Calendar.MINUTE, Integer.parseInt(timesplit2[1].substring(0,2)));
+            ca2.set(Calendar.MINUTE, Integer.parseInt(timesplit2[1].substring(0, 2)));
 
             proE.add(new ProveedorEvento(eventoActual.getIdEvento(), (int) m.getValueAt(j, 1), ca.getTime(), ca2.getTime(), 0));
         }
@@ -285,16 +257,15 @@ public class pnlProveedores extends JPanel {
     }
 
     private void txtHoraEntradaMouseClicked(MouseEvent e) {
-     
         int x = getPointerInfo().getLocation().x - txtHoraEntrada.getLocationOnScreen().x;
         int y = getPointerInfo().getLocation().y - txtHoraEntrada.getLocationOnScreen().y - timePicker1.getHeight();
-       timePicker1.showPopup(txtHoraEntrada, x, y);
+        timePicker1.showPopup(txtHoraEntrada, x, y);
     }
 
     private void txtHoraSalidaMouseClicked(MouseEvent e) {
-         int x = getPointerInfo().getLocation().x - txtHoraSalida.getLocationOnScreen().x;
+        int x = getPointerInfo().getLocation().x - txtHoraSalida.getLocationOnScreen().x;
         int y = getPointerInfo().getLocation().y - txtHoraSalida.getLocationOnScreen().y - timePicker2.getHeight();
-         timePicker2.showPopup(txtHoraSalida, x, y);
+        timePicker2.showPopup(txtHoraSalida, x, y);
     }
 
     private void initComponents() {

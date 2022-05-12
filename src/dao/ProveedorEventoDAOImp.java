@@ -164,7 +164,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = "+ idEvento+
                 " AND IDPROVEEDOR = " + idProveedor)) {
             if (rs.next()) {
-                return new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getDate(3), rs.getDate(4), rs.getInt(5));
+                return new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getTimestamp(3), rs.getTimestamp(4), rs.getInt(5));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());

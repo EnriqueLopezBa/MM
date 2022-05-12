@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import static javax.swing.JOptionPane.showMessageDialog;
 import modelo.Ciudad;
 import modelo.Cliente;
 import modelo.Evento;
@@ -46,11 +45,11 @@ public class DialogEvento extends JDialog {
         pun = puntero;
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         double asd = screensize.getWidth() / 1.9;
-        int x = (int)asd;
+        int x = (int) asd;
         setSize(new Dimension(x, getPreferredSize().height));
         setLocationRelativeTo(pun.i);
         getContentPane().setBackground(Color.white);
-        p.init(new String[]{"idEvento", "idCliente", "idTipoEvento", "idLugar", "Fecha", "Num. Invitados", "Presupuesto", "Estilo", "Nombre de Evento", "Precio Total"}, 4, false);
+        p.init(new String[]{"idEvento", "idCliente", "idTipoEvento", "idLugar", "Fecha Inicio", "Fecha Final", "Nombre de Evento", "Num. Invitados", "Presupuesto", "Estilo", "Precio Total"}, 4, false);
         llenarTabla();
         p.txtBusqueda.addKeyListener(new KeyAdapter() {
             @Override
@@ -68,16 +67,14 @@ public class DialogEvento extends JDialog {
                     return;
                 }
                 int x = p.tblBuscar.getSelectedRow();
-                pun.txtNombreEvento.setText(p.tblModel.getValueAt(x, 8).toString());
-                pun.txtPresupuesto.setText(p.tblModel.getValueAt(x, 6).toString());
-                pun.txtCantInvitados.setText(p.tblModel.getValueAt(x, 5).toString());
-//                pun.frm.listModel.clear();
-//                for (LugarEtiquetas lu : controladorLugEti.obtenerEtiquetasByIDLugar((int) p.tblModel.getValueAt(x, 3))) {
-//                    pun.frm.listModel.addElement(controladorEtiqueta.obtenerByID(lu.getIdEtiqueta()).getEtiqueta());
-//                }
+                pun.txtNombreEvento.setText(p.tblModel.getValueAt(x, 6).toString());
+                pun.txtCantInvitados.setText(p.tblModel.getValueAt(x, 7).toString());
+                pun.txtPresupuesto.setText(p.tblModel.getValueAt(x, 8).toString());
                 try {
                     Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(p.tblModel.getValueAt(x, 4).toString());
-                    pun.dateChooser.setSelectedDate(date1);
+                    pun.fechaInicio.setSelectedDate(date1);
+                    Date date2 = new SimpleDateFormat("yyyy-MM-dd").parse(p.tblModel.getValueAt(x, 5).toString());
+                    pun.fechaFinal.setSelectedDate(date2);
                     pun.cmbTipoEvento.setSelectedItem(ControladorTipoEvento.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 2)).getTematica());
                     Lugar lug = ControladorLugar.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 3));
                     Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lug.getIdCiudad());
@@ -90,12 +87,10 @@ public class DialogEvento extends JDialog {
                             + cliente.getCorreo() + " - " + cliente.getNombre() + " " + cliente.getApellido());
                     lblCliente.setText("Cliente: " + cliente.getCorreo() + " - "
                             + cliente.getNombre() + " " + cliente.getApellido());
-                    Constante.clienteTemporal = cliente;
-
+                    Constante.setClienteTemporal(cliente);
                 } catch (ParseException ex) {
                     Logger.getLogger(DialogEvento.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
 
         });
@@ -109,11 +104,7 @@ public class DialogEvento extends JDialog {
                 int x = p.tblBuscar.getSelectedRow();
                 Evento evento = new Evento();
                 evento.setIdEvento((int) p.tblModel.getValueAt(x, 0));
-                if (Constante.clienteTemporal != null) {
-                    evento.setIdCliente(Constante.clienteTemporal.getIdCliente());
-                } else {
-                    evento.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
-                }
+                evento.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
                 evento.setIdTipoEvento(pun.tipoEventoActual.getIdTipoEvento());
                 if (pun.lugarActual == null) {
                     Lugar lugar = new Lugar();
@@ -124,7 +115,8 @@ public class DialogEvento extends JDialog {
                 } else {
                     evento.setIdLugar(pun.lugarActual.getIdLugar());
                 }
-                evento.setFecha(pun.getFecha());
+                evento.setFechaInicio(pun.obtenerFecha(pun.txtFechaInicio, pun.txtHorarioInicio));
+                evento.setFechaFinal(pun.obtenerFecha(pun.txtFechaFinal, pun.txtHorarioFinal));
                 evento.setNoInvitados(Integer.parseInt(pun.txtCantInvitados.getText()));
                 evento.setPresupuesto(Integer.parseInt(pun.txtPresupuesto.getText()));
                 evento.setEstilo(pun.txtEstilo.getText());
@@ -163,27 +155,25 @@ public class DialogEvento extends JDialog {
         p.tblModel.setRowCount(0);
         for (Evento e : ControladorEvento.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdEvento(), e.getIdCliente(), e.getIdTipoEvento(),
-                e.getIdLugar(), e.getFecha(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo(), e.getNombreEvento(), e.getPrecioFinal()});
+                e.getIdLugar(), e.getFechaInicio(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo(), e.getNombreEvento(), e.getPrecioFinal()});
         }
     }
 
     private void thisWindowClosed(WindowEvent e) {
-        Constante.clienteTemporal = null;
-        Principal.getInstancia().getClienteActivo();
+        Constante.removeClienteTemporal();
     }
 
     private void txtPrecioTotalKeyReleased(KeyEvent e) {
-     
 
     }
 
     private void txtPrecioTotalKeyPressed(KeyEvent e) {
-      
+
     }
 
     private void txtPrecioTotalKeyTyped(KeyEvent e) {
         if (!Character.isDigit(e.getKeyChar())) {
-          
+
             e.consume();
         }
     }

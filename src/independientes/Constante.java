@@ -34,7 +34,7 @@ public class Constante {
         return Principal.getInstancia().admin;
     }
 
-    public static Cliente clienteTemporal;
+    private static Cliente clienteTemporal;
     
     public static Cliente getClienteTemporal(){
         return clienteTemporal;

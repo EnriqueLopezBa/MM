@@ -81,7 +81,7 @@ public class DialogQuiz extends JDialog {
 
     private void cargarQuiz(){
         m.setRowCount(0);
-        for(Quiz z : ControladorQuiz.getInstancia().obtenerListaByIdCliente(Constante.clienteTemporal.getIdCliente())){
+        for(Quiz z : ControladorQuiz.getInstancia().obtenerListaByIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())){
             Pregunta pregunta = ControladorPregunta.getInstancia().obtenerByID(z.getIdPregunta());
             m.addRow(new Object[]{z.getIdPregunta(), z.getIdCliente(), pregunta.getPregunta(), z.getRespuesta()});
         }

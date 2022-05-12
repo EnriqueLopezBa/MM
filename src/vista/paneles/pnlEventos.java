@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import com.raven.datechooser.*;
+import com.raven.swing.*;
 import controlador.ControladorCiudad;
 import controlador.ControladorCliente;
 import controlador.ControladorEstado;
@@ -41,6 +42,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import independientes.image_slider.*;
+import static java.awt.MouseInfo.getPointerInfo;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.ZoneId;
@@ -66,7 +68,8 @@ import vista.principales.Principal;
 
 public class pnlEventos extends JPanel {
 
-    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat sdfT = new SimpleDateFormat("hh:mm:ss");
 
     public Estado estadoActual = null;
     public Ciudad ciudadActual = null;
@@ -79,7 +82,6 @@ public class pnlEventos extends JPanel {
         initComponents();
         txtPresupuesto.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
         txtCantInvitados.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
-        setMinDate();
         cargarEtiquetas();
         cargarTipoEvento();
         cargarEstado();
@@ -304,13 +306,10 @@ public class pnlEventos extends JPanel {
         try {
             validarDatos(txtPresupuesto, txtCantInvitados, cmbLugar, txtNombreEvento);
             Evento evento = new Evento();
-            if (Constante.clienteTemporal != null) {
-                evento.setIdCliente(Constante.clienteTemporal.getIdCliente());
-            } else {
-                evento.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
-            }
+            evento.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
             evento.setIdTipoEvento(ControladorTipoEvento.getInstancia().obtenerListaByCadena(cmbTipoEvento.getSelectedItem().toString()).get(0).getIdTipoEvento());
-            evento.setFecha(getFecha());
+            evento.setFechaInicio(obtenerFecha(txtFechaInicio, txtHorarioInicio));
+            evento.setFechaFinal(obtenerFecha(txtFechaFinal, txtHorarioFinal));
             evento.setNoInvitados(Integer.parseInt(txtCantInvitados.getText().replaceAll(",", "")));
             evento.setPresupuesto(Integer.parseInt(txtPresupuesto.getText().replaceAll(",", "")));
             evento.setEstilo(txtEstilo.getText());
@@ -334,6 +333,10 @@ public class pnlEventos extends JPanel {
     }
 
     private void validarDatos(JTextField txtPresupuesto, JTextField txtNoInvitados, JComboBox cmbLugar, JTextField txtNombreEvento) throws MMException {
+        if (txtNombreEvento.getText().isEmpty()) {
+            txtNombreEvento.requestFocus();
+            throw new MMException("Nombre de evento vacio");
+        }
         if (txtPresupuesto.getText().isEmpty()) {
             txtPresupuesto.requestFocus();
             throw new MMException("Prepuesto vacio");
@@ -352,57 +355,82 @@ public class pnlEventos extends JPanel {
             txtNombreEvento.requestFocus();
             throw new MMException("Nombre de evento vacio");
         }
+
+        //Validar fecha
+        LocalDate d1 = LocalDate.parse(sdf.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate d2 = LocalDate.parse(txtFechaInicio.getText(), DateTimeFormatter.ISO_LOCAL_DATE);
+        Duration diff = Duration.between(d1.atStartOfDay(), d2.atStartOfDay());
+        long diffDays = diff.toDays();
+        if (diffDays < 7) {
+            txtFechaInicio.requestFocus();
+            throw new MMException("Minimo 1 semana de anticipacion");
+        }
+
+        Date fechaInicioo = obtenerFecha(txtFechaInicio, txtHorarioInicio);
+        Date fechaFinall = obtenerFecha(txtFechaFinal, txtHorarioFinal);
+        System.out.println(fechaInicioo + " | " + fechaFinall);
+        if (fechaFinall.before(fechaInicioo) || fechaFinall.equals(fechaInicioo)) {
+            throw new MMException("Fecha final incorrecta!");
+        }
         if (ControladorCliente.getInstancia().obtenerClienteActivo() == null) {
             throw new MMException("Sin cliente activo");
         }
     }
 
+    public Date obtenerFecha(JTextField fecha, JTextField hora) {
+        try {
+            String sp[] = hora.getText().split(":");
+            Calendar calendario = Calendar.getInstance();
+            calendario.setTime(sdf.parse(fecha.getText()));
+            calendario.set(Calendar.HOUR, Integer.parseInt(sp[0]));
+            calendario.set(Calendar.MINUTE, Integer.parseInt(sp[1].substring(0, 2)));
+            return calendario.getTime();
+        } catch (ParseException ex) {
+            Logger.getLogger(pnlEventos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
     private void setMinDate() {
-        LocalDate d11 = LocalDate.parse(format.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate d11 = LocalDate.parse(sdf.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
         d11 = d11.plusDays(7);
-        dateChooser.setSelectedDate(new SelectedDate(d11.getDayOfMonth(), d11.getMonthValue(), d11.getYear()));
+
+        fechaInicio.setSelectedDate(new SelectedDate(d11.getDayOfMonth(), d11.getMonthValue(), d11.getYear()));
     }
 
     private void dateChooserPropertyChange(PropertyChangeEvent e) {
-        if (txtFecha.getText().length() > 0) {
-            LocalDate d1 = LocalDate.parse(format.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
-            LocalDate d2 = LocalDate.parse(txtFecha.getText(), DateTimeFormatter.ISO_LOCAL_DATE);
 
-            ArrayList<Evento> eventos = ControladorEvento.getInstancia().obtenerEventoByAnio(d2.getYear());
-            for (Evento eve : eventos) {
-                Date input = null;
-                try {
-                    input = format.parse(eve.getFecha() + "");
-                } catch (ParseException ex) {
-                    Logger.getLogger(pnlEventos.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                LocalDate date = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                if (date.getDayOfMonth() == d2.getDayOfMonth()) {
-                    if (date.getMonthValue() == d2.getMonthValue()) {
-                        if (date.getYear() == d2.getYear()) {
-                            Constante.mensaje("Este dia se encuentra ocupado", Message.Tipo.ADVERTENCIA);
-                            setMinDate();
-                            return;
-                        }
-                    }
-                }
-
-            }
-            Duration diff = Duration.between(d1.atStartOfDay(), d2.atStartOfDay());
-            long diffDays = diff.toDays();
-            if (diffDays < 7) {
-                Constante.mensaje("Minimo 1 semana de anticipacion", Message.Tipo.ADVERTENCIA);
-                setMinDate();
-            }
-        }
-    }
-
-    public Date getFecha() {
-        Calendar c1 = Calendar.getInstance();
-        c1.set(Calendar.YEAR, dateChooser.getSelectedDate().getYear());
-        c1.set(Calendar.MONTH, dateChooser.getSelectedDate().getMonth() - 1);
-        c1.set(Calendar.DAY_OF_MONTH, dateChooser.getSelectedDate().getDay());
-        return c1.getTime();
+//        if (txtFecha.getText().length() > 0) {
+//            LocalDate d1 = LocalDate.parse(format.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
+//            LocalDate d2 = LocalDate.parse(txtFecha.getText(), DateTimeFormatter.ISO_LOCAL_DATE);
+//
+//            ArrayList<Evento> eventos = ControladorEvento.getInstancia().obtenerEventoByAnio(d2.getYear());
+//            for (Evento eve : eventos) {
+//                Date input = null;
+//                try {
+//                    input = format.parse(eve.getFecha() + "");
+//                } catch (ParseException ex) {
+//                    Logger.getLogger(pnlEventos.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                LocalDate date = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//                if (date.getDayOfMonth() == d2.getDayOfMonth()) {
+//                    if (date.getMonthValue() == d2.getMonthValue()) {
+//                        if (date.getYear() == d2.getYear()) {
+//                            Constante.mensaje("Este dia se encuentra ocupado", Message.Tipo.ADVERTENCIA);
+//                            setMinDate();
+//                            return;
+//                        }
+//                    }
+//                }
+//
+//            }
+//            Duration diff = Duration.between(d1.atStartOfDay(), d2.atStartOfDay());
+//            long diffDays = diff.toDays();
+//            if (diffDays < 7) {
+//                Constante.mensaje("Minimo 1 semana de anticipacion", Message.Tipo.ADVERTENCIA);
+//                setMinDate();
+//            }
+//        }
     }
 
     private void lblEditEtiquetaMousePressed(MouseEvent e) {
@@ -417,20 +445,32 @@ public class pnlEventos extends JPanel {
         });
     }
 
-    private void txtFechaMouseWheelMoved(MouseWheelEvent e) {
-//        if (e.getWheelRotation() > 0) {
-//            showMessageDialog(null, "abajo");
-//         
-//        }else{
-////            showMessageDialog(null, "arriba");
-////               LocalDate d11 = LocalDate.parse(format.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
-////             d11 = d11.plusMonths(1);
-//             
-////           dateChooser.showPopup(txtFecha, txtFecha.getLocationOnScreen().x/2, txtFecha.getLocationOnScreen().y);
-////             dateChooser.setSelectedDate(new SelectedDate(d11.getDayOfMonth(), d11.getMonthValue(), d11.getYear()));
-//               
-//        }
+    private void txtHorarioInicioMouseClicked(MouseEvent e) {
+        int x = getPointerInfo().getLocation().x - txtHorarioInicio.getLocationOnScreen().x;
+        int y = getPointerInfo().getLocation().y - txtHorarioInicio.getLocationOnScreen().y - timePickerInicio.getHeight();
+        timePickerInicio.showPopup(txtHorarioInicio, x, y);
+    }
 
+    private void txtHorarioFinalMouseClicked(MouseEvent e) {
+        int x = getPointerInfo().getLocation().x - txtHorarioFinal.getLocationOnScreen().x;
+        int y = getPointerInfo().getLocation().y - txtHorarioFinal.getLocationOnScreen().y - timePickerFinal.getHeight();
+        timePickerFinal.showPopup(txtHorarioFinal, x, y);
+    }
+
+    private void fechaInicioMouseWheelMoved(MouseWheelEvent e) {
+//         if (e.getWheelRotation() > 0) {  
+//            fechaInicio.cmdPrevious.doClick();
+//        }else{
+//           fechaInicio.cmdForward.doClick();    
+//        }
+    }
+
+    private void txtFechaInicioKeyPressed(KeyEvent e) {
+        // TODO add your code here
+    }
+
+    private void txtHorarioInicioKeyPressed(KeyEvent e) {
+        // TODO add your code here
     }
 
     private void initComponents() {
@@ -440,7 +480,6 @@ public class pnlEventos extends JPanel {
         lblPresupuesto = new JLabel();
         lblCantInvitados = new JLabel();
         lblCaracteristicas = new JLabel();
-        lblFecha = new JLabel();
         lblTipoEvento = new JLabel();
         lblEstado = new JLabel();
         lblCiudad = new JLabel();
@@ -448,12 +487,18 @@ public class pnlEventos extends JPanel {
         txtPresupuesto = new JFormattedTextField();
         txtCantInvitados = new JFormattedTextField();
         pnlListEtiquetas = new JPanel();
-        txtFecha = new JTextField();
         btnAdmin = new JButton();
         i = new ImageSlider();
         lblEstilo = new JLabel();
         txtEstilo = new JTextField();
         lblEditEtiqueta = new JLabel();
+        panel1 = new JPanel();
+        lblFecha = new JLabel();
+        txtFechaInicio = new JTextField();
+        txtHorarioInicio = new JTextField();
+        lblFecha2 = new JLabel();
+        txtFechaFinal = new JTextField();
+        txtHorarioFinal = new JTextField();
         cmbEstado = new JComboBox();
         cmbCiudad = new JComboBox();
         cmbTipoEvento = new JComboBox();
@@ -465,7 +510,10 @@ public class pnlEventos extends JPanel {
         lblEditLugar = new JLabel();
         cbOtro = new JCheckBox();
         btnAceptar = new Button();
-        dateChooser = new DateChooser();
+        fechaInicio = new DateChooser();
+        fechaFinal = new DateChooser();
+        timePickerInicio = new TimePicker();
+        timePickerFinal = new TimePicker();
 
         //======== this ========
         setBackground(Color.white);
@@ -500,41 +548,37 @@ public class pnlEventos extends JPanel {
 
         //---- lblNombreEvento ----
         lblNombreEvento.setText("Nombre Evento");
+        lblNombreEvento.setFont(new Font("Segoe UI", Font.BOLD, 14));
         add(lblNombreEvento, "cell 0 1");
 
         //---- lblPresupuesto ----
         lblPresupuesto.setText("Presupuesto");
-        lblPresupuesto.setFont(lblPresupuesto.getFont().deriveFont(lblPresupuesto.getFont().getSize() + 1f));
+        lblPresupuesto.setFont(new Font("Segoe UI", Font.BOLD, 14));
         add(lblPresupuesto, "cell 0 2");
 
         //---- lblCantInvitados ----
         lblCantInvitados.setText("Cant. Invitados");
-        lblCantInvitados.setFont(lblCantInvitados.getFont().deriveFont(lblCantInvitados.getFont().getSize() + 1f));
+        lblCantInvitados.setFont(new Font("Segoe UI", Font.BOLD, 14));
         add(lblCantInvitados, "cell 0 3");
 
         //---- lblCaracteristicas ----
         lblCaracteristicas.setText("Caracteristicas de evento");
-        lblCaracteristicas.setFont(lblCaracteristicas.getFont().deriveFont(lblCaracteristicas.getFont().getSize() + 1f));
+        lblCaracteristicas.setFont(new Font("Segoe UI", Font.BOLD, 14));
         add(lblCaracteristicas, "cell 0 5");
-
-        //---- lblFecha ----
-        lblFecha.setText("Fecha");
-        lblFecha.setFont(lblFecha.getFont().deriveFont(lblFecha.getFont().getSize() + 1f));
-        add(lblFecha, "cell 0 6");
 
         //---- lblTipoEvento ----
         lblTipoEvento.setText("Tipo de evento");
-        lblTipoEvento.setFont(lblTipoEvento.getFont().deriveFont(lblTipoEvento.getFont().getSize() + 1f));
+        lblTipoEvento.setFont(new Font("Segoe UI", Font.BOLD, 14));
         add(lblTipoEvento, "cell 0 7");
 
         //---- lblEstado ----
         lblEstado.setText("Estado");
-        lblEstado.setFont(lblEstado.getFont().deriveFont(lblEstado.getFont().getSize() + 1f));
+        lblEstado.setFont(new Font("Segoe UI", Font.BOLD, 14));
         add(lblEstado, "cell 0 8");
 
         //---- lblCiudad ----
         lblCiudad.setText("Ciudad");
-        lblCiudad.setFont(lblCiudad.getFont().deriveFont(lblCiudad.getFont().getSize() + 1f));
+        lblCiudad.setFont(new Font("Segoe UI", Font.BOLD, 14));
         add(lblCiudad, "cell 0 9");
 
         //---- txtNombreEvento ----
@@ -573,13 +617,6 @@ public class pnlEventos extends JPanel {
         }
         add(pnlListEtiquetas, "cell 1 5");
 
-        //---- txtFecha ----
-        txtFecha.setHorizontalAlignment(SwingConstants.CENTER);
-        txtFecha.setFont(txtFecha.getFont().deriveFont(txtFecha.getFont().getSize() + 3f));
-        txtFecha.setNextFocusableComponent(cmbTipoEvento);
-        txtFecha.addMouseWheelListener(e -> txtFechaMouseWheelMoved(e));
-        add(txtFecha, "cell 1 6");
-
         //---- btnAdmin ----
         btnAdmin.setIcon(new ImageIcon(getClass().getResource("/img/admin.png")));
         btnAdmin.setContentAreaFilled(false);
@@ -587,13 +624,11 @@ public class pnlEventos extends JPanel {
         btnAdmin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnAdmin.addActionListener(e -> btnAdmin(e));
         add(btnAdmin, "cell 2 1,grow 0 0");
-
-        //---- i ----
-        i.setBackground(Color.white);
         add(i, "cell 3 1 1 11");
 
         //---- lblEstilo ----
         lblEstilo.setText("Estilo");
+        lblEstilo.setFont(new Font("Segoe UI", Font.BOLD, 14));
         add(lblEstilo, "cell 0 4");
 
         //---- txtEstilo ----
@@ -612,23 +647,95 @@ public class pnlEventos extends JPanel {
         });
         add(lblEditEtiqueta, "cell 2 5,grow 0 0");
 
+        //======== panel1 ========
+        {
+            panel1.setBackground(Color.white);
+            panel1.setLayout(new MigLayout(
+                "fill",
+                // columns
+                "0[fill]" +
+                "[fill]para" +
+                "[fill]" +
+                "[fill]" +
+                "[fill]0",
+                // rows
+                "0[]0"));
+
+            //---- lblFecha ----
+            lblFecha.setText("Fecha Inicio");
+            lblFecha.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            panel1.add(lblFecha, "cell 0 0");
+
+            //---- txtFechaInicio ----
+            txtFechaInicio.setHorizontalAlignment(SwingConstants.CENTER);
+            txtFechaInicio.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            txtFechaInicio.setNextFocusableComponent(cmbTipoEvento);
+            panel1.add(txtFechaInicio, "cell 0 0");
+
+            //---- txtHorarioInicio ----
+            txtHorarioInicio.setHorizontalAlignment(SwingConstants.CENTER);
+            txtHorarioInicio.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            txtHorarioInicio.setEditable(false);
+            txtHorarioInicio.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    txtHorarioInicioKeyPressed(e);
+                }
+            });
+            txtHorarioInicio.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    txtHorarioInicioMouseClicked(e);
+                }
+            });
+            panel1.add(txtHorarioInicio, "cell 1 0");
+
+            //---- lblFecha2 ----
+            lblFecha2.setText("Fecha Final");
+            lblFecha2.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            lblFecha2.setHorizontalAlignment(SwingConstants.CENTER);
+            panel1.add(lblFecha2, "cell 2 0");
+
+            //---- txtFechaFinal ----
+            txtFechaFinal.setHorizontalAlignment(SwingConstants.CENTER);
+            txtFechaFinal.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            panel1.add(txtFechaFinal, "cell 3 0");
+
+            //---- txtHorarioFinal ----
+            txtHorarioFinal.setHorizontalAlignment(SwingConstants.CENTER);
+            txtHorarioFinal.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            txtHorarioFinal.setEditable(false);
+            txtHorarioFinal.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    txtHorarioFinalMouseClicked(e);
+                }
+            });
+            panel1.add(txtHorarioFinal, "cell 4 0");
+        }
+        add(panel1, "cell 0 6, sx 2");
+
         //---- cmbEstado ----
         cmbEstado.setNextFocusableComponent(cmbCiudad);
+        cmbEstado.setFont(new Font("Segoe UI", Font.BOLD, 15));
         cmbEstado.addActionListener(e -> cmbEstado(e));
         add(cmbEstado, "cell 1 8");
 
         //---- cmbCiudad ----
         cmbCiudad.setNextFocusableComponent(cmbLugar);
+        cmbCiudad.setFont(new Font("Segoe UI", Font.BOLD, 15));
         cmbCiudad.addActionListener(e -> cmbCiudad());
         add(cmbCiudad, "cell 1 9");
 
         //---- cmbTipoEvento ----
         cmbTipoEvento.setNextFocusableComponent(cmbEstado);
+        cmbTipoEvento.setFont(new Font("Segoe UI", Font.BOLD, 15));
         cmbTipoEvento.addActionListener(e -> cmbTipoEvento(e));
         add(cmbTipoEvento, "cell 1 7");
 
         //---- cmbLugar ----
         cmbLugar.setNextFocusableComponent(btnAceptar);
+        cmbLugar.setFont(new Font("Segoe UI", Font.BOLD, 15));
         cmbLugar.addActionListener(e -> cmbLugar(e));
         add(cmbLugar, "cell 1 10");
 
@@ -667,7 +774,7 @@ public class pnlEventos extends JPanel {
 
         //---- lblLugar ----
         lblLugar.setText("Lugar");
-        lblLugar.setFont(lblLugar.getFont().deriveFont(lblLugar.getFont().getSize() + 1f));
+        lblLugar.setFont(new Font("Segoe UI", Font.BOLD, 14));
         add(lblLugar, "cell 0 10");
 
         //---- lblEditLugar ----
@@ -691,10 +798,23 @@ public class pnlEventos extends JPanel {
         btnAceptar.addActionListener(e -> btnAceptar(e));
         add(btnAceptar, "cell 1 11,growy");
 
-        //---- dateChooser ----
-        dateChooser.setTextRefernce(txtFecha);
-        dateChooser.setDateFormat("yyyy-MM-dd");
-        dateChooser.addPropertyChangeListener(e -> dateChooserPropertyChange(e));
+        //---- fechaInicio ----
+        fechaInicio.setTextRefernce(txtFechaInicio);
+        fechaInicio.setDateFormat("yyyy-MM-dd");
+        fechaInicio.setForeground(Color.pink);
+
+        //---- fechaFinal ----
+        fechaFinal.setTextRefernce(txtFechaFinal);
+        fechaFinal.setDateFormat("yyyy-MM-dd");
+        fechaFinal.setForeground(Color.pink);
+
+        //---- timePickerInicio ----
+        timePickerInicio.setForeground(new Color(153, 102, 255));
+        timePickerInicio.setDisplayText(txtHorarioInicio);
+
+        //---- timePickerFinal ----
+        timePickerFinal.setForeground(new Color(153, 102, 255));
+        timePickerFinal.setDisplayText(txtHorarioFinal);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -704,7 +824,6 @@ public class pnlEventos extends JPanel {
     private JLabel lblPresupuesto;
     private JLabel lblCantInvitados;
     private JLabel lblCaracteristicas;
-    private JLabel lblFecha;
     private JLabel lblTipoEvento;
     private JLabel lblEstado;
     private JLabel lblCiudad;
@@ -712,12 +831,18 @@ public class pnlEventos extends JPanel {
     public JFormattedTextField txtPresupuesto;
     public JFormattedTextField txtCantInvitados;
     public JPanel pnlListEtiquetas;
-    public JTextField txtFecha;
     private JButton btnAdmin;
     public ImageSlider i;
     private JLabel lblEstilo;
     public JTextField txtEstilo;
     private JLabel lblEditEtiqueta;
+    private JPanel panel1;
+    private JLabel lblFecha;
+    public JTextField txtFechaInicio;
+    public JTextField txtHorarioInicio;
+    private JLabel lblFecha2;
+    public JTextField txtFechaFinal;
+    public JTextField txtHorarioFinal;
     public JComboBox cmbEstado;
     public JComboBox cmbCiudad;
     public JComboBox cmbTipoEvento;
@@ -729,6 +854,9 @@ public class pnlEventos extends JPanel {
     private JLabel lblEditLugar;
     public JCheckBox cbOtro;
     private Button btnAceptar;
-    public DateChooser dateChooser;
+    public DateChooser fechaInicio;
+    public DateChooser fechaFinal;
+    private TimePicker timePickerInicio;
+    private TimePicker timePickerFinal;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

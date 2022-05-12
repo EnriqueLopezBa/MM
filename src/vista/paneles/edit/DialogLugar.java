@@ -37,9 +37,6 @@ import vista.principales.Principal;
  */
 public class DialogLugar extends JDialog {
 
- 
-
-
     private Estado estadoActual = null;
     private Ciudad ciudadActual = null;
 
@@ -85,10 +82,6 @@ public class DialogLugar extends JDialog {
 
     public void init() {
 
-        for (Estado e :  ControladorEstado.getInstancia().obtenerListaByCadena("")) {
-            f.cmbEstado.addItem(e.getEstado());
-        }
-        cargarCiduades();
         llenarTabla();
         f.init(); // Iniciar Etiquetas
         //AGREGAR
@@ -189,7 +182,7 @@ public class DialogLugar extends JDialog {
                 f.txtCapacidad.setText(p.tblModel.getValueAt(x, 4).toString());
                 f.txtPrecioAprox.setText(p.tblModel.getValueAt(x, 5).toString());
                 Ciudad city = ControladorCiudad.getInstancia().obtenerById((int) p.tblModel.getValueAt(x, 1));
-                f.cmbEstado.setSelectedItem( ControladorEstado.getInstancia().obtenerByID(city.getIdEstado()).getEstado());
+                f.cmbEstado.setSelectedItem(ControladorEstado.getInstancia().obtenerByID(city.getIdEstado()).getEstado());
                 refreshEstado();
                 f.cmbCiudad.setSelectedItem(city.getCiudad());
                 ArrayList<LugarEtiquetas> temp = ControladorLugarEtiquetas.getInstancia().obtenerEtiquetasByIDLugar((int) p.tblModel.getValueAt(x, 0));
@@ -242,15 +235,22 @@ public class DialogLugar extends JDialog {
         f.cmbEstado.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-               refreshEstado();
+
+                refreshEstado();
             }
         });
+
+        for (Estado e : ControladorEstado.getInstancia().obtenerListaByCadena("")) {
+            f.cmbEstado.addItem(e.getEstado());
+        }
+        cargarCiduades();
 
     }
 
     private void refreshEstado() {
+
         if (f.cmbEstado.getSelectedIndex() != -1) {
-            for (Estado estado :  ControladorEstado.getInstancia().obtenerListaByCadena("")) {
+            for (Estado estado : ControladorEstado.getInstancia().obtenerListaByCadena("")) {
                 if (estado.getEstado().equals(f.cmbEstado.getSelectedItem().toString())) {
                     estadoActual = estado;
                     cargarCiduades();

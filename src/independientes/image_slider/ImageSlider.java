@@ -20,13 +20,8 @@ import net.miginfocom.swing.MigLayout;
 
 public class ImageSlider extends javax.swing.JPanel {
 
- 
- 
-
-
- 
-
     private MigLayout imageLayout;
+    ScrollBar sb = new ScrollBar();
 
     public ImageSlider() {
         initComponents();
@@ -35,7 +30,6 @@ public class ImageSlider extends javax.swing.JPanel {
     }
 
     public void init(int orientacion) {
-        ScrollBar sb = new ScrollBar();
         if (orientacion == ScrollBar.HORIZONTAL) {
             sb.setOrientation(ScrollBar.HORIZONTAL);
             sp.setHorizontalScrollBar(sb);
@@ -52,7 +46,12 @@ public class ImageSlider extends javax.swing.JPanel {
         panelItem.revalidate();
         panelItem.repaint();
         for (LugarImagenes lu : ControladorLugarImagenes.getInstancia().obtenerListaByIDLugar(lugar.getIdLugar())) {
-            panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 250, h 200");
+            if (sb.getOrientation() == ScrollBar.VERTICAL) {
+                 panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 60%, h 30%");
+            }else{
+                 panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 30%, h 80%");
+            }
+           
         }
     }
 
@@ -61,7 +60,7 @@ public class ImageSlider extends javax.swing.JPanel {
         panelItem.revalidate();
         panelItem.repaint();
         for (ProveedorImagenes lu : ControladorProveedorImagenes.getInstancia().obtenerListabyIdProveedor(proveedor.getIdProveedor())) {
-            panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 250, h 200");
+            panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 60%, h 30%");
         }
     }
 
@@ -71,7 +70,12 @@ public class ImageSlider extends javax.swing.JPanel {
         panelItem.repaint();
         for (ProveedorImagenes lu : ControladorProveedorImagenes.getInstancia().obtenerobtenerListabyIdCiudadAndTipoProveedor(idCiudad, idTipoProveedor)) {
             Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(lu.getIdProveedor());
-            panelItem.add(getItem(new ImageIcon(lu.getImagen()), proveedor, lu), "w 250, h 200");
+            if (sb.getOrientation() == ScrollBar.VERTICAL) {
+                panelItem.add(getItem(new ImageIcon(lu.getImagen()), proveedor, lu), "w 60%, h 30%");
+            } else {
+                panelItem.add(getItem(new ImageIcon(lu.getImagen()), proveedor, lu), "w 30%, h 80%");
+            }
+
         }
     }
 
@@ -94,12 +98,17 @@ public class ImageSlider extends javax.swing.JPanel {
         }
         for (LugarImagenes lugarimg : ControladorLugarImagenes.getInstancia().obtenerListaByIDCiudad(idCiudad, arr)) {
             Lugar lugar = ControladorLugar.getInstancia().obtenerByID(lugarimg.getIdLugar());
-            panelItem.add(getItem(new ImageIcon(lugarimg.getImagen()), lugar, lugarimg), "w 250, h 200");
+            if (sb.getOrientation() == ScrollBar.VERTICAL) {
+                panelItem.add(getItem(new ImageIcon(lugarimg.getImagen()), lugar, lugarimg), "w 60%, h 30%");
+            } else {
+                panelItem.add(getItem(new ImageIcon(lugarimg.getImagen()), lugar, lugarimg), "w 30%, h 80%");
+            }
+
         }
     }
 
     private ImageItem getItem(Icon icon, Object clase, Object claseIMG) {
-        return new ImageItem(icon, imageLayout, clase, claseIMG);
+        return new ImageItem(icon, imageLayout, clase, claseIMG, this);
     }
 
     @SuppressWarnings("unchecked")
@@ -109,8 +118,15 @@ public class ImageSlider extends javax.swing.JPanel {
         sp = new javax.swing.JScrollPane();
         panelItem = new javax.swing.JPanel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
+        setName("asd"); // NOI18N
+
         sp.setBorder(null);
         sp.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        sp.setName("nnnnn"); // NOI18N
+
+        panelItem.setBackground(new java.awt.Color(255, 255, 255));
+        panelItem.setName("bvc"); // NOI18N
 
         javax.swing.GroupLayout panelItemLayout = new javax.swing.GroupLayout(panelItem);
         panelItem.setLayout(panelItemLayout);

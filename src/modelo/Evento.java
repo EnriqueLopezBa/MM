@@ -8,7 +8,7 @@ public class Evento {
     private int idCliente;
     private int idTipoEvento;
     private int idLugar;
-    private Date fecha;
+    private Date fechaInicio, fechaFinal;
     private int noInvitados, presupuesto;
     private String estilo, nombreEvento;
     private int precioFinal;
@@ -16,31 +16,38 @@ public class Evento {
     public Evento() {
     }
 
-//    public Evento(int idEvento, int idCliente, int idTipoEvento, int idLugar, Date fecha, int noInvitados, int presupuesto, String estilo, String nombreEvento) {
-//        this.idEvento = idEvento;
-//        this.idCliente = idCliente;
-//        this.idTipoEvento = idTipoEvento;
-//        this.idLugar = idLugar;
-//        this.fecha = fecha;
-//        this.noInvitados = noInvitados;
-//        this.presupuesto = presupuesto;
-//        this.estilo = estilo;
-//        this.nombreEvento = nombreEvento;
-//    }
-
-    public Evento(int idEvento, int idCliente, int idTipoEvento, int idLugar, Date fecha, int noInvitados, int presupuesto, String estilo, String nombreEvento, int precioFinal) {
+    public Evento(int idEvento, int idCliente, int idTipoEvento, int idLugar, Date fechaInicio, Date fechaFinal, int noInvitados, int presupuesto, String estilo, String nombreEvento, int precioFinal) {
         this.idEvento = idEvento;
         this.idCliente = idCliente;
         this.idTipoEvento = idTipoEvento;
         this.idLugar = idLugar;
-        this.fecha = fecha;
+        this.fechaInicio = fechaInicio;
+        this.fechaFinal = fechaFinal;
         this.noInvitados = noInvitados;
         this.presupuesto = presupuesto;
         this.estilo = estilo;
         this.nombreEvento = nombreEvento;
         this.precioFinal = precioFinal;
     }
-    
+
+    public Date getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+
+    public Date getFechaFinal() {
+        return fechaFinal;
+    }
+
+    public void setFechaFinal(Date fechaFinal) {
+        this.fechaFinal = fechaFinal;
+    }
+
+
 
     
     public int getIdEvento() {
@@ -75,13 +82,6 @@ public class Evento {
         this.idLugar = idLugar;
     }
 
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
-    }
 
     public int getNoInvitados() {
         return noInvitados;

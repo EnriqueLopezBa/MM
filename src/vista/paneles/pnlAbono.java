@@ -63,11 +63,7 @@ public class pnlAbono extends JPanel {
             @Override
             protected void finalize() throws Throwable {
                 super.finalize(); //To change body of generated methods, choose Tools | Templates.
-                Constante.clienteTemporal = null;
-                if (ControladorCliente.getInstancia().obtenerClienteActivo() != null) {
-                    Principal.getInstancia().lblCliente.setText("Cliente Activo: " + ControladorCliente.getInstancia().obtenerClienteActivo().getCorreo());
-                }
-
+                Constante.removeClienteTemporal();
             }
 
         });
@@ -78,15 +74,12 @@ public class pnlAbono extends JPanel {
                     return;
                 }
                 int x = p.tblBuscar.getSelectedRow();
-
-                Cliente temp = ControladorCliente.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 0));
-                Constante.clienteTemporal = temp;
-                Principal.getInstancia().lblCliente.setText("Cliente Activo (SOLO ADMIN) : " + temp.getCorreo() + " - " + temp.getNombre());
+                Constante.setClienteTemporal(ControladorCliente.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 0)));
                 cmbEvento.removeAllItems();
                 mClientes.setRowCount(0);
                 lblCantADeber.setText("Cant. A Deber:");
                 lblTotal.setText("Total: ");
-                for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
+                for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
                     cmbEvento.addItem(ev.getNombreEvento());
                 }
 
@@ -128,11 +121,11 @@ public class pnlAbono extends JPanel {
             return;
         }
         if (materialTabbed1.getSelectedIndex() == 0) {
-            for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
+            for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
                 if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
                     eventoActual = ev;
                     lblTotal.setText("Total : " + eventoActual.getPrecioFinal());
-                    lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(Constante.clienteTemporal.getIdCliente(), eventoActual.getIdEvento()));
+                    actualizarTotalADeber();
                     mClientes.setRowCount(0);
                     cargarTablaAbono();
                     break;
@@ -140,12 +133,11 @@ public class pnlAbono extends JPanel {
             }
         } else if (materialTabbed1.getSelectedIndex() == 1) {
 
-            for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.clienteTemporal.getIdCliente())) {
+            for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
                 if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
-                   
                     eventoActual = ev;
                     lblTotal.setText("Total : " + eventoActual.getPrecioFinal());
-                    lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(Constante.clienteTemporal.getIdCliente(), eventoActual.getIdEvento()));
+                    lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente(), eventoActual.getIdEvento()));
                     cargarTablaAbono();
                     break;
                 }
@@ -155,9 +147,7 @@ public class pnlAbono extends JPanel {
     }
 
     private void actualizarTotalADeber() {
-
-        lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(Constante.clienteTemporal.getIdCliente(), eventoActual.getIdEvento()));
-
+        lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente(), eventoActual.getIdEvento()));
     }
 
     private void cargarTablaAbono() {
@@ -211,7 +201,7 @@ public class pnlAbono extends JPanel {
             format.requestFocus();
             throw new MMException("Abono vacio");
         }
-        if (Constante.clienteTemporal == null) {
+        if (ControladorCliente.getInstancia().obtenerClienteActivo() == null) {
             throw new MMException("Sin cliente activo/seleccionado");
         }
         if (eventoActual.getPrecioFinal() == 0) {
@@ -224,12 +214,7 @@ public class pnlAbono extends JPanel {
         try {
             validaDatos(cmbEvento, txtImporte);
             Abono abono = new Abono();
-            if (Constante.clienteTemporal == null) {
-                abono.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
-
-            } else {
-                abono.setIdCliente(Constante.clienteTemporal.getIdCliente());
-            }
+            abono.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
             abono.setIdEvento(eventoActual.getIdEvento());
             abono.setImporte(Integer.parseInt(txtImporte.getText().replaceAll(",", "")));
             Calendar c = Calendar.getInstance();

@@ -33,8 +33,6 @@ public class DialogLugarImagenes extends JDialog {
     private File abre = null;
 
 
-
-
     public byte[] getImagen() {
         return imagen;
     }
@@ -158,14 +156,15 @@ public class DialogLugarImagenes extends JDialog {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         i = new ImageSlider();
         p = new pnlCRUD();
-        lblIMG = new JLabel();
         panel1 = new JPanel();
+        lblIMG = new JLabel();
         cbPredeterminada = new JCheckBox();
         txtDescripcion = new TextField();
 
         //======== this ========
         setModal(true);
         setBackground(Color.white);
+        setTitle("Imagenes del Lugar");
         Container contentPane = getContentPane();
         contentPane.setLayout(new MigLayout(
             "fill",
@@ -174,24 +173,13 @@ public class DialogLugarImagenes extends JDialog {
             "[grow,fill]",
             // rows
             "[]" +
-            "[]0" +
-            "[]"));
+            "[]" +
+            "[grow, fill]"));
 
         //---- i ----
         i.setBackground(Color.white);
-        contentPane.add(i, "cell 0 0,height 30%!, spanx");
-        contentPane.add(p, "cell 0 1,height 35%!, spanx");
-
-        //---- lblIMG ----
-        lblIMG.setBorder(new TitledBorder(null, "Imagen", TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION));
-        lblIMG.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        lblIMG.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                lblIMGMouseClicked(e);
-            }
-        });
-        contentPane.add(lblIMG, "cell 0 2,push,width 10:10, h 30%!");
+        contentPane.add(i, "cell 0 0,height 40%!, spanx");
+        contentPane.add(p, "cell 0 1,height 25%!, spanx");
 
         //======== panel1 ========
         {
@@ -199,20 +187,34 @@ public class DialogLugarImagenes extends JDialog {
             panel1.setLayout(new MigLayout(
                 "fill",
                 // columns
+                "[fill]" +
                 "[fill]",
                 // rows
                 "[]" +
+                "[]" +
+                "[]" +
                 "[]"));
+
+            //---- lblIMG ----
+            lblIMG.setBorder(new TitledBorder(null, "Imagen", TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION));
+            lblIMG.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            lblIMG.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    lblIMGMouseClicked(e);
+                }
+            });
+            panel1.add(lblIMG, "cell 0 0,spany, growy, w 10:10, h 10: 10");
 
             //---- cbPredeterminada ----
             cbPredeterminada.setText("Imagen predeterminada");
-            panel1.add(cbPredeterminada, "cell 0 0");
+            panel1.add(cbPredeterminada, "cell 1 1");
 
             //---- txtDescripcion ----
             txtDescripcion.setLabelText("Descripcion");
-            panel1.add(txtDescripcion, "cell 0 1");
+            panel1.add(txtDescripcion, "cell 1 2");
         }
-        contentPane.add(panel1, "cell 1 2, growx");
+        contentPane.add(panel1, "cell 0 2,growx, spanx");
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -221,8 +223,8 @@ public class DialogLugarImagenes extends JDialog {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private ImageSlider i;
     private pnlCRUD p;
-    private JLabel lblIMG;
     private JPanel panel1;
+    private JLabel lblIMG;
     private JCheckBox cbPredeterminada;
     private TextField txtDescripcion;
     // JFormDesigner - End of variables declaration  //GEN-END:variables

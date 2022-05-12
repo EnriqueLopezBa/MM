@@ -1,6 +1,7 @@
 package controlador;
 
 import dao.ClienteDAOImp;
+import independientes.Constante;
 import independientes.Mensaje;
 import java.util.ArrayList;
 import modelo.Cliente;
@@ -31,7 +32,7 @@ public class ControladorCliente {
     }
 
     public Cliente obtenerClienteActivo() {
-        return ClienteDAOImp.getInstancia().obtenerClienteActivo();
+        return Constante.getClienteTemporal() != null ? Constante.getClienteTemporal() : ClienteDAOImp.getInstancia().obtenerClienteActivo();
     }
 
     public void desactivarClienteActivo() {

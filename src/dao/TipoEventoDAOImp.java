@@ -69,6 +69,7 @@ public class TipoEventoDAOImp implements ITipoEventoDAO {
         }
         try (PreparedStatement ps = cn.prepareStatement("INSERT INTO tipoEvento VALUES (?)")) {
             ps.setString(1, t.getTematica());
+            return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
         } catch (SQLException e) {
             System.err.println("Error registrar TipoEvento, " + e.getMessage());
         }

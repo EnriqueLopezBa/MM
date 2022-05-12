@@ -23,55 +23,49 @@ new FormModel {
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblNombreEvento"
 				"text": "Nombre Evento"
+				"font": &Font0 new java.awt.Font( "Segoe UI", 1, 14 )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 1"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblPresupuesto"
 				"text": "Presupuesto"
-				"font": &SwingDerivedFont0 new com.jformdesigner.model.SwingDerivedFont( null, 0, 1, false )
+				"font": #Font0
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 2"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblCantInvitados"
 				"text": "Cant. Invitados"
-				"font": #SwingDerivedFont0
+				"font": #Font0
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 3"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblCaracteristicas"
 				"text": "Caracteristicas de evento"
-				"font": #SwingDerivedFont0
+				"font": #Font0
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 5"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
-				name: "lblFecha"
-				"text": "Fecha"
-				"font": #SwingDerivedFont0
-			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 6"
-			} )
-			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblTipoEvento"
 				"text": "Tipo de evento"
-				"font": #SwingDerivedFont0
+				"font": #Font0
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 7"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblEstado"
 				"text": "Estado"
-				"font": #SwingDerivedFont0
+				"font": #Font0
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 8"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblCiudad"
 				"text": "Ciudad"
-				"font": #SwingDerivedFont0
+				"font": #Font0
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 9"
 			} )
@@ -88,7 +82,7 @@ new FormModel {
 			} )
 			add( new FormComponent( "javax.swing.JFormattedTextField" ) {
 				name: "txtPresupuesto"
-				"font": &Font0 new java.awt.Font( "Segoe UI", 1, 16 )
+				"font": &Font1 new java.awt.Font( "Segoe UI", 1, 16 )
 				"horizontalAlignment": 0
 				"nextFocusableComponent": new FormReference( "txtCantInvitados" )
 				auxiliary() {
@@ -100,7 +94,7 @@ new FormModel {
 			} )
 			add( new FormComponent( "javax.swing.JFormattedTextField" ) {
 				name: "txtCantInvitados"
-				"font": #Font0
+				"font": #Font1
 				"horizontalAlignment": 0
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
@@ -118,18 +112,6 @@ new FormModel {
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 1 5"
 			} )
-			add( new FormComponent( "javax.swing.JTextField" ) {
-				name: "txtFecha"
-				"horizontalAlignment": 0
-				"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 3, false )
-				"nextFocusableComponent": new FormReference( "cmbTipoEvento" )
-				auxiliary() {
-					"JavaCodeGenerator.variableModifiers": 1
-				}
-				addEvent( new FormEvent( "java.awt.event.MouseWheelListener", "mouseWheelMoved", "txtFechaMouseWheelMoved", true ) )
-			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 6"
-			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "btnAdmin"
 				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/admin.png" )
@@ -142,7 +124,6 @@ new FormModel {
 			} )
 			add( new FormComponent( "independientes.image_slider.ImageSlider" ) {
 				name: "i"
-				"background": sfield java.awt.Color white
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
@@ -152,6 +133,7 @@ new FormModel {
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblEstilo"
 				"text": "Estilo"
+				"font": #Font0
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 4"
 			} )
@@ -173,9 +155,81 @@ new FormModel {
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 2 5,grow 0 0"
 			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "fill"
+				"$columnConstraints": "0[fill][fill]para[fill][fill][fill]0"
+				"$rowConstraints": "0[]0"
+			} ) {
+				name: "panel1"
+				"background": new java.awt.Color( 255, 255, 255, 255 )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblFecha"
+					"text": "Fecha Inicio"
+					"font": #Font0
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0"
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "txtFechaInicio"
+					"horizontalAlignment": 0
+					"font": &Font2 new java.awt.Font( "Segoe UI", 1, 18 )
+					"nextFocusableComponent": new FormReference( "cmbTipoEvento" )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0"
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "txtHorarioInicio"
+					"horizontalAlignment": 0
+					"font": #Font2
+					"editable": false
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+					addEvent( new FormEvent( "java.awt.event.KeyListener", "keyPressed", "txtHorarioInicioKeyPressed", true ) )
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "txtHorarioInicioMouseClicked", true ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 0"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblFecha2"
+					"text": "Fecha Final"
+					"font": #Font0
+					"horizontalAlignment": 0
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 2 0"
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "txtFechaFinal"
+					"horizontalAlignment": 0
+					"font": #Font2
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 3 0"
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "txtHorarioFinal"
+					"horizontalAlignment": 0
+					"font": #Font2
+					"editable": false
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "txtHorarioFinalMouseClicked", true ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 4 0"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 6, sx 2"
+			} )
 			add( new FormComponent( "javax.swing.JComboBox" ) {
 				name: "cmbEstado"
 				"nextFocusableComponent": new FormReference( "cmbCiudad" )
+				"font": &Font3 new java.awt.Font( "Segoe UI", 1, 15 )
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
@@ -186,6 +240,7 @@ new FormModel {
 			add( new FormComponent( "javax.swing.JComboBox" ) {
 				name: "cmbCiudad"
 				"nextFocusableComponent": new FormReference( "cmbLugar" )
+				"font": #Font3
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
@@ -196,6 +251,7 @@ new FormModel {
 			add( new FormComponent( "javax.swing.JComboBox" ) {
 				name: "cmbTipoEvento"
 				"nextFocusableComponent": new FormReference( "cmbEstado" )
+				"font": #Font3
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
@@ -206,6 +262,7 @@ new FormModel {
 			add( new FormComponent( "javax.swing.JComboBox" ) {
 				name: "cmbLugar"
 				"nextFocusableComponent": new FormReference( "btnAceptar" )
+				"font": #Font3
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
@@ -240,7 +297,7 @@ new FormModel {
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblLugar"
 				"text": "Lugar"
-				"font": #SwingDerivedFont0
+				"font": #Font0
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 10"
 			} )
@@ -274,15 +331,40 @@ new FormModel {
 			"size": new java.awt.Dimension( 1145, 680 )
 		} )
 		add( new FormComponent( "com.raven.datechooser.DateChooser" ) {
-			name: "dateChooser"
-			"textRefernce": new FormReference( "txtFecha" )
+			name: "fechaInicio"
+			"textRefernce": new FormReference( "txtFechaInicio" )
 			"dateFormat": "yyyy-MM-dd"
+			"foreground": sfield java.awt.Color pink
 			auxiliary() {
 				"JavaCodeGenerator.variableModifiers": 1
 			}
-			addEvent( new FormEvent( "java.beans.PropertyChangeListener", "propertyChange", "dateChooserPropertyChange", true ) )
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 55, 686 )
+			"location": new java.awt.Point( 35, 690 )
+		} )
+		add( new FormComponent( "com.raven.datechooser.DateChooser" ) {
+			name: "fechaFinal"
+			"textRefernce": new FormReference( "txtFechaFinal" )
+			"dateFormat": "yyyy-MM-dd"
+			"foreground": sfield java.awt.Color pink
+			auxiliary() {
+				"JavaCodeGenerator.variableModifiers": 1
+			}
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 460, 690 )
+		} )
+		add( new FormComponent( "com.raven.swing.TimePicker" ) {
+			name: "timePickerInicio"
+			"foreground": new java.awt.Color( 153, 102, 255, 255 )
+			"displayText": new FormReference( "txtHorarioInicio" )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 255, 690 )
+		} )
+		add( new FormComponent( "com.raven.swing.TimePicker" ) {
+			name: "timePickerFinal"
+			"foreground": new java.awt.Color( 153, 102, 255, 255 )
+			"displayText": new FormReference( "txtHorarioFinal" )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 706, 695 )
 		} )
 	}
 }

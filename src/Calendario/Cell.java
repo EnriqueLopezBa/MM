@@ -84,8 +84,8 @@ public class Cell extends JButton implements MouseListener {
         }
     }
 
-    public void setAsToDay() {
-        isToDay = true;
+    public void setAsToDay(boolean is) {
+        isToDay = is;
         setForeground(Color.WHITE);
     }
 

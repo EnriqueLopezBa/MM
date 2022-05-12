@@ -7,7 +7,6 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import modelo.Evento;
 
@@ -19,11 +18,10 @@ public class PanelDate extends JPanel {
     
     public PanelDate() {
         initComponents();
-       
-      
     }
 
     public void init(int month, int year) {
+   
         this.month = month;
         this.year = year;
         lun.asTitle();
@@ -47,6 +45,13 @@ public class PanelDate extends JPanel {
         int startDay = calendar.get(Calendar.DAY_OF_WEEK) - 1;  //  get day of week -1 to index
         calendar.add(Calendar.DATE, -startDay);
         ToDay toDay = getToDay();
+         for (Component com : getComponents()){
+              Cell cell = (Cell) com;
+              if (!cell.isTitle()){
+                  cell.setEvento(null);
+                  cell.setAsToDay(false);
+              }
+         }
         for (Component com : getComponents()) {
             Cell cell = (Cell) com;
             if (!cell.isTitle()) {
@@ -54,9 +59,9 @@ public class PanelDate extends JPanel {
                 for(Evento eve : evento){
                     Calendar d1 = Calendar.getInstance();
                     Calendar d2 = Calendar.getInstance();
-                    d1.setTime(eve.getFecha());
+                    d1.setTime(eve.getFechaInicio());
                     d2.setTime(calendar.getTime());
-                    
+                 
                     if (d1.get(Calendar.DATE) == d2.get(Calendar.DATE)) {
                         if (d1.get(Calendar.MONTH) == d2.get(Calendar.MONTH)) {
                             if (d1.get(Calendar.YEAR) == d2.get(Calendar.YEAR)) {
@@ -66,14 +71,12 @@ public class PanelDate extends JPanel {
                     }
                   
                 }
-                if (evento.isEmpty()) {
-                    cell.setEvento(null);
-                }
+               
                 cell.setText(calendar.get(Calendar.DATE) + "");
                 cell.setDate(calendar.getTime());
                 cell.currentMonth(calendar.get(Calendar.MONTH) == month - 1);
                 if (toDay.isToDay(new ToDay(calendar.get(Calendar.DATE), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR)))) {
-                    cell.setAsToDay();
+                    cell.setAsToDay(true);
                 }
                 if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
                     cell.setForeground(Color.red);

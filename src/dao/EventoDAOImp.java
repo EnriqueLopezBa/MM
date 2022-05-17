@@ -43,7 +43,6 @@ public class EventoDAOImp implements IEventoDAO {
             while (rs.next()) {
                 temp.add(new Evento(rs.getInt(1), rs.getInt(2), rs.getInt(3),
                         rs.getInt(4), rs.getTimestamp(5), rs.getTimestamp(6), rs.getInt(7), rs.getInt(8), rs.getString(9), rs.getString(10), rs.getInt(11)));
-
             }
             return temp;
         } catch (SQLException e) {

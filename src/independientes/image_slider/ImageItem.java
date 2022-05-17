@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import modelo.Lugar;
@@ -40,11 +41,9 @@ public class ImageItem extends JComponent {
 
     private Proveedor proveedor;
     private ProveedorImagenes proveedorIMG;
-    private ImageSlider puntero;
 
     public ImageItem(Icon image, MigLayout mig, Object clase, Object claseIMG, ImageSlider puntero) {
         this.image = image;
-        this.puntero = puntero;
         if (clase instanceof Lugar) {
             this.lugar = (Lugar) clase;
         } else if (clase instanceof Proveedor) {
@@ -55,17 +54,16 @@ public class ImageItem extends JComponent {
         } else if (claseIMG instanceof ProveedorImagenes) {
             this.proveedorIMG = (ProveedorImagenes) claseIMG;
         }
-
         setBackground(Color.BLACK);
         setToolTipText("Click derecho para ver galeria");
 
         timer = new Timer(0, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+             
                 float porcentaje = 0F;
                 porcentaje = (puntero.sb.getOrientation() == ScrollBar.VERTICAL) ? 0.45F : 0.90F;
                 if (show) {
-
                     int width = getWidth();
                     int height = getHeight();
 
@@ -118,11 +116,11 @@ public class ImageItem extends JComponent {
     @Override
     protected void paintComponent(Graphics grphcs) {
         if (image != null) {
+            
             Graphics2D g2 = (Graphics2D) grphcs;
             Rectangle size = getAutoSize(image);
             int width = getWidth();
             int height = getHeight();
-
             BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = img.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

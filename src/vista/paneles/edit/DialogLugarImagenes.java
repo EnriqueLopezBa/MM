@@ -32,7 +32,6 @@ public class DialogLugarImagenes extends JDialog {
     private byte[] imagen = null;
     private File abre = null;
 
-
     public byte[] getImagen() {
         return imagen;
     }
@@ -51,10 +50,23 @@ public class DialogLugarImagenes extends JDialog {
     public DialogLugarImagenes(Principal owner, Lugar lugar) {
         super(owner);
         initComponents();
-        getContentPane().setBackground(Color.white);
+        super.getContentPane().setBackground(Color.white);
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.2).intValue()));
-        setLocationRelativeTo(null);
+        if (!Constante.getAdmin()) {
+           
+            remove(p);
+            remove(panel1);
+             int y = screensize.getSize().height / 2;
+            int x = screensize.getSize().width / 2;
+            super.setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 2).intValue()));
+            i.setMinimumSize(new Dimension(x, y));
+
+        } else {
+           
+            super.setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.2).intValue()));
+        }
+
+        super.setLocationRelativeTo(null);
         p.init(new String[]{"idLugar", "id2", "Descripcion"}, 2, true);
         llenarTabla(lugar.getIdLugar());
         Lugar temp = ControladorLugar.getInstancia().obtenerByID(lugar.getIdLugar());
@@ -89,7 +101,7 @@ public class DialogLugarImagenes extends JDialog {
                     if (x != -1) {
                         validaDatos();
                         LugarImagenes temp = new LugarImagenes();
-                        temp.setIdLugar((int)p.tblModel.getValueAt(x, 0));
+                        temp.setIdLugar((int) p.tblModel.getValueAt(x, 0));
                         temp.setId2(p.tblModel.getValueAt(x, 1).toString());
                         temp.setImagen(getImagen());
                         temp.setDescripcion(txtDescripcion.getText());

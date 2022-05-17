@@ -6,29 +6,26 @@ new FormModel {
 		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$layoutConstraints": "fill"
 			"$columnConstraints": "[fill]"
-			"$rowConstraints": "[fill][grow, fill][grow, fill]"
+			"$rowConstraints": "[][]"
 		} ) {
 			name: "this"
-			"defaultCloseOperation": 2
 			"modal": true
+			"defaultCloseOperation": 2
+			"title": "EDICION TIPO DE USUARIOS"
+			add( new FormComponent( "Componentes.TextField" ) {
+				name: "txtTipoUsuario"
+				"labelText": "Tipo Usuario"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1"
+			} )
 			add( new FormComponent( "vista.paneles.pnlCRUD" ) {
 				name: "p"
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 0"
 			} )
-			add( new FormComponent( "vista.paneles.frmProveedor" ) {
-				name: "fProveedor"
-			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 1"
-			} )
-			add( new FormComponent( "vista.paneles.frmEtiquetas" ) {
-				name: "fProveedorArea"
-			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 2"
-			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 515, 490 )
+			"size": new java.awt.Dimension( 400, 300 )
 		} )
 	}
 }

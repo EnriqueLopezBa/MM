@@ -18,8 +18,15 @@ public class pnlCRUD extends JPanel {
     }
 
     public void init(String columnas[], int hideColumnsCount, boolean btnAgregar) {
-
-        this.btnAgregar.setVisible(btnAgregar);
+        if (!btnAgregar) {
+            MigLayout mig = (MigLayout) pnlBotones.getLayout();
+            pnlBotones.remove(this.btnAgregar);
+            mig.setRowConstraints("[grow][grow]");
+            mig.setComponentConstraints(btnModificar, "cell 0 0,height 50, growx");
+            mig.setComponentConstraints(btnEliminar, "cell 0 1,height 50, growx");
+            
+        }
+//        this.btnAgregar.setVisible(btnAgregar);
         tblBuscar.setModel(new DefaultTableModel(
                 new Object[][]{},
                 columnas

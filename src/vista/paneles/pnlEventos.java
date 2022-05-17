@@ -49,6 +49,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JMenuItem;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.SwingUtilities;
 import modelo.Ciudad;
@@ -89,6 +90,7 @@ public class pnlEventos extends JPanel {
         cargarLugares();
         i.init(ScrollBar.VERTICAL);
         modoAdmin();
+
     }
 
     private void modoAdmin() {

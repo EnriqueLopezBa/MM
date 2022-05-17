@@ -149,7 +149,7 @@ new FormModel {
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblEditEtiqueta"
-				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/edit.png" )
+				"icon": &SwingIcon0 new com.jformdesigner.model.SwingIcon( 0, "/img/edit.png" )
 				"cursor": new java.awt.Cursor( 12 )
 				addEvent( new FormEvent( "java.awt.event.MouseListener", "mousePressed", "lblEditEtiquetaMousePressed", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
@@ -272,7 +272,7 @@ new FormModel {
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblEditEstado"
-				"icon": &SwingIcon0 new com.jformdesigner.model.SwingIcon( 0, "/img/edit.png" )
+				"icon": #SwingIcon0
 				"cursor": &Cursor0 new java.awt.Cursor( 12 )
 				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblEditEstadoMouseClicked", false ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {

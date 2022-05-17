@@ -66,6 +66,7 @@ public class DialogProveedor extends JDialog {
                 fProveedor.txtTelefono.setText(valorTabla(x, 4));
                 fProveedor.txtTelefono2.setText(valorTabla(x, 5));
                 fProveedor.txtPrecioAprox.setText(valorTabla(x, 6));
+                fProveedor.cbDisponible.setSelected(ControladorProveedor.getInstancia().obtenerByID(Integer.parseInt(valorTabla(x, 0))).isDisponible());
                 llenarAreaDeProveedor(Integer.parseInt(valorTabla(x, 0)));
                  fProveedor.cmbTipoProveedor.setSelectedItem(tipoProv.getTipoProveedor());
             }
@@ -82,6 +83,7 @@ public class DialogProveedor extends JDialog {
                 proveedor.setTelefono(fProveedor.txtTelefono.getText());
                 proveedor.setTelefono2(fProveedor.txtTelefono2.getText());
                 proveedor.setPrecioAprox(Integer.parseInt(fProveedor.txtPrecioAprox.getText()));
+                proveedor.setDisponible(fProveedor.cbDisponible.isSelected());
                 Mensaje m = ControladorProveedor.getInstancia().registrar(proveedor);
                 if (m.getTipoMensaje() == Tipo.OK) { //Suponiendo que se agregó el proveedor correctamente
                     llenarTabla();
@@ -119,6 +121,7 @@ public class DialogProveedor extends JDialog {
                 proveedor.setTelefono(fProveedor.txtTelefono.getText());
                 proveedor.setTelefono2(fProveedor.txtTelefono2.getText());
                 proveedor.setPrecioAprox(Integer.parseInt(fProveedor.txtPrecioAprox.getText()));
+                proveedor.setDisponible(fProveedor.cbDisponible.isSelected());
                 Mensaje m = ControladorProveedor.getInstancia().actualizar(proveedor);
                 if (m.getTipoMensaje() == Tipo.OK) {
                     llenarTabla();

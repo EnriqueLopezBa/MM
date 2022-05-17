@@ -47,7 +47,7 @@ public class DialogLugar extends JDialog {
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.5).intValue()));
         setLocationRelativeTo(null);
-        p.init(new String[]{"idLugar", "idCiudad", "Nombre Local", "Domicilio", "Capacidad", "Precio"}, 0, true);
+        p.init(new String[]{"idLugar", "idCiudad", "Nombre Local", "Domicilio", "Capacidad", "Precio"}, 2, true);
         init();
     }
 
@@ -202,12 +202,12 @@ public class DialogLugar extends JDialog {
                 int x = p.tblBuscar.getSelectedRow();
                 DialogLugarImagenes temp = new DialogLugarImagenes(Principal.getInstancia(), ControladorLugar.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 0)));
                 temp.setVisible(true);
-                temp.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        super.windowClosed(e); //To change body of generated methods, choose Tools | Templates.
-                    }
-                });
+//                temp.addWindowListener(new WindowAdapter() {
+//                    @Override
+//                    public void windowClosed(WindowEvent e) {
+//                        super.windowClosed(e); //To change body of generated methods, choose Tools | Templates.
+//                    }
+//                });
             }
         });
 

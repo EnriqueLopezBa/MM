@@ -125,15 +125,19 @@ public class ClienteDAOImp implements IClienteDAO {
             if (rs.next()) {
                 return "Correo";
             }
-            try (ResultSet rss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != " + t.getIdCliente() + " and TELEFONO = '" + t.getTelefono() + "'")) {
-                if (rss.next()) {
-                    return "Telefono";
-                }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        try (ResultSet rss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != " + t.getIdCliente() + " and TELEFONO = '" + t.getTelefono() + "'")) {
+            if (rss.next()) {
+                return "Telefono";
             }
-            try (ResultSet rsss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != " + t.getIdCliente() + " and TELEFONO2 = '" + t.getTelefono2() + "'")) {
-                if (rsss.next()) {
-                    return "Telefono 2";
-                }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        try (ResultSet rsss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != " + t.getIdCliente() + " and TELEFONO2 = '" + t.getTelefono2() + "'")) {
+            if (rsss.next()) {
+                return "Telefono 2";
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());

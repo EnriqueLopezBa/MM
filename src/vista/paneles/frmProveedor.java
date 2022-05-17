@@ -71,6 +71,7 @@ public class frmProveedor extends JPanel{
         cmbTipoProveedor = new JComboBox();
         txtNombre = new TextField();
         txtNombreEmpresa = new TextField();
+        cbDisponible = new JCheckBox();
         txtPrecioAprox = new TextField();
         txtTelefono = new TextField();
         txtTelefono2 = new TextField();
@@ -98,6 +99,10 @@ public class frmProveedor extends JPanel{
         //---- txtNombreEmpresa ----
         txtNombreEmpresa.setLabelText("Nombre Empresa");
         add(txtNombreEmpresa, "cell 2 0");
+
+        //---- cbDisponible ----
+        cbDisponible.setText("Disponible");
+        add(cbDisponible, "cell 0 1");
 
         //---- txtPrecioAprox ----
         txtPrecioAprox.setLabelText("Precio Aprox");
@@ -140,6 +145,7 @@ public class frmProveedor extends JPanel{
     public JComboBox cmbTipoProveedor;
     public TextField txtNombre;
     public TextField txtNombreEmpresa;
+    public JCheckBox cbDisponible;
     public TextField txtPrecioAprox;
     public TextField txtTelefono;
     public TextField txtTelefono2;

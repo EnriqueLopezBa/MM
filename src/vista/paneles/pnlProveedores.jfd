@@ -84,7 +84,6 @@ new FormModel {
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblInfo"
-				"text": "text"
 				"horizontalAlignment": 2
 				"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 0, false )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
@@ -147,7 +146,6 @@ new FormModel {
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblInfoProv"
-				"text": "text"
 				"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 0, false )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 1 5"

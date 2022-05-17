@@ -49,6 +49,8 @@ public class DialogEvento extends JDialog {
         setSize(new Dimension(x, getPreferredSize().height));
         setLocationRelativeTo(pun.i);
         getContentPane().setBackground(Color.white);
+        
+        
         p.init(new String[]{"idEvento", "idCliente", "idTipoEvento", "idLugar", "Fecha Inicio", "Fecha Final", "Nombre de Evento", "Num. Invitados", "Presupuesto", "Estilo", "Precio Total"}, 4, false);
         llenarTabla();
         p.txtBusqueda.addKeyListener(new KeyAdapter() {
@@ -73,8 +75,8 @@ public class DialogEvento extends JDialog {
                 try {
                     Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(p.tblModel.getValueAt(x, 4).toString());
                     pun.fechaInicio.setSelectedDate(date1);
-                    Date date2 = new SimpleDateFormat("yyyy-MM-dd").parse(p.tblModel.getValueAt(x, 5).toString());
-                    pun.fechaFinal.setSelectedDate(date2);
+//                    Date date2 = new SimpleDateFormat("yyyy-MM-dd").parse(p.tblModel.getValueAt(x, 5).toString());
+//                    pun.fechaFinal.setSelectedDate(date2);
                     pun.cmbTipoEvento.setSelectedItem(ControladorTipoEvento.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 2)).getTematica());
                     Lugar lug = ControladorLugar.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 3));
                     Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lug.getIdCiudad());
@@ -155,10 +157,11 @@ public class DialogEvento extends JDialog {
         p.tblModel.setRowCount(0);
         for (Evento e : ControladorEvento.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdEvento(), e.getIdCliente(), e.getIdTipoEvento(),
-                e.getIdLugar(), e.getFechaInicio(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo(), e.getNombreEvento(), e.getPrecioFinal()});
+                e.getIdLugar(), e.getFechaInicio(), e.getFechaFinal(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo(), e.getNombreEvento(), e.getPrecioFinal()});
         }
     }
-
+    
+    
     private void thisWindowClosed(WindowEvent e) {
         Constante.removeClienteTemporal();
     }

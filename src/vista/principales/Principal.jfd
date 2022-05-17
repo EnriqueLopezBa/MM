@@ -10,16 +10,23 @@ new FormModel {
 			"undecorated": true
 			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowIconified", "thisWindowIconified", true ) )
 			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowDeiconified", "thisWindowDeiconified", true ) )
-			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) {
-				"autoSize": false
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "fill"
+				"$columnConstraints": "0[fill]"
+				"$rowConstraints": "[fill]0[fill]0[fill]0[fill]"
 			} ) {
 				name: "pnlOpciones"
 				"background": sfield java.awt.Color pink
 				"minimumSize": new java.awt.Dimension( 150, 81 )
 				"preferredSize": new java.awt.Dimension( 150, 81 )
 				"alignmentY": 0.0f
+				add( new FormComponent( "javax.swing.JPopupMenu$Separator" ) {
+					name: "separator1"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 2"
+				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
-					name: "panel6"
+					name: "pnlBienvenida"
 					"background": sfield java.awt.Color pink
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label4"
@@ -37,96 +44,114 @@ new FormModel {
 					}, new FormLayoutConstraints( class java.lang.String ) {
 						"value": "Center"
 					} )
-				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) )
-				add( new FormComponent( "Componentes.Buttont" ) {
-					name: "btnCliente"
-					"text": "Cliente"
-					"hoverColor": &Color0 new java.awt.Color( 102, 153, 255, 255 )
-					"$buttonGroup": &FormReference0 new FormReference( "buttonGroup1" )
-					auxiliary() {
-						"JavaCodeGenerator.variableModifiers": 4
-					}
-					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnCliente", true ) )
-				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
-					"x": 0
-					"y": 170
-					"width": 150
-					"height": 35
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0"
 				} )
-				add( new FormComponent( "Componentes.Buttont" ) {
-					name: "btnEvento"
-					"text": "Evento"
-					"hoverColor": #Color0
-					"$buttonGroup": #FormReference0
-					auxiliary() {
-						"JavaCodeGenerator.variableModifiers": 1
-					}
-					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEvento", true ) )
-				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
-					"width": 150
-					"height": 35
-					"x": 0
-					"y": 240
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "fill"
+					"$columnConstraints": "0[]0"
+					"$rowConstraints": "[grow,fill]0[grow,fill]0[grow,fill]0[grow,fill]0[grow,fill]"
+				} ) {
+					name: "pnlOpcionesCliente"
+					"background": sfield java.awt.Color pink
+					add( new FormComponent( "Componentes.Buttont" ) {
+						name: "btnCliente"
+						"text": "Cliente"
+						"hoverColor": &Color0 new java.awt.Color( 102, 153, 255, 255 )
+						"$buttonGroup": &FormReference0 new FormReference( "buttonGroup1" )
+						auxiliary() {
+							"JavaCodeGenerator.variableModifiers": 4
+						}
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnCliente", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0, growx"
+					} )
+					add( new FormComponent( "Componentes.Buttont" ) {
+						name: "btnQuiz"
+						"text": "Quiz"
+						"hoverColor": #Color0
+						"$buttonGroup": #FormReference0
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnQuiz", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 1, grow"
+					} )
+					add( new FormComponent( "Componentes.Buttont" ) {
+						name: "btnEvento"
+						"text": "Evento"
+						"hoverColor": #Color0
+						"$buttonGroup": #FormReference0
+						auxiliary() {
+							"JavaCodeGenerator.variableModifiers": 1
+						}
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEvento", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 2, grow"
+					} )
+					add( new FormComponent( "Componentes.Buttont" ) {
+						name: "btnProveedores"
+						"text": "Proveedores"
+						"hoverColor": #Color0
+						"$buttonGroup": #FormReference0
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnProveedores", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 3, grow"
+					} )
+					add( new FormComponent( "Componentes.Buttont" ) {
+						name: "btnEventosDestacados"
+						"text": "Eventos Destacados"
+						"hoverColor": &Color1 new java.awt.Color( 102, 153, 255, 255 )
+						"$buttonGroup": &FormReference1 new FormReference( "buttonGroup1" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEventosDestacados", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 4, grow"
+					} )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 1"
 				} )
-				add( new FormComponent( "Componentes.Buttont" ) {
-					name: "btnAgenda"
-					"text": "Agenda"
-					"hoverColor": #Color0
-					"$buttonGroup": #FormReference0
-					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAgenda", true ) )
-				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
-					"width": 150
-					"height": 35
-					"x": 0
-					"y": 420
-				} )
-				add( new FormComponent( "Componentes.Buttont" ) {
-					name: "btnProveedores"
-					"text": "Proveedores"
-					"hoverColor": #Color0
-					"$buttonGroup": #FormReference0
-					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnProveedores", true ) )
-				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
-					"width": 150
-					"height": 35
-					"x": 0
-					"y": 275
-				} )
-				add( new FormComponent( "Componentes.Buttont" ) {
-					name: "btnPago"
-					"text": "Pago/Abono"
-					"hoverColor": &Color1 new java.awt.Color( 102, 153, 255, 255 )
-					"$buttonGroup": &FormReference1 new FormReference( "buttonGroup1" )
-					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnPago", true ) )
-				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
-					"x": 0
-					"y": 385
-					"width": 150
-					"height": 35
-				} )
-				add( new FormComponent( "Componentes.Buttont" ) {
-					name: "btnQuiz"
-					"text": "Quiz"
-					"hoverColor": #Color0
-					"$buttonGroup": #FormReference0
-					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnQuiz", true ) )
-				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
-					"width": 150
-					"height": 35
-					"x": 0
-					"y": 205
-				} )
-				add( new FormComponent( "Componentes.Buttont" ) {
-					name: "btnEventosDestacados"
-					"text": "Eventos Destacados"
-					"hoverColor": #Color1
-					"$buttonGroup": #FormReference1
-					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEventosDestacados", true ) )
-				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
-					"width": 150
-					"height": 35
-					"x": 0
-					"y": 335
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "fill"
+					"$columnConstraints": "0[]0"
+					"$rowConstraints": "[][][][]"
+				} ) {
+					name: "pnlAdmin"
+					"background": sfield java.awt.Color pink
+					add( new FormComponent( "Componentes.Buttont" ) {
+						name: "btnPago"
+						"text": "Pago/Abono"
+						"hoverColor": #Color1
+						"$buttonGroup": #FormReference1
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnPago", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0, grow"
+					} )
+					add( new FormComponent( "Componentes.Buttont" ) {
+						name: "btnCotizacion"
+						"text": "Cotizacion"
+						"$buttonGroup": &FormReference2 new FormReference( "buttonGroup1" )
+						"hoverColor": &Color2 new java.awt.Color( 102, 153, 255, 255 )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 1, grow"
+					} )
+					add( new FormComponent( "Componentes.Buttont" ) {
+						name: "btnAgenda"
+						"text": "Agenda"
+						"hoverColor": #Color0
+						"$buttonGroup": #FormReference0
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAgenda", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 2,grow"
+					} )
+					add( new FormComponent( "Componentes.Buttont" ) {
+						name: "btnUsuarios"
+						"text": "Usuarios"
+						"$buttonGroup": #FormReference2
+						"hoverColor": #Color2
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnUsuarios", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 3,grow"
+					} )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 3"
 				} )
 			}, new FormLayoutConstraints( class java.lang.String ) {
 				"value": "West"
@@ -160,7 +185,7 @@ new FormModel {
 						"maximumSize": &Dimension0 new java.awt.Dimension( 30, 21 )
 						"minimumSize": &Dimension1 new java.awt.Dimension( 50, 21 )
 						"preferredSize": &Dimension2 new java.awt.Dimension( 50, 21 )
-						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/close.png" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/icons8_Close_48px.png" )
 						"opaque": true
 						"contentAreaFilled": false
 						"cursor": &Cursor0 new java.awt.Cursor( 12 )
@@ -176,7 +201,7 @@ new FormModel {
 						"maximumSize": #Dimension0
 						"minimumSize": #Dimension1
 						"preferredSize": #Dimension2
-						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/minimize.png" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/icons8_minimize_window_48px_1.png" )
 						"opaque": true
 						"contentAreaFilled": false
 						"cursor": #Cursor0
@@ -184,6 +209,16 @@ new FormModel {
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnMinimizar", true ) )
 					}, new FormLayoutConstraints( class java.lang.String ) {
 						"value": "West"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "btnMaximizar"
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/icons8_maximize_window_48px.png" )
+						"borderPainted": false
+						"contentAreaFilled": false
+						"cursor": new java.awt.Cursor( 12 )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnMaximizar", true ) )
+					}, new FormLayoutConstraints( class java.lang.String ) {
+						"value": "Center"
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "After"
@@ -213,7 +248,7 @@ new FormModel {
 				"value": "Center"
 			} )
 		}, new FormLayoutConstraints( null ) {
-			"size": new java.awt.Dimension( 700, 470 )
+			"size": new java.awt.Dimension( 700, 510 )
 			"location": new java.awt.Point( 0, 0 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {

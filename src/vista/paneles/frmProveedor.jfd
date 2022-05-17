@@ -37,6 +37,15 @@ new FormModel {
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 2 0"
 			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "cbDisponible"
+				"text": "Disponible"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1"
+			} )
 			add( new FormComponent( "Componentes.TextField" ) {
 				name: "txtPrecioAprox"
 				"labelText": "Precio Aprox"

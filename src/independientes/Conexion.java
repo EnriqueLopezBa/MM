@@ -35,7 +35,7 @@ public class Conexion {
 
     public ResultSet Consulta(String consulta) {
         try {
-            return con.prepareStatement(consulta).executeQuery();
+           return con.prepareStatement(consulta).executeQuery();
         } catch (SQLException ex) {
             System.err.println("Error, " + ex.getMessage());
         }

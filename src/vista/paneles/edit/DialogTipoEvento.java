@@ -30,7 +30,7 @@ public class DialogTipoEvento extends JDialog {
         initComponents();
         getContentPane().setBackground(Color.white);
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.5).intValue()));
+        setSize(new Dimension(screensize.getSize().width / 4, new Double(screensize.getSize().height / 2.5).intValue()));
         setLocationRelativeTo(null);
         p.init(new String[]{"idTipoEvento", "Tipo Evento"}, 1, true);
         init();

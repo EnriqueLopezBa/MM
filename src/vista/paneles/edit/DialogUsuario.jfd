@@ -1,0 +1,62 @@
+JFDML JFormDesigner: "7.0.5.0.404" Java: "1.8.0_261" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "fill"
+			"$columnConstraints": "[grow,fill][grow,fill]"
+			"$rowConstraints": "[][][][]"
+		} ) {
+			name: "this"
+			"background": new java.awt.Color( 255, 255, 255, 255 )
+			"title": "EDICION DE USUARIOS"
+			add( new FormComponent( "vista.paneles.pnlCRUD" ) {
+				name: "p"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0, spanx"
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cbTipoUsario"
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cbTipoUsarioItemStateChanged", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblEditTipoUsuario"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/edit.png" )
+				"cursor": new java.awt.Cursor( 12 )
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblEditTipoUsuarioMouseClicked", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 1,grow 0 0"
+			} )
+			add( new FormComponent( "Componentes.TextField" ) {
+				name: "txtNombre"
+				"labelText": "Nombre"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 2"
+			} )
+			add( new FormComponent( "Componentes.TextField" ) {
+				name: "txtApellido"
+				"labelText": "Apellido"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 2"
+			} )
+			add( new FormComponent( "Componentes.TextField" ) {
+				name: "txtCorreo"
+				"labelText": "Correo"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 3"
+			} )
+			add( new FormComponent( "Componentes.PasswordField" ) {
+				name: "txtClave"
+				"labelText": "Clave"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 3"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 400, 370 )
+		} )
+	}
+}

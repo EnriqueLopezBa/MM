@@ -56,13 +56,13 @@ public class ProveedorDAOImp implements IProveedorDAO {
 
     @Override
     public Proveedor obtenerByID(int id) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR WHERE IDPROVEEDOR = "+id)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR WHERE IDPROVEEDOR = " + id)) {
             if (rs.next()) {
-               return new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getBoolean(8));
+                return new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getBoolean(8));
             }
         } catch (SQLException e) {
             System.err.println("Error obtenerBYID Proveedor, " + e.getMessage());
-        }     
+        }
         return null;
     }
 
@@ -101,8 +101,8 @@ public class ProveedorDAOImp implements IProveedorDAO {
             ps.setString(4, t.getTelefono());
             ps.setString(5, t.getTelefono2());
             ps.setInt(6, t.getPrecioAprox());
-            ps.setInt(7, t.getIdProveedor());
-            ps.setBoolean(8, t.isDisponible());
+            ps.setBoolean(7, t.isDisponible());
+            ps.setInt(8, t.getIdProveedor());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
         } catch (SQLException e) {
             System.err.println("Error actualizar Proveedor, " + e.getMessage());

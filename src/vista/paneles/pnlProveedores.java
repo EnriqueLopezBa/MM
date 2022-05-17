@@ -92,6 +92,9 @@ public class pnlProveedores extends JPanel {
         int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
         for (ProveedorArea prov : ControladorProveedorArea.getInstancia().obtenerListaByIdCiudad(idCiudad)) {
             for (Proveedor pro : ControladorProveedor.getInstancia().obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())) {
+                if (!pro.isDisponible()) {
+                    continue;
+                }
                 if (prov.getIdProveedor() == pro.getIdProveedor()) {
                     cmbProveedor.addItem(pro.getNombreEmpresa());
                 }
@@ -131,7 +134,7 @@ public class pnlProveedores extends JPanel {
                 eventoActual = eve;
                 Lugar lugar = ControladorLugar.getInstancia().obtenerByID(eve.getIdLugar());
                 Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lugar.getIdCiudad());
-                Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdCiudad());
+                Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdEstado());
                 lblInfo.setText(estado.getEstado() + ", " + ciudad.getCiudad());
             }
         }
@@ -368,7 +371,6 @@ public class pnlProveedores extends JPanel {
         add(label1, "cell 0 2");
 
         //---- lblInfo ----
-        lblInfo.setText("text");
         lblInfo.setHorizontalAlignment(SwingConstants.LEFT);
         lblInfo.setFont(lblInfo.getFont().deriveFont(lblInfo.getFont().getStyle() | Font.BOLD));
         add(lblInfo, "cell 1 2");
@@ -423,7 +425,6 @@ public class pnlProveedores extends JPanel {
         add(label2, "cell 0 5");
 
         //---- lblInfoProv ----
-        lblInfoProv.setText("text");
         lblInfoProv.setFont(lblInfoProv.getFont().deriveFont(lblInfoProv.getFont().getStyle() | Font.BOLD));
         add(lblInfoProv, "cell 1 5");
 

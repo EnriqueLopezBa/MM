@@ -205,10 +205,10 @@ public class pnlCliente extends JPanel {
             panel1.setPreferredSize(new Dimension(772, 258));
             panel1.setMaximumSize(new Dimension(772, 32767));
             panel1.setLayout(new MigLayout(
-                "insets 0,hidemode 3,gap 0 0",
+                null,
                 // columns
-                "[grow,fill]" +
-                "[fill]para",
+                "[grow,fill]0" +
+                "[grow,fill]",
                 // rows
                 "[grow,fill]"));
 
@@ -216,16 +216,16 @@ public class pnlCliente extends JPanel {
             btnAceptar.setText("Registrar");
             btnAceptar.setFont(new Font("Segoe UI", Font.BOLD, 18));
             btnAceptar.addActionListener(e -> btnAceptar(e));
-            panel1.add(btnAceptar, "cell 1 0,growx,wmin 20%,height 30%:30%:30%");
+            panel1.add(btnAceptar, "cell 1 0,growx,height 30%:30%:30%,");
 
             //======== panel2 ========
             {
                 panel2.setBackground(Color.white);
                 panel2.setLayout(new MigLayout(
-                    "fill,insets 0,hidemode 3,gap 10 4",
+                    "fill",
                     // columns
-                    "rel[171,fill]para" +
-                    "[210,fill]para",
+                    "rel[grow,fill]para" +
+                    "[grow,fill]para",
                     // rows
                     "[fill]8" +
                     "[fill]8" +

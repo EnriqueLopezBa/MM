@@ -7,6 +7,8 @@ import Componentes.*;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import controlador.ControladorCliente;
 import modelo.Cliente;
+import net.miginfocom.swing.*;
+import vista.paneles.edit.DialogUsuario;
 import vista.paneles.pnlAbono;
 import vista.paneles.pnlAgenda;
 import vista.paneles.pnlCliente;
@@ -17,14 +19,11 @@ import vista.paneles.pnlQuiz;
 
 public class Principal extends JFrame {
 
- 
     private static Principal instancia;
     private int mouseX, mouseY;
 
     public boolean admin = false;
     public pnlEventos pnlEventos = null;
-    
-
 
     public static Principal getInstancia() {
         if (instancia == null) {
@@ -35,10 +34,9 @@ public class Principal extends JFrame {
 
     private Principal() {
         initComponents();
-        final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        setMinimumSize(screensize.getSize());
-        setLocationRelativeTo(null);
-
+       separator1.setForeground(Color.red); // top line color
+       separator1.setBackground(Color.red.brighter());
+        maximizar();
         new Timer(2000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -55,7 +53,7 @@ public class Principal extends JFrame {
         Cliente cliente = ControladorCliente.getInstancia().obtenerClienteActivo();
         if (cliente != null) {
             lblCliente.setText("Cliente activo: " + cliente.getCorreo() + " - " + cliente.getNombre() + " " + cliente.getApellido());
-        }else{
+        } else {
             lblCliente.setText("Cliente Activo: ");
         }
     }
@@ -77,10 +75,10 @@ public class Principal extends JFrame {
     }
 
     private void cambiarPanel(JPanel pnl) {
-
         pnlContenido.removeAll();
         pnlContenido.add(pnl);
         pnlContenido.revalidate();
+
     }
 
     private void btnEvento(ActionEvent e) {
@@ -93,7 +91,7 @@ public class Principal extends JFrame {
     }
 
     private void btnPago(ActionEvent e) {
-       cambiarPanel(new pnlAbono());
+        cambiarPanel(new pnlAbono());
     }
 
     private void btnModoOscuro(ActionEvent e) {
@@ -130,23 +128,44 @@ public class Principal extends JFrame {
         cambiarPanel(new pnlEventosDestacados());
     }
 
+    private void maximizar() {
+        final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+        setMinimumSize(screensize.getSize());
+        setLocationRelativeTo(null);
+
+    }
+
+    private void btnMaximizar(ActionEvent e) {
+        maximizar();
+    }
+
+    private void btnUsuarios(ActionEvent e) {
+       new DialogUsuario().setVisible(true);
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         pnlOpciones = new JPanel();
-        panel6 = new JPanel();
+        separator1 = new JPopupMenu.Separator();
+        pnlBienvenida = new JPanel();
         label4 = new JLabel();
+        pnlOpcionesCliente = new JPanel();
         btnCliente = new Buttont();
-        btnEvento = new Buttont();
-        btnAgenda = new Buttont();
-        btnProveedores = new Buttont();
-        btnPago = new Buttont();
         btnQuiz = new Buttont();
+        btnEvento = new Buttont();
+        btnProveedores = new Buttont();
         btnEventosDestacados = new Buttont();
+        pnlAdmin = new JPanel();
+        btnPago = new Buttont();
+        btnCotizacion = new Buttont();
+        btnAgenda = new Buttont();
+        btnUsuarios = new Buttont();
         pnlMenu = new JPanel();
         lblCliente = new JLabel();
         panel1 = new JPanel();
         btnCerrar = new JButton();
         btnMinimizar = new JButton();
+        btnMaximizar = new JButton();
         lblPresupuesto = new JLabel();
         pnlContenido = new JPanel();
 
@@ -173,12 +192,21 @@ public class Principal extends JFrame {
             pnlOpciones.setMinimumSize(new Dimension(150, 81));
             pnlOpciones.setPreferredSize(new Dimension(150, 81));
             pnlOpciones.setAlignmentY(0.0F);
-            pnlOpciones.setLayout(null);
+            pnlOpciones.setLayout(new MigLayout(
+                "fill",
+                // columns
+                "0[fill]",
+                // rows
+                "[fill]0" +
+                "[fill]0" +
+                "[fill]0" +
+                "[fill]"));
+            pnlOpciones.add(separator1, "cell 0 2");
 
-            //======== panel6 ========
+            //======== pnlBienvenida ========
             {
-                panel6.setBackground(Color.pink);
-                panel6.setLayout(new BorderLayout());
+                pnlBienvenida.setBackground(Color.pink);
+                pnlBienvenida.setLayout(new BorderLayout());
 
                 //---- label4 ----
                 label4.setText("<html> <H2 align=\"center\"> Bienvenido Marina Meza </H2></html>");
@@ -194,59 +222,93 @@ public class Principal extends JFrame {
                         label4MouseClicked();
                     }
                 });
-                panel6.add(label4, BorderLayout.CENTER);
+                pnlBienvenida.add(label4, BorderLayout.CENTER);
             }
-            pnlOpciones.add(panel6);
-            panel6.setBounds(new Rectangle(new Point(0, 0), panel6.getPreferredSize()));
+            pnlOpciones.add(pnlBienvenida, "cell 0 0");
 
-            //---- btnCliente ----
-            btnCliente.setText("Cliente");
-            btnCliente.setHoverColor(new Color(102, 153, 255));
-            btnCliente.addActionListener(e -> btnCliente(e));
-            pnlOpciones.add(btnCliente);
-            btnCliente.setBounds(0, 170, 150, 35);
+            //======== pnlOpcionesCliente ========
+            {
+                pnlOpcionesCliente.setBackground(Color.pink);
+                pnlOpcionesCliente.setLayout(new MigLayout(
+                    "fill",
+                    // columns
+                    "0[]0",
+                    // rows
+                    "[grow,fill]0" +
+                    "[grow,fill]0" +
+                    "[grow,fill]0" +
+                    "[grow,fill]0" +
+                    "[grow,fill]"));
 
-            //---- btnEvento ----
-            btnEvento.setText("Evento");
-            btnEvento.setHoverColor(new Color(102, 153, 255));
-            btnEvento.addActionListener(e -> btnEvento(e));
-            pnlOpciones.add(btnEvento);
-            btnEvento.setBounds(0, 240, 150, 35);
+                //---- btnCliente ----
+                btnCliente.setText("Cliente");
+                btnCliente.setHoverColor(new Color(102, 153, 255));
+                btnCliente.addActionListener(e -> btnCliente(e));
+                pnlOpcionesCliente.add(btnCliente, "cell 0 0, growx");
 
-            //---- btnAgenda ----
-            btnAgenda.setText("Agenda");
-            btnAgenda.setHoverColor(new Color(102, 153, 255));
-            btnAgenda.addActionListener(e -> btnAgenda(e));
-            pnlOpciones.add(btnAgenda);
-            btnAgenda.setBounds(0, 420, 150, 35);
+                //---- btnQuiz ----
+                btnQuiz.setText("Quiz");
+                btnQuiz.setHoverColor(new Color(102, 153, 255));
+                btnQuiz.addActionListener(e -> btnQuiz(e));
+                pnlOpcionesCliente.add(btnQuiz, "cell 0 1, grow");
 
-            //---- btnProveedores ----
-            btnProveedores.setText("Proveedores");
-            btnProveedores.setHoverColor(new Color(102, 153, 255));
-            btnProveedores.addActionListener(e -> btnProveedores(e));
-            pnlOpciones.add(btnProveedores);
-            btnProveedores.setBounds(0, 275, 150, 35);
+                //---- btnEvento ----
+                btnEvento.setText("Evento");
+                btnEvento.setHoverColor(new Color(102, 153, 255));
+                btnEvento.addActionListener(e -> btnEvento(e));
+                pnlOpcionesCliente.add(btnEvento, "cell 0 2, grow");
 
-            //---- btnPago ----
-            btnPago.setText("Pago/Abono");
-            btnPago.setHoverColor(new Color(102, 153, 255));
-            btnPago.addActionListener(e -> btnPago(e));
-            pnlOpciones.add(btnPago);
-            btnPago.setBounds(0, 385, 150, 35);
+                //---- btnProveedores ----
+                btnProveedores.setText("Proveedores");
+                btnProveedores.setHoverColor(new Color(102, 153, 255));
+                btnProveedores.addActionListener(e -> btnProveedores(e));
+                pnlOpcionesCliente.add(btnProveedores, "cell 0 3, grow");
 
-            //---- btnQuiz ----
-            btnQuiz.setText("Quiz");
-            btnQuiz.setHoverColor(new Color(102, 153, 255));
-            btnQuiz.addActionListener(e -> btnQuiz(e));
-            pnlOpciones.add(btnQuiz);
-            btnQuiz.setBounds(0, 205, 150, 35);
+                //---- btnEventosDestacados ----
+                btnEventosDestacados.setText("Eventos Destacados");
+                btnEventosDestacados.setHoverColor(new Color(102, 153, 255));
+                btnEventosDestacados.addActionListener(e -> btnEventosDestacados(e));
+                pnlOpcionesCliente.add(btnEventosDestacados, "cell 0 4, grow");
+            }
+            pnlOpciones.add(pnlOpcionesCliente, "cell 0 1");
 
-            //---- btnEventosDestacados ----
-            btnEventosDestacados.setText("Eventos Destacados");
-            btnEventosDestacados.setHoverColor(new Color(102, 153, 255));
-            btnEventosDestacados.addActionListener(e -> btnEventosDestacados(e));
-            pnlOpciones.add(btnEventosDestacados);
-            btnEventosDestacados.setBounds(0, 335, 150, 35);
+            //======== pnlAdmin ========
+            {
+                pnlAdmin.setBackground(Color.pink);
+                pnlAdmin.setLayout(new MigLayout(
+                    "fill",
+                    // columns
+                    "0[]0",
+                    // rows
+                    "[]" +
+                    "[]" +
+                    "[]" +
+                    "[]"));
+
+                //---- btnPago ----
+                btnPago.setText("Pago/Abono");
+                btnPago.setHoverColor(new Color(102, 153, 255));
+                btnPago.addActionListener(e -> btnPago(e));
+                pnlAdmin.add(btnPago, "cell 0 0, grow");
+
+                //---- btnCotizacion ----
+                btnCotizacion.setText("Cotizacion");
+                btnCotizacion.setHoverColor(new Color(102, 153, 255));
+                pnlAdmin.add(btnCotizacion, "cell 0 1, grow");
+
+                //---- btnAgenda ----
+                btnAgenda.setText("Agenda");
+                btnAgenda.setHoverColor(new Color(102, 153, 255));
+                btnAgenda.addActionListener(e -> btnAgenda(e));
+                pnlAdmin.add(btnAgenda, "cell 0 2,grow");
+
+                //---- btnUsuarios ----
+                btnUsuarios.setText("Usuarios");
+                btnUsuarios.setHoverColor(new Color(102, 153, 255));
+                btnUsuarios.addActionListener(e -> btnUsuarios(e));
+                pnlAdmin.add(btnUsuarios, "cell 0 3,grow");
+            }
+            pnlOpciones.add(pnlAdmin, "cell 0 3");
         }
         contentPane.add(pnlOpciones, BorderLayout.WEST);
 
@@ -284,7 +346,7 @@ public class Principal extends JFrame {
                 btnCerrar.setMaximumSize(new Dimension(30, 21));
                 btnCerrar.setMinimumSize(new Dimension(50, 21));
                 btnCerrar.setPreferredSize(new Dimension(50, 21));
-                btnCerrar.setIcon(new ImageIcon(getClass().getResource("/img/close.png")));
+                btnCerrar.setIcon(new ImageIcon(getClass().getResource("/img/icons8_Close_48px.png")));
                 btnCerrar.setOpaque(true);
                 btnCerrar.setContentAreaFilled(false);
                 btnCerrar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -298,13 +360,21 @@ public class Principal extends JFrame {
                 btnMinimizar.setMaximumSize(new Dimension(30, 21));
                 btnMinimizar.setMinimumSize(new Dimension(50, 21));
                 btnMinimizar.setPreferredSize(new Dimension(50, 21));
-                btnMinimizar.setIcon(new ImageIcon(getClass().getResource("/img/minimize.png")));
+                btnMinimizar.setIcon(new ImageIcon(getClass().getResource("/img/icons8_minimize_window_48px_1.png")));
                 btnMinimizar.setOpaque(true);
                 btnMinimizar.setContentAreaFilled(false);
                 btnMinimizar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 btnMinimizar.setMargin(new Insets(5, 30, 2, 30));
                 btnMinimizar.addActionListener(e -> btnMinimizar(e));
                 panel1.add(btnMinimizar, BorderLayout.WEST);
+
+                //---- btnMaximizar ----
+                btnMaximizar.setIcon(new ImageIcon(getClass().getResource("/img/icons8_maximize_window_48px.png")));
+                btnMaximizar.setBorderPainted(false);
+                btnMaximizar.setContentAreaFilled(false);
+                btnMaximizar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                btnMaximizar.addActionListener(e -> btnMaximizar(e));
+                panel1.add(btnMaximizar, BorderLayout.CENTER);
             }
             pnlMenu.add(panel1, BorderLayout.LINE_END);
 
@@ -329,18 +399,20 @@ public class Principal extends JFrame {
         //---- buttonGroup1 ----
         ButtonGroup buttonGroup1 = new ButtonGroup();
         buttonGroup1.add(btnCliente);
-        buttonGroup1.add(btnEvento);
-        buttonGroup1.add(btnAgenda);
-        buttonGroup1.add(btnProveedores);
-        buttonGroup1.add(btnPago);
         buttonGroup1.add(btnQuiz);
+        buttonGroup1.add(btnEvento);
+        buttonGroup1.add(btnProveedores);
         buttonGroup1.add(btnEventosDestacados);
+        buttonGroup1.add(btnPago);
+        buttonGroup1.add(btnCotizacion);
+        buttonGroup1.add(btnAgenda);
+        buttonGroup1.add(btnUsuarios);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
     public static void main(String[] args) {
         try {
-                UIManager.setLookAndFeel(new FlatIntelliJLaf());
+            UIManager.setLookAndFeel(new FlatIntelliJLaf());
         } catch (UnsupportedLookAndFeelException e) {
             System.err.println(e.getMessage());
         }
@@ -349,20 +421,26 @@ public class Principal extends JFrame {
     }
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JPanel pnlOpciones;
-    private JPanel panel6;
+    private JPopupMenu.Separator separator1;
+    private JPanel pnlBienvenida;
     protected JLabel label4;
+    private JPanel pnlOpcionesCliente;
     protected Buttont btnCliente;
-    public Buttont btnEvento;
-    private Buttont btnAgenda;
-    private Buttont btnProveedores;
-    private Buttont btnPago;
     private Buttont btnQuiz;
+    public Buttont btnEvento;
+    private Buttont btnProveedores;
     private Buttont btnEventosDestacados;
+    private JPanel pnlAdmin;
+    private Buttont btnPago;
+    private Buttont btnCotizacion;
+    private Buttont btnAgenda;
+    private Buttont btnUsuarios;
     public JPanel pnlMenu;
     public JLabel lblCliente;
     private JPanel panel1;
     private JButton btnCerrar;
     private JButton btnMinimizar;
+    private JButton btnMaximizar;
     public JLabel lblPresupuesto;
     protected JPanel pnlContenido;
     // JFormDesigner - End of variables declaration  //GEN-END:variables

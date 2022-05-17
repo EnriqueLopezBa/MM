@@ -43,10 +43,9 @@ public final class Dates extends javax.swing.JPanel {
 
     public void showDate(int month, int year, SelectedDate select) {
         List<Date> fechas = new ArrayList<>();
-        if (ControladorEvento.getInstancia() != null) {
-            ControladorEvento.getInstancia().obtenerEventoByAnio(YEAR).forEach(fecha -> fechas.add(fecha.getFechaInicio()));
-            diasNoDisponibles = fechas;
-        }
+
+        ControladorEvento.getInstancia().obtenerEventoByAnio(YEAR).forEach(fecha -> fechas.add(fecha.getFechaInicio()));
+        diasNoDisponibles = fechas;
 
 //        init(fechas);
         m = month;
@@ -77,19 +76,18 @@ public final class Dates extends javax.swing.JPanel {
                 cmd.setBackground(getForeground());
                 cmd.setForeground(new Color(255, 255, 255));
             }
-            if (ControladorEvento.getInstancia() != null) {
-                String tempDate = year + "-" + month + "-" + i;
-                try {
-                    if (diasNoDisponibles != null && diasNoDisponibles.contains(dateFormat.parse(tempDate))) {
-                        cmd.setBackground(new Color(255, 0, 0));
-                        cmd.setForeground(new Color(255, 255, 255));
-                        cmd.setToolTipText("DIA NO DISPONIBLE");
-                        cmd.setDiaDisponible(false);
-                        cmd.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    }
-                } catch (ParseException ex) {
-                    Logger.getLogger(Dates.class.getName()).log(Level.SEVERE, null, ex);
+
+            String tempDate = year + "-" + month + "-" + i;
+            try {
+                if (diasNoDisponibles != null && diasNoDisponibles.contains(dateFormat.parse(tempDate))) {
+                    cmd.setBackground(new Color(255, 0, 0));
+                    cmd.setForeground(new Color(255, 255, 255));
+                    cmd.setToolTipText("DIA NO DISPONIBLE");
+                    cmd.setDiaDisponible(false);
+                    cmd.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
+            } catch (ParseException ex) {
+                Logger.getLogger(Dates.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             start++;
@@ -116,6 +114,7 @@ public final class Dates extends javax.swing.JPanel {
                     String tempDate = y + "-" + m + "-" + cmd.getText();
                     try {
                         if (diasNoDisponibles != null && !diasNoDisponibles.contains(dateFormat.parse(tempDate))) {
+
                             cmd.setBackground(Color.WHITE);
                             cmd.setForeground(new java.awt.Color(75, 75, 75));
                         }

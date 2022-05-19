@@ -8,11 +8,14 @@ new FormModel {
 			"alwaysOnTop": true
 			"type": enum java.awt.Window$Type POPUP
 			"defaultCloseOperation": 2
+			"$sizePolicy": 1
+			"title": "INICIAR SESION"
 			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "thisWindowClosing", true ) )
 			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosed", "thisWindowClosed", true ) )
-			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {seq {space :p:122:p, comp lblError:::p::p, space ::313:x}, seq l {space :p:101:p, par l {comp txtCorreo::::212:x, comp botonGradiente1::t:::x, comp txtClave::l::212:x}, space :p:122:p}}"
-				"$verticalGroup": "par l {seq l {space :p:60:p, comp txtCorreo:::p::p, space :p:37:p, comp txtClave:::p::p, space ::65:x, comp lblError:::p::p, space u:::p, comp botonGradiente1:::p:47:p, space :p:25:p}}"
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "flowy"
+				"$columnConstraints": "[grow, align center]"
+				"$rowConstraints": "[fill]rel[fill]para[fill]"
 			} ) {
 				name: "panel2"
 				"background": new java.awt.Color( 255, 255, 255, 255 )
@@ -22,12 +25,16 @@ new FormModel {
 					"labelText": "Correo"
 					"text": "mm@gmail.com"
 					"nextFocusableComponent": new FormReference( "txtClave" )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0, w 80%"
 				} )
 				add( new FormComponent( "Componentes.PasswordField" ) {
 					name: "txtClave"
 					"labelText": "Contraseña"
 					"nextFocusableComponent": new FormReference( "botonGradiente1" )
 					addEvent( new FormEvent( "java.awt.event.KeyListener", "keyPressed", "passwordKeyPressed", true ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 1, w 80%"
 				} )
 				add( new FormComponent( "Componentes.BotonGradiente" ) {
 					name: "botonGradiente1"
@@ -38,19 +45,23 @@ new FormModel {
 					"PGradiante2": new java.awt.Color( 255, 204, 204, 255 )
 					"cursor": new java.awt.Cursor( 12 )
 					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "botonGradiente1MouseClicked", false ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 2, w 70%, h 30%!"
 				} )
 				add( new FormComponent( "javax.swing.JLabel" ) {
 					name: "lblError"
 					"text": "Datos erroneos"
 					"foreground": sfield java.awt.Color red
 					"visible": false
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 2"
 				} )
 			}, new FormLayoutConstraints( class java.lang.String ) {
 				"value": "Center"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 350, 300 )
+			"size": new java.awt.Dimension( 266, 200 )
 		} )
 	}
 }

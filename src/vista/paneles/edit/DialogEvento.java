@@ -152,12 +152,12 @@ public class DialogEvento extends JDialog {
             }
         });
     }
-
+   private SimpleDateFormat localDateFormat = new SimpleDateFormat("yyyy-MM-dd (HH:mm)");
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
         for (Evento e : ControladorEvento.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdEvento(), e.getIdCliente(), e.getIdTipoEvento(),
-                e.getIdLugar(), e.getFechaInicio(), e.getFechaFinal(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo(), e.getNombreEvento(), e.getPrecioFinal()});
+                e.getIdLugar(), localDateFormat.format(e.getFechaInicio()), localDateFormat.format(e.getFechaFinal()), e.getNombreEvento(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo(), e.getPrecioFinal()});
         }
     }
     

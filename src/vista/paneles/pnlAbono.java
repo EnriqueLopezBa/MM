@@ -5,11 +5,11 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import Componentes.Sweet_Alert.Button;
-import Componentes.Sweet_Alert.Message;
 import Componentes.Sweet_Alert.Message.Tipo;
 import Componentes.TabbedPane.*;
 import Componentes.tableC.*;
 import com.raven.datechooser.*;
+import com.raven.datechooserV2.*;
 import controlador.ControladorAbono;
 import controlador.ControladorCliente;
 import controlador.ControladorEvento;
@@ -21,14 +21,12 @@ import independientes.Mensaje;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import modelo.Abono;
 import modelo.Cliente;
 import modelo.Evento;
 import modelo.Proveedor;
 import modelo.ProveedorEvento;
 import net.miginfocom.swing.*;
-import vista.principales.Principal;
 
 /**
  * @author das
@@ -57,6 +55,7 @@ public class pnlAbono extends JPanel {
         p2.btnModificar.setVisible(false);
         ((JLabel) cmbEvento.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
         ((JLabel) cmbEventoP.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+        cargarEventos(true);
         cargarClientes();
         cargarProveedores();
         addComponentListener(new ComponentAdapter() {
@@ -75,13 +74,11 @@ public class pnlAbono extends JPanel {
                 }
                 int x = p.tblBuscar.getSelectedRow();
                 Constante.setClienteTemporal(ControladorCliente.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 0)));
-                cmbEvento.removeAllItems();
+
                 mClientes.setRowCount(0);
                 lblCantADeber.setText("Cant. A Deber:");
                 lblTotal.setText("Total: ");
-                for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
-                    cmbEvento.addItem(ev.getNombreEvento());
-                }
+                cargarEventos(true);
 
             }
         });
@@ -92,9 +89,7 @@ public class pnlAbono extends JPanel {
                 if (!Constante.filaSeleccionada(p2.tblBuscar)) {
                     return;
                 }
-
                 int x = p2.tblBuscar.getSelectedRow();
-
                 Proveedor temp = ControladorProveedor.getInstancia().obtenerByID((int) p2.tblModel.getValueAt(x, 0));
                 ArrayList<ProveedorEvento> eventos = ControladorProveedorEvento.getInstancia().obtenerListaByIdProveedor(temp.getIdProveedor());
                 for (ProveedorEvento ev : eventos) {
@@ -114,6 +109,27 @@ public class pnlAbono extends JPanel {
             }
 
         });
+    }
+
+    private void cargarEventos(boolean cliente) {
+        if (cbSoloAdeudo.isSelected()) {
+            if (cliente) {
+                cmbEvento.removeAllItems();
+                for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
+                    Cliente clienteTemp = ControladorCliente.getInstancia().obtenerClienteActivo();
+                    if (ControladorAbono.getInstancia().obtenerCantidadADeber(clienteTemp.getIdCliente(), ev.getIdEvento()) > 0) {
+                        cmbEvento.addItem(ev.getNombreEvento());
+                    }
+                }
+            }
+        } else {
+            if (cliente) {
+                cmbEvento.removeAllItems();
+                for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
+                    cmbEvento.addItem(ev.getNombreEvento());
+                }
+            }
+        }
     }
 
     private void cmbEventoItemStateChanged(ItemEvent e) {
@@ -137,7 +153,7 @@ public class pnlAbono extends JPanel {
                 if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
                     eventoActual = ev;
                     lblTotal.setText("Total : " + eventoActual.getPrecioFinal());
-                    lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente(), eventoActual.getIdEvento()));
+                    actualizarTotalADeber();
                     cargarTablaAbono();
                     break;
                 }
@@ -151,13 +167,10 @@ public class pnlAbono extends JPanel {
     }
 
     private void cargarTablaAbono() {
-
         ArrayList<Abono> temp = ControladorAbono.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento());
-
         if (temp == null) {
             return;
         }
-
         for (Abono ab : temp) {
             mClientes.addRow(new Object[]{ab.getIdAbono(), ab.getIdCliente(), ab.getIdEvento(),
                 ab.getImporte(), ab.getFecha(),});
@@ -206,6 +219,12 @@ public class pnlAbono extends JPanel {
         }
         if (eventoActual.getPrecioFinal() == 0) {
             throw new MMException("Es necesario registrar la cotizacion final");
+        }
+        Cliente clienteTemp = ControladorCliente.getInstancia().obtenerClienteActivo();
+        int adeber = ControladorAbono.getInstancia().obtenerCantidadADeber(clienteTemp.getIdCliente(), eventoActual.getIdEvento()) - Integer.parseInt(txtImporte.getText().replaceAll(",", ""));
+        if (adeber < 0) {
+            txtImporte.requestFocus();
+            throw new MMException("El importe excede la deuda");
         }
 
     }
@@ -273,6 +292,10 @@ public class pnlAbono extends JPanel {
         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
     }
 
+    private void cbSoloAdeudo(ActionEvent e) {
+        cargarEventos(materialTabbed1.getSelectedIndex() == 0);
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         materialTabbed1 = new MaterialTabbed();
@@ -280,6 +303,7 @@ public class pnlAbono extends JPanel {
         panel3 = new JPanel();
         lblTotal = new JLabel();
         lblCantADeber = new JLabel();
+        cbSoloAdeudo = new JCheckBox();
         cmbEvento = new JComboBox();
         label2 = new JLabel();
         txtImporte = new JFormattedTextField();
@@ -292,6 +316,7 @@ public class pnlAbono extends JPanel {
         panel4 = new JPanel();
         lblTotalP = new JLabel();
         lblCantADeberP = new JLabel();
+        checkBox1 = new JCheckBox();
         cmbEventoP = new JComboBox();
         label1 = new JLabel();
         txtImporteP = new JFormattedTextField();
@@ -300,12 +325,11 @@ public class pnlAbono extends JPanel {
         scrollPane2 = new JScrollPane();
         tblProveedores = new Table();
         p2 = new pnlCRUD();
-        dateChooser1 = new DateChooser();
-        dateChooser2 = new DateChooser();
         popupMenu1 = new JPopupMenu();
         btnEliminar = new JMenuItem();
         popupMenu2 = new JPopupMenu();
         btnEliminar2 = new JMenuItem();
+        dateChooser1 = new DateChooserV2();
 
         //======== this ========
         setBackground(Color.white);
@@ -324,6 +348,7 @@ public class pnlAbono extends JPanel {
                     "[grow,fill]" +
                     "[grow,fill]",
                     // rows
+                    "[]" +
                     "[]" +
                     "[]"));
 
@@ -353,6 +378,12 @@ public class pnlAbono extends JPanel {
                     lblCantADeber.setFont(new Font("Segoe UI", Font.BOLD, 15));
                     panel3.add(lblCantADeber, "cell 0 0");
 
+                    //---- cbSoloAdeudo ----
+                    cbSoloAdeudo.setText("Solo con adeudo");
+                    cbSoloAdeudo.setSelected(true);
+                    cbSoloAdeudo.addActionListener(e -> cbSoloAdeudo(e));
+                    panel3.add(cbSoloAdeudo, "cell 0 1, grow 0 00");
+
                     //---- cmbEvento ----
                     cmbEvento.setFont(new Font("Segoe UI", Font.BOLD, 16));
                     cmbEvento.addItemListener(e -> cmbEventoItemStateChanged(e));
@@ -361,7 +392,7 @@ public class pnlAbono extends JPanel {
                     //---- label2 ----
                     label2.setText("Cantidad");
                     label2.setFont(new Font("Segoe UI", Font.BOLD, 16));
-                    panel3.add(label2, "cell 0 2");
+                    panel3.add(label2, "cell 0 2,aligny bottom,growy 0");
 
                     //---- txtImporte ----
                     txtImporte.setFont(new Font("Segoe UI", Font.BOLD, 18));
@@ -453,6 +484,10 @@ public class pnlAbono extends JPanel {
                     lblCantADeberP.setFont(new Font("Segoe UI", Font.BOLD, 15));
                     panel4.add(lblCantADeberP, "cell 0 0");
 
+                    //---- checkBox1 ----
+                    checkBox1.setText("Solo con adeudo");
+                    panel4.add(checkBox1, "cell 0 1, grow 0 00");
+
                     //---- cmbEventoP ----
                     cmbEventoP.addItemListener(e -> cmbEventoItemStateChanged(e));
                     panel4.add(cmbEventoP, "cell 0 1, growy, hmax 10%");
@@ -512,12 +547,6 @@ public class pnlAbono extends JPanel {
         }
         add(materialTabbed1, BorderLayout.CENTER);
 
-        //---- dateChooser1 ----
-        dateChooser1.setTextRefernce(txtFecha);
-
-        //---- dateChooser2 ----
-        dateChooser2.setTextRefernce(txtFechaP);
-
         //======== popupMenu1 ========
         {
 
@@ -537,6 +566,9 @@ public class pnlAbono extends JPanel {
             btnEliminar2.addActionListener(e -> btnEliminarP(e));
             popupMenu2.add(btnEliminar2);
         }
+
+        //---- dateChooser1 ----
+        dateChooser1.setTextRefernce(txtFecha);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -546,6 +578,7 @@ public class pnlAbono extends JPanel {
     private JPanel panel3;
     private JLabel lblTotal;
     private JLabel lblCantADeber;
+    private JCheckBox cbSoloAdeudo;
     private JComboBox cmbEvento;
     private JLabel label2;
     private JFormattedTextField txtImporte;
@@ -558,6 +591,7 @@ public class pnlAbono extends JPanel {
     private JPanel panel4;
     private JLabel lblTotalP;
     private JLabel lblCantADeberP;
+    private JCheckBox checkBox1;
     private JComboBox cmbEventoP;
     private JLabel label1;
     private JFormattedTextField txtImporteP;
@@ -566,11 +600,10 @@ public class pnlAbono extends JPanel {
     private JScrollPane scrollPane2;
     private Table tblProveedores;
     private pnlCRUD p2;
-    private DateChooser dateChooser1;
-    private DateChooser dateChooser2;
     private JPopupMenu popupMenu1;
     private JMenuItem btnEliminar;
     private JPopupMenu popupMenu2;
     private JMenuItem btnEliminar2;
+    private DateChooserV2 dateChooser1;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

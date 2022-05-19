@@ -173,6 +173,7 @@ public class Principal extends JFrame {
         setBackground(Color.white);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setUndecorated(true);
+        setTitle("Marina Meza Project");
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowDeiconified(WindowEvent e) {
@@ -201,7 +202,7 @@ public class Principal extends JFrame {
                 "[fill]0" +
                 "[fill]0" +
                 "[fill]"));
-            pnlOpciones.add(separator1, "cell 0 2");
+            pnlOpciones.add(separator1, "cell 0 2, growx, growy 0");
 
             //======== pnlBienvenida ========
             {

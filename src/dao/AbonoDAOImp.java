@@ -64,11 +64,11 @@ public class AbonoDAOImp implements IAbonoDAO {
     @Override
     public Mensaje actualizar(Abono t) {
         try (PreparedStatement ps = cn.prepareStatement("UPDATE ")) {
-            
+
         } catch (SQLException e) {
             System.err.println("Error actualizar Abono, " + e.getMessage());
-        }    
-         return new Mensaje(Message.Tipo.ERROR, "Error");
+        }
+        return new Mensaje(Message.Tipo.ERROR, "Error");
     }
 
     @Override
@@ -88,30 +88,30 @@ public class AbonoDAOImp implements IAbonoDAO {
 
     @Override
     public ArrayList<Abono> obtenerListaByIdEvento(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ABONOS WHERE IDEVENTO = " +idEvento + " ORDER BY FECHA")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ABONOS WHERE IDEVENTO = " + idEvento + " ORDER BY FECHA")) {
             ArrayList<Abono> temp = new ArrayList<>();
-            while(rs.next()){
+            while (rs.next()) {
                 temp.add(new Abono(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getDate(5)));
             }
             return temp;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
-        }   
+        }
         return null;
     }
 
     @Override
     public int obtenerCantidadADeber(int idCliente, int idEvento) {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT (e.precioEvento - SUM(a.Importe)) FROM abonos a JOIN evento e ON a.idEvento = e.idEvento"
-                + " WHERE a.idCliente = "+idCliente+" AND a.idEvento = "+idEvento+" GROUP BY e.precioEvento")) {
+                + " WHERE a.idCliente = " + idCliente + " AND a.idEvento = " + idEvento + " GROUP BY e.precioEvento")) {
             if (rs.next()) {
                 return rs.getInt(1);
-            }else{
+            } else {
                 return ControladorEvento.getInstancia().obtenerByID(idEvento).getPrecioFinal();
             }
         } catch (SQLException e) {
             System.err.println("Error obtenerCantidadADeber AbonoCliente," + e.getMessage());
-        }       
+        }
         return -1;
     }
 

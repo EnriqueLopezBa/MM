@@ -30,6 +30,7 @@ public final class Dates extends javax.swing.JPanel {
     private List<Date> diasNoDisponibles;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+
     public Dates() {
         initComponents();
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
@@ -41,11 +42,14 @@ public final class Dates extends javax.swing.JPanel {
 
     }
 
-    public void showDate(int month, int year, SelectedDate select) {
-        List<Date> fechas = new ArrayList<>();
 
-        ControladorEvento.getInstancia().obtenerEventoByAnio(YEAR).forEach(fecha -> fechas.add(fecha.getFechaInicio()));
-        diasNoDisponibles = fechas;
+
+    public void showDate(int month, int year, SelectedDate select) {
+        System.out.println("salamanca");
+            List<Date> fechas = new ArrayList<>();
+            ControladorEvento.getInstancia().obtenerEventoByAnio(YEAR).forEach(fecha -> fechas.add(fecha.getFechaInicio()));
+            diasNoDisponibles = fechas;
+        
 
 //        init(fechas);
         m = month;
@@ -77,18 +81,20 @@ public final class Dates extends javax.swing.JPanel {
                 cmd.setForeground(new Color(255, 255, 255));
             }
 
-            String tempDate = year + "-" + month + "-" + i;
-            try {
-                if (diasNoDisponibles != null && diasNoDisponibles.contains(dateFormat.parse(tempDate))) {
-                    cmd.setBackground(new Color(255, 0, 0));
-                    cmd.setForeground(new Color(255, 255, 255));
-                    cmd.setToolTipText("DIA NO DISPONIBLE");
-                    cmd.setDiaDisponible(false);
-                    cmd.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+           
+                String tempDate = year + "-" + month + "-" + i;
+                try {
+                    if (diasNoDisponibles != null && diasNoDisponibles.contains(dateFormat.parse(tempDate))) {
+                        cmd.setBackground(new Color(255, 0, 0));
+                        cmd.setForeground(new Color(255, 255, 255));
+                        cmd.setToolTipText("DIA NO DISPONIBLE");
+                        cmd.setDiaDisponible(false);
+                        cmd.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    }
+                } catch (ParseException ex) {
+                    Logger.getLogger(Dates.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (ParseException ex) {
-                Logger.getLogger(Dates.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
 
             start++;
         }

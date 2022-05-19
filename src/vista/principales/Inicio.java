@@ -8,6 +8,7 @@ import Componentes.BotonGradiente;
 import Componentes.PasswordField;
 import controlador.ControladorUsuario;
 import modelo.Usuario;
+import net.miginfocom.swing.*;
 
 /**
  * @author das
@@ -16,9 +17,11 @@ public class Inicio extends JDialog {
 
     private Usuario u;
     private Principal p;
+
     public Inicio(Principal owner, boolean modal) {
         super(owner, modal);
         initComponents();
+        getContentPane().setBackground(Color.white);
         p = owner;
     }
 
@@ -29,12 +32,11 @@ public class Inicio extends JDialog {
         u = ControladorUsuario.getInstancia().inicioSesion(u);
         if (u == null) {
             lblError.setVisible(true);
-        }else{
-              this.dispose();
-              p.admin = true;
-              p.label4.setText("<html> <H2 align=\"center\"> Bienvenido "+u.getNombre()+ " "+ u.getApellido()+" </H2></html>");
+        } else {
+            this.dispose();
+            p.admin = true;
+            p.label4.setText("<html> <H2 align=\"center\"> Bienvenido " + u.getNombre() + " " + u.getApellido() + " </H2></html>");
         }
-      
 
     }
 
@@ -49,13 +51,11 @@ public class Inicio extends JDialog {
     }
 
     private void label3MouseClicked() {
-       this.dispose();
+        this.dispose();
     }
 
     private void thisWindowClosing(WindowEvent e) {
-        
-       
-       
+
     }
 
     private void thisWindowClosed(WindowEvent e) {
@@ -76,6 +76,7 @@ public class Inicio extends JDialog {
         setAlwaysOnTop(true);
         setType(Window.Type.POPUP);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("INICIAR SESION");
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -93,11 +94,20 @@ public class Inicio extends JDialog {
         {
             panel2.setBackground(Color.white);
             panel2.setName("cc");
+            panel2.setLayout(new MigLayout(
+                "flowy",
+                // columns
+                "[grow, align center]",
+                // rows
+                "[fill]rel" +
+                "[fill]para" +
+                "[fill]"));
 
             //---- txtCorreo ----
             txtCorreo.setLabelText("Correo");
             txtCorreo.setText("mm@gmail.com");
             txtCorreo.setNextFocusableComponent(txtClave);
+            panel2.add(txtCorreo, "cell 0 0, w 80%");
 
             //---- txtClave ----
             txtClave.setLabelText("Contrase\u00f1a");
@@ -108,6 +118,7 @@ public class Inicio extends JDialog {
                     passwordKeyPressed(e);
                 }
             });
+            panel2.add(txtClave, "cell 0 1, w 80%");
 
             //---- botonGradiente1 ----
             botonGradiente1.setPTexto("Aceptar");
@@ -122,44 +133,16 @@ public class Inicio extends JDialog {
                     botonGradiente1MouseClicked();
                 }
             });
+            panel2.add(botonGradiente1, "cell 0 2, w 70%, h 30%!");
 
             //---- lblError ----
             lblError.setText("Datos erroneos");
             lblError.setForeground(Color.red);
             lblError.setVisible(false);
-
-            GroupLayout panel2Layout = new GroupLayout(panel2);
-            panel2.setLayout(panel2Layout);
-            panel2Layout.setHorizontalGroup(
-                panel2Layout.createParallelGroup()
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addGap(122, 122, 122)
-                        .addComponent(lblError)
-                        .addContainerGap(313, Short.MAX_VALUE))
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addGap(101, 101, 101)
-                        .addGroup(panel2Layout.createParallelGroup()
-                            .addComponent(txtCorreo, GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-                            .addComponent(botonGradiente1, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtClave, GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE))
-                        .addGap(122, 122, 122))
-            );
-            panel2Layout.setVerticalGroup(
-                panel2Layout.createParallelGroup()
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addGap(60, 60, 60)
-                        .addComponent(txtCorreo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addGap(37, 37, 37)
-                        .addComponent(txtClave, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
-                        .addComponent(lblError)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(botonGradiente1, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
-                        .addGap(25, 25, 25))
-            );
+            panel2.add(lblError, "cell 0 2");
         }
         contentPane.add(panel2, BorderLayout.CENTER);
-        pack();
+        setSize(332, 250);
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }

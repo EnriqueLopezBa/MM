@@ -49,7 +49,7 @@ public class pnlProveedores extends JPanel {
 
     private DefaultTableModel m;
 
-    SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
+    private SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
 
     public pnlProveedores() {
         initComponents();

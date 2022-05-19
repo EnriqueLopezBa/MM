@@ -70,6 +70,7 @@ public class DialogUsuario extends JDialog {
                     if (p.tblBuscar.getSelectedRow() == -1) {
                         p.tblBuscar.requestFocus();
                         Constante.mensaje("Selecciona una fila", Tipo.ERROR);
+                        return;
                     }
                     validaDatos();
                     int x = p.tblBuscar.getSelectedRow();

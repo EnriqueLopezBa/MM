@@ -72,15 +72,18 @@ public class ClienteDAOImp implements IClienteDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente!");
         }
-
-        try (PreparedStatement ps = cn.prepareStatement(" INSERT INTO CLIENTE (nombre, apellido, email, telefono, telefono2)"
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO CLIENTE (nombre, apellido, email, telefono, telefono2)"
                 + " VALUES (?,?,?,?,?)")) {
-
             ps.setString(1, t.getNombre());
             ps.setString(2, t.getApellido());
             ps.setString(3, t.getCorreo());
             ps.setString(4, t.getTelefono());
-            ps.setString(5, t.getTelefono2());
+            if (t.getTelefono2().isEmpty()) {
+                ps.setNull(5, java.sql.Types.NULL);
+            }else{
+                ps.setString(5, t.getTelefono2());
+            }
+            
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado!") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar!");
         } catch (SQLException e) {
             System.err.println("Error registro cliente, " + e.getMessage());
@@ -99,7 +102,11 @@ public class ClienteDAOImp implements IClienteDAO {
             ps.setString(2, t.getApellido());
             ps.setString(3, t.getCorreo());
             ps.setString(4, t.getTelefono());
-            ps.setString(5, t.getTelefono2());
+             if (t.getTelefono2().isEmpty()) {
+                ps.setNull(5, java.sql.Types.NULL);
+            }else{
+                ps.setString(5, t.getTelefono2());
+            }
             ps.setInt(6, t.getIdCliente());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Cliente actualizado!") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar!");
         } catch (SQLException e) {

@@ -91,12 +91,13 @@ public class UsuarioDAOImp implements IUsuarioDAO {
         if (!yaExiste(t).isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, "Ya existe");
         }
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE USUARIO SET IDTIPOUSUARIO = ?, NOMBRE = ?, APELLIDO = ?, EMAIL = ?, CLAVE = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE USUARIO SET IDTIPOUSUARIO = ?, NOMBRE = ?, APELLIDO = ?, EMAIL = ?, CLAVE = ? WHERE IDUSUARIO = ?")) {
             ps.setInt(1, t.getIdTipoUsuario());
             ps.setString(2, t.getNombre());
             ps.setString(3, t.getApellido());
             ps.setString(4, t.getCorreo());
             ps.setString(5, t.getClave());
+            ps.setInt(6, t.getIdSuario());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
         } catch (SQLException e) {
             System.err.println("Error actualizar Usuario, " + e.getMessage());

@@ -12,7 +12,7 @@ new FormModel {
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 					"$layoutConstraints": "fill"
 					"$columnConstraints": "[grow,fill][grow,fill]"
-					"$rowConstraints": "[][]"
+					"$rowConstraints": "[][][]"
 				} ) {
 					name: "pnlAbonoCliente"
 					"background": &Color0 new java.awt.Color( 255, 255, 255, 255 )
@@ -38,6 +38,14 @@ new FormModel {
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 0 0"
 						} )
+						add( new FormComponent( "javax.swing.JCheckBox" ) {
+							name: "cbSoloAdeudo"
+							"text": "Solo con adeudo"
+							"selected": true
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbSoloAdeudo", true ) )
+						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+							"value": "cell 0 1, grow 0 00"
+						} )
 						add( new FormComponent( "javax.swing.JComboBox" ) {
 							name: "cmbEvento"
 							"font": new java.awt.Font( "Segoe UI", 1, 16 )
@@ -50,7 +58,7 @@ new FormModel {
 							"text": "Cantidad"
 							"font": new java.awt.Font( "Segoe UI", 1, 16 )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-							"value": "cell 0 2"
+							"value": "cell 0 2,aligny bottom,growy 0"
 						} )
 						add( new FormComponent( "javax.swing.JFormattedTextField" ) {
 							name: "txtImporte"
@@ -150,6 +158,12 @@ new FormModel {
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 0 0"
 						} )
+						add( new FormComponent( "javax.swing.JCheckBox" ) {
+							name: "checkBox1"
+							"text": "Solo con adeudo"
+						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+							"value": "cell 0 1, grow 0 00"
+						} )
 						add( new FormComponent( "javax.swing.JComboBox" ) {
 							name: "cmbEventoP"
 							addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbEventoItemStateChanged", true ) )
@@ -235,18 +249,6 @@ new FormModel {
 			"location": new java.awt.Point( 0, 0 )
 			"size": new java.awt.Dimension( 566, 460 )
 		} )
-		add( new FormComponent( "com.raven.datechooser.DateChooser" ) {
-			name: "dateChooser1"
-			"textRefernce": new FormReference( "txtFecha" )
-		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 626, 126 )
-		} )
-		add( new FormComponent( "com.raven.datechooser.DateChooser" ) {
-			name: "dateChooser2"
-			"textRefernce": new FormReference( "txtFechaP" )
-		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 626, 340 )
-		} )
 		add( new FormContainer( "javax.swing.JPopupMenu", new FormLayoutManager( class javax.swing.JPopupMenu ) ) {
 			name: "popupMenu1"
 			add( new FormComponent( "javax.swing.JMenuItem" ) {
@@ -269,6 +271,12 @@ new FormModel {
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 306, 475 )
 			"size": new java.awt.Dimension( 103, 33 )
+		} )
+		add( new FormComponent( "com.raven.datechooserV2.DateChooserV2" ) {
+			name: "dateChooser1"
+			"textRefernce": new FormReference( "txtFecha" )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 646, 90 )
 		} )
 	}
 }

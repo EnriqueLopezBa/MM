@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
+import Componentes.*;
 import Componentes.Sweet_Alert.Button;
 import Componentes.Sweet_Alert.Message;
 import Componentes.tableC.*;
@@ -51,8 +52,22 @@ public class pnlProveedores extends JPanel {
 
     private SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
 
-    public pnlProveedores() {
-        initComponents();
+    private static pnlProveedores instancia;
+
+    public static pnlProveedores getInstancia() {
+        if (instancia == null) {
+            instancia = new pnlProveedores();
+        }
+        return instancia;
+    }
+
+    public void checkAdmin() {
+        lblEditProveedor.setVisible(Constante.getAdmin());
+        lblEditTipoProveedor.setVisible(Constante.getAdmin());
+        init();
+    }
+
+    private void init() {
         m = (DefaultTableModel) tblProveedor.getModel();
         int presuInicial = Constante.getPresupuesto();
         m.addTableModelListener(new TableModelListener() { // PARA RECALCULAR EL PRESUPUESTO
@@ -76,6 +91,10 @@ public class pnlProveedores extends JPanel {
         tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
     }
 
+    private pnlProveedores() {
+        initComponents();
+    }
+
     private void cargarTipoProveedor() {
         cmbTipoProveedor.removeAllItems();
         for (TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")) {
@@ -84,7 +103,7 @@ public class pnlProveedores extends JPanel {
     }
 
     private void cargarProveedores() {
-        if (eventoActual == null) {
+        if (eventoActual == null || ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()) == null) {
             return;
         }
         cmbProveedor.removeAllItems();
@@ -104,6 +123,9 @@ public class pnlProveedores extends JPanel {
     }
 
     private void cargarNombreEvento() {
+        if (Constante.getClienteActivo() == null) {
+            return;
+        }
         cmbNombreEvento.removeAllItems();
         for (Evento e : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
             cmbNombreEvento.addItem(e.getNombreEvento());
@@ -112,7 +134,7 @@ public class pnlProveedores extends JPanel {
     }
 
     private void cmbTipoProveedorItemStateChanged(ItemEvent e) {
-        if (cmbTipoProveedor.getSelectedIndex() == -1 || eventoActual == null) {
+        if (cmbTipoProveedor.getSelectedIndex() == -1 || eventoActual == null || ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()) == null) {
             return;
         }
         for (TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")) {
@@ -126,13 +148,17 @@ public class pnlProveedores extends JPanel {
     }
 
     private void cmbNombreEventoItemStateChanged(ItemEvent e) {
-        if (cmbNombreEvento.getSelectedIndex() == -1) {
+        if (cmbNombreEvento.getSelectedIndex() == -1 || Constante.getClienteActivo() == null) {
             return;
         }
         for (Evento eve : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
             if (eve.getNombreEvento().equals(cmbNombreEvento.getSelectedItem().toString())) {
                 eventoActual = eve;
+
                 Lugar lugar = ControladorLugar.getInstancia().obtenerByID(eve.getIdLugar());
+                if (lugar == null) {
+                    continue;
+                }
                 Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lugar.getIdCiudad());
                 Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdEstado());
                 lblInfo.setText(estado.getEstado() + ", " + ciudad.getCiudad());
@@ -279,7 +305,7 @@ public class pnlProveedores extends JPanel {
         scrollPane1 = new JScrollPane();
         tblProveedor = new Table();
         i = new ImageSlider();
-        label1 = new JLabel();
+        svgIcon1 = new SvgIcon();
         lblInfo = new JLabel();
         lblTipoProveedor = new JLabel();
         cmbTipoProveedor = new JComboBox();
@@ -288,7 +314,7 @@ public class pnlProveedores extends JPanel {
         cmbProveedor = new JComboBox();
         cbOtro = new JCheckBox();
         lblEditProveedor = new JLabel();
-        label2 = new JLabel();
+        svgIcon2 = new SvgIcon();
         lblInfoProv = new JLabel();
         label3 = new JLabel();
         txtHoraEntrada = new JTextField();
@@ -365,10 +391,9 @@ public class pnlProveedores extends JPanel {
         i.setBackground(Color.white);
         add(i, "cell 3 1 1 9,grow 50 100");
 
-        //---- label1 ----
-        label1.setIcon(new ImageIcon(getClass().getResource("/img/icons8_info_40px.png")));
-        label1.setHorizontalAlignment(SwingConstants.RIGHT);
-        add(label1, "cell 0 2");
+        //---- svgIcon1 ----
+        svgIcon1.setIcon(new ImageIcon("C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\info.svg"));
+        add(svgIcon1, "cell 0 2");
 
         //---- lblInfo ----
         lblInfo.setHorizontalAlignment(SwingConstants.LEFT);
@@ -419,10 +444,9 @@ public class pnlProveedores extends JPanel {
         });
         add(lblEditProveedor, "cell 1 4,grow 0 0");
 
-        //---- label2 ----
-        label2.setHorizontalAlignment(SwingConstants.RIGHT);
-        label2.setIcon(new ImageIcon(getClass().getResource("/img/icons8_info_40px.png")));
-        add(label2, "cell 0 5");
+        //---- svgIcon2 ----
+        svgIcon2.setIcon(new ImageIcon("C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\info.svg"));
+        add(svgIcon2, "cell 0 5");
 
         //---- lblInfoProv ----
         lblInfoProv.setFont(lblInfoProv.getFont().deriveFont(lblInfoProv.getFont().getStyle() | Font.BOLD));
@@ -495,7 +519,7 @@ public class pnlProveedores extends JPanel {
     private JScrollPane scrollPane1;
     private Table tblProveedor;
     private ImageSlider i;
-    private JLabel label1;
+    private SvgIcon svgIcon1;
     private JLabel lblInfo;
     private JLabel lblTipoProveedor;
     private JComboBox cmbTipoProveedor;
@@ -504,7 +528,7 @@ public class pnlProveedores extends JPanel {
     private JComboBox cmbProveedor;
     private JCheckBox cbOtro;
     private JLabel lblEditProveedor;
-    private JLabel label2;
+    private SvgIcon svgIcon2;
     private JLabel lblInfoProv;
     private JLabel label3;
     private JTextField txtHoraEntrada;

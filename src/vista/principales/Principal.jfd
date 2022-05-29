@@ -9,8 +9,6 @@ new FormModel {
 			"defaultCloseOperation": 0
 			"undecorated": true
 			"title": "Marina Meza Project"
-			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowIconified", "thisWindowIconified", true ) )
-			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowDeiconified", "thisWindowDeiconified", true ) )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 				"$layoutConstraints": "fill"
 				"$columnConstraints": "0[fill]"
@@ -21,6 +19,9 @@ new FormModel {
 				"minimumSize": new java.awt.Dimension( 150, 81 )
 				"preferredSize": new java.awt.Dimension( 150, 81 )
 				"alignmentY": 0.0f
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
 				add( new FormComponent( "javax.swing.JPopupMenu$Separator" ) {
 					name: "separator1"
 				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
@@ -30,7 +31,7 @@ new FormModel {
 					name: "pnlBienvenida"
 					"background": sfield java.awt.Color pink
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label4"
+						name: "lblTitulo"
 						"text": "<html> <H2 align=\"center\"> Bienvenido Marina Meza </H2></html>"
 						"horizontalAlignment": 0
 						"maximumSize": new java.awt.Dimension( 150, 70 )
@@ -41,7 +42,6 @@ new FormModel {
 						auxiliary() {
 							"JavaCodeGenerator.variableModifiers": 4
 						}
-						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "label4MouseClicked", false ) )
 					}, new FormLayoutConstraints( class java.lang.String ) {
 						"value": "Center"
 					} )
@@ -60,6 +60,7 @@ new FormModel {
 						"text": "Cliente"
 						"hoverColor": &Color0 new java.awt.Color( 102, 153, 255, 255 )
 						"$buttonGroup": &FormReference0 new FormReference( "buttonGroup1" )
+						"font": new com.jformdesigner.model.SwingDerivedFont( "Constantia", 0, 0, false )
 						auxiliary() {
 							"JavaCodeGenerator.variableModifiers": 4
 						}
@@ -72,6 +73,9 @@ new FormModel {
 						"text": "Quiz"
 						"hoverColor": #Color0
 						"$buttonGroup": #FormReference0
+						auxiliary() {
+							"JavaCodeGenerator.variableModifiers": 1
+						}
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnQuiz", true ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 1, grow"
@@ -93,6 +97,9 @@ new FormModel {
 						"text": "Proveedores"
 						"hoverColor": #Color0
 						"$buttonGroup": #FormReference0
+						auxiliary() {
+							"JavaCodeGenerator.variableModifiers": 1
+						}
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnProveedores", true ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 3, grow"
@@ -102,6 +109,9 @@ new FormModel {
 						"text": "Eventos Destacados"
 						"hoverColor": &Color1 new java.awt.Color( 102, 153, 255, 255 )
 						"$buttonGroup": &FormReference1 new FormReference( "buttonGroup1" )
+						auxiliary() {
+							"JavaCodeGenerator.variableModifiers": 1
+						}
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEventosDestacados", true ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 4, grow"
@@ -112,10 +122,14 @@ new FormModel {
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 					"$layoutConstraints": "fill"
 					"$columnConstraints": "0[]0"
-					"$rowConstraints": "[][][][]"
+					"$rowConstraints": "[][][][][]"
 				} ) {
 					name: "pnlAdmin"
 					"background": sfield java.awt.Color pink
+					"visible": false
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 4
+					}
 					add( new FormComponent( "Componentes.Buttont" ) {
 						name: "btnPago"
 						"text": "Pago/Abono"
@@ -151,6 +165,15 @@ new FormModel {
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 3,grow"
 					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "button1"
+						"text": "text"
+						"horizontalTextPosition": 0
+						"visible": false
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button1", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 4"
+					} )
 				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 					"value": "cell 0 3"
 				} )
@@ -173,53 +196,36 @@ new FormModel {
 					auxiliary() {
 						"JavaCodeGenerator.variableModifiers": 1
 					}
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblClienteMouseClicked", true ) )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Before"
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 					name: "panel1"
 					"background": sfield java.awt.Color pink
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "btnCerrar"
-						"borderPainted": false
-						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
-						"maximumSize": &Dimension0 new java.awt.Dimension( 30, 21 )
-						"minimumSize": &Dimension1 new java.awt.Dimension( 50, 21 )
-						"preferredSize": &Dimension2 new java.awt.Dimension( 50, 21 )
-						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/icons8_Close_48px.png" )
-						"opaque": true
-						"contentAreaFilled": false
-						"cursor": &Cursor0 new java.awt.Cursor( 12 )
-						"margin": &Insets0 new java.awt.Insets( 5, 30, 2, 30 )
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnCerrar", true ) )
-					}, new FormLayoutConstraints( class java.lang.String ) {
-						"value": "East"
-					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
+					add( new FormComponent( "Componentes.SvgIcon" ) {
 						name: "btnMinimizar"
-						"borderPainted": false
-						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
-						"maximumSize": #Dimension0
-						"minimumSize": #Dimension1
-						"preferredSize": #Dimension2
-						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/icons8_minimize_window_48px_1.png" )
-						"opaque": true
-						"contentAreaFilled": false
-						"cursor": #Cursor0
-						"margin": #Insets0
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnMinimizar", true ) )
+						"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\minimize.svg" )
+						"cursor": new java.awt.Cursor( 12 )
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "btnMinimizarMouseClicked", true ) )
 					}, new FormLayoutConstraints( class java.lang.String ) {
 						"value": "West"
 					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "btnMaximizar"
-						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/icons8_maximize_window_48px.png" )
-						"borderPainted": false
-						"contentAreaFilled": false
-						"cursor": new java.awt.Cursor( 12 )
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnMaximizar", true ) )
+					add( new FormComponent( "Componentes.SvgIcon" ) {
+						name: "lblMaximizar"
+						"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\maximize.svg" )
+						"cursor": &Cursor0 new java.awt.Cursor( 12 )
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblMaximizarMouseClicked", true ) )
 					}, new FormLayoutConstraints( class java.lang.String ) {
 						"value": "Center"
+					} )
+					add( new FormComponent( "Componentes.SvgIcon" ) {
+						name: "lblSalir"
+						"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\close.svg" )
+						"cursor": #Cursor0
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblSalirMouseClicked", true ) )
+					}, new FormLayoutConstraints( class java.lang.String ) {
+						"value": "East"
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "After"

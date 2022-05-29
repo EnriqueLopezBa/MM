@@ -25,7 +25,7 @@ public class Conexion {
     public  Connection getConexion() {
         try {
             String connectionUrl = "jdbc:sqlserver://localhost:1433;"
-                    + "databaseName=MM;user=sa; password=toor;";
+                    + "databaseName=MM;user=sa; password=toor;encrypt=true;trustServerCertificate=true;";
             con = DriverManager.getConnection(connectionUrl);
         } catch (SQLException ex) {
             System.err.println("Error, " + ex.getMessage());

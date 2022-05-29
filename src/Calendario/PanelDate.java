@@ -31,8 +31,7 @@ public class PanelDate extends JPanel {
         vie.asTitle();
         sab.asTitle();
         dom.asTitle();
-        evento = ControladorEvento.getInstancia().obtenerEventoByAnio(year);
-      
+        evento = ControladorEvento.getInstancia().obtenerEventoByAnio(year);  
         setDate();
 
     }

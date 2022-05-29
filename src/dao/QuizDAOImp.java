@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import modelo.Quiz;
 
@@ -47,13 +48,23 @@ public class QuizDAOImp implements IQuizDAO {
 
     @Override
     public Mensaje registrar(Quiz t) {
-        
+
         try (PreparedStatement ps = cn.prepareStatement("INSERT INTO QUIZ VALUES(?,?,?,?,?)")) {
             ps.setInt(1, t.getIdPregunta());
             ps.setInt(2, t.getIdCliente());
             ps.setInt(3, t.getIdEvento());
-            ps.setString(4, t.getRespuesta());
-            ps.setString(5, t.getOpciones());
+            if (t.getRespuesta().isEmpty()) {
+                ps.setNull(4, Types.NULL);
+            } else {
+                ps.setString(4, t.getRespuesta());
+            }
+
+            if (t.getOpciones().isEmpty()) {
+                ps.setNull(5, Types.NULL);
+            } else {
+                ps.setString(5, t.getOpciones());
+            }
+
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Surgió un problema");
         } catch (SQLException e) {
             System.err.println("Error registrar QUIZ, " + e.getMessage());
@@ -77,8 +88,8 @@ public class QuizDAOImp implements IQuizDAO {
     }
 
     @Override
-    public ArrayList<Quiz> obtenerListaByIdCliente(int idCliente) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM QUIZ WHERE IDCLIENTE = " + idCliente)) {
+    public ArrayList<Quiz> obtenerListaByIdClienteAndIdEvento(int idCliente, int idEvento) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM QUIZ WHERE IDCLIENTE = " + idCliente + " AND IDEVENTO = " + idEvento)) {
             ArrayList<Quiz> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new Quiz(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getString(5)));
@@ -92,7 +103,7 @@ public class QuizDAOImp implements IQuizDAO {
 
     @Override
     public Quiz obtenerByIdPreguntaAndIdEvento(int idPregunta, int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM QUIZ WHERE IDPREGUNTA  = " + idPregunta + " AND IDEVENTO = "+ idEvento)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM QUIZ WHERE IDPREGUNTA  = " + idPregunta + " AND IDEVENTO = " + idEvento)) {
             if (rs.next()) {
                 return new Quiz(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getString(5));
             }
@@ -100,6 +111,16 @@ public class QuizDAOImp implements IQuizDAO {
             System.err.println("Error obtenerByIdPreguntaAndIdEvento QUIZ, " + e.getMessage());
         }
         return null;
+    }
+
+    @Override
+    public Mensaje eliminarRespuesta(int idPregunta, int idEvento, int idCliente) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM QUIZ WHERE IDPREGUNTA = " + idPregunta + " AND IDEVENTO = " + idEvento + " AND IDCLIENTE = "+idCliente)) {
+            return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Respuesta Eliminada") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
+        } catch (SQLException e) {
+            System.err.println("Error eliminarRespuesta Quiz," + e.getMessage());
+        }
+          return new Mensaje(Message.Tipo.ERROR, "Error");
     }
 
 }

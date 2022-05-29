@@ -85,10 +85,10 @@ public class DialogEvento extends JDialog {
                     pun.cmbLugar.setSelectedItem(lug.getNombreLocal());
                     pun.txtEstilo.setText(p.tblModel.getValueAt(x, 7).toString());
                     Cliente cliente = ControladorCliente.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 1));
-                    Principal.getInstancia().lblCliente.setText("Cliente activo (SOLO ADMIN): "
-                            + cliente.getCorreo() + " - " + cliente.getNombre() + " " + cliente.getApellido());
-                    lblCliente.setText("Cliente: " + cliente.getCorreo() + " - "
-                            + cliente.getNombre() + " " + cliente.getApellido());
+//                    Principal.getInstancia().lblCliente.setText("Cliente activo (SOLO ADMIN): "
+//                            + cliente.getCorreo() + " - " + cliente.getNombre() + " " + cliente.getApellido());
+//                    lblCliente.setText("Cliente: " + cliente.getCorreo() + " - "
+//                            + cliente.getNombre() + " " + cliente.getApellido());
                     Constante.setClienteTemporal(cliente);
                 } catch (ParseException ex) {
                     Logger.getLogger(DialogEvento.class.getName()).log(Level.SEVERE, null, ex);
@@ -163,7 +163,7 @@ public class DialogEvento extends JDialog {
     
     
     private void thisWindowClosed(WindowEvent e) {
-        Constante.removeClienteTemporal();
+      
     }
 
     private void txtPrecioTotalKeyReleased(KeyEvent e) {
@@ -176,7 +176,6 @@ public class DialogEvento extends JDialog {
 
     private void txtPrecioTotalKeyTyped(KeyEvent e) {
         if (!Character.isDigit(e.getKeyChar())) {
-
             e.consume();
         }
     }

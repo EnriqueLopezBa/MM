@@ -5,7 +5,13 @@ import java.awt.event.*;
 import javax.swing.*;
 import Componentes.*;
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
+import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
 import controlador.ControladorCliente;
+import independientes.Constante;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import modelo.Cliente;
 import net.miginfocom.swing.*;
 import vista.paneles.edit.DialogUsuario;
@@ -23,7 +29,6 @@ public class Principal extends JFrame {
     private int mouseX, mouseY;
 
     public boolean admin = false;
-    public pnlEventos pnlEventos = null;
 
     public static Principal getInstancia() {
         if (instancia == null) {
@@ -34,68 +39,130 @@ public class Principal extends JFrame {
 
     private Principal() {
         initComponents();
-       separator1.setForeground(Color.red); // top line color
-       separator1.setBackground(Color.red.brighter());
+        separator1.setForeground(Color.red);
+        separator1.setBackground(Color.red.brighter());
         maximizar();
         new Timer(2000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (admin) {
-                    ((Timer) e.getSource()).stop();
-                }
+//                if (admin) {
+//                    ((Timer) e.getSource()).stop();
+//                }
                 getClienteActivo();
             }
         }).start();
 
     }
 
+    protected void checkAdmin() {
+        pnlCliente.getInstancia().checkAdmin();
+        pnlQuiz.getInstancia().checkAdmin();
+        pnlEventos.getInstancia().checkAdmin();
+        pnlProveedores.getInstancia().checkAdmin();
+        soyAdmin();
+    }
+
+    protected void soyAdmin() {
+        if (!Constante.getAdmin()) {
+            lblCliente.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            lblCliente.setToolTipText(null);
+            return;
+        }
+        pnlAdmin.setVisible(true);
+        lblCliente.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblCliente.setToolTipText("Click para cerrar sesiones");
+    }
+
+    public Dimension getFontSize(FontMetrics metrics, Font font, String text) {
+        // get the height of a line of text in this font and render context
+        int hgt = metrics.getHeight();
+        // get the advance of my text in this font and render context
+        int adv = metrics.stringWidth(text);
+        // calculate the size of a box to hold the text with some padding.
+        Dimension size = new Dimension(adv + 2, hgt + 2);
+        return size;
+    }
+
+    public Font findFont(Component component, Dimension componentSize, Font oldFont, String text) {
+        //search up to 100
+        Font savedFont = oldFont;
+        for (int i = 0; i < 100; i++) {
+            Font newFont = new Font(oldFont.getFontName(), oldFont.getStyle(), i);
+            Dimension d = getFontSize(component.getFontMetrics(newFont), newFont, text);
+            if (componentSize.height < d.height || componentSize.width < d.width) {
+                return savedFont;
+            }
+            savedFont = newFont;
+        }
+        return oldFont;
+    }
+
     public void getClienteActivo() {
         Cliente cliente = ControladorCliente.getInstancia().obtenerClienteActivo();
         if (cliente != null) {
-            lblCliente.setText("Cliente activo: " + cliente.getCorreo() + " - " + cliente.getNombre() + " " + cliente.getApellido());
+            if (Constante.getClienteTemporal() != null && ControladorCliente.getInstancia().obtenerClienteActivo2() != null) {
+                Cliente cliente2 = ControladorCliente.getInstancia().obtenerClienteActivo2();
+                lblCliente.setText("Cliente (SOLO ADMIN): " + cliente.getNombre()+ " " + cliente.getApellido()+ " (" + cliente.getCorreo()+") "
+                        + " <<>> Cliente ACTIVO:" + cliente2.getNombre()+" " + cliente2.getApellido() + " ("+cliente2.getCorreo()+")");  
+            }
+            else if (Constante.getClienteTemporal() != null) {
+                lblCliente.setText("Cliente (SOLO ADMIN): " + cliente.getNombre()+ " - " + cliente.getApellido()+ " (" + cliente.getCorreo()+")");
+            } else {
+                lblCliente.setText("Cliente ACTIVO: " + cliente.getNombre()+ " - " + cliente.getApellido()+ " (" + cliente.getCorreo()+") ");
+            }
+            lblCliente.setEnabled(true);
+            if (!admin) {
+                Principal.getInstancia().btnCliente.setEnabled(false);
+                Principal.getInstancia().btnQuiz.setEnabled(true);
+                Principal.getInstancia().btnEvento.setEnabled(true);
+                Principal.getInstancia().btnProveedores.setEnabled(true);
+            } else {
+                Principal.getInstancia().btnCliente.setEnabled(true);
+
+            }
+
         } else {
-            lblCliente.setText("Cliente Activo: ");
+            lblCliente.setText("*Sin Cliente Activo*");
+            lblCliente.setEnabled(false);
+            if (!admin) {
+                Principal.getInstancia().btnCliente.setEnabled(true);
+                Principal.getInstancia().btnQuiz.setEnabled(false);
+                Principal.getInstancia().btnEvento.setEnabled(false);
+                Principal.getInstancia().btnProveedores.setEnabled(false);
+            } else {
+                Principal.getInstancia().btnCliente.setEnabled(true);
+                Principal.getInstancia().btnQuiz.setEnabled(true);
+                Principal.getInstancia().btnEvento.setEnabled(true);
+                Principal.getInstancia().btnProveedores.setEnabled(true);
+            }
         }
     }
 
-    private void thisWindowIconified(WindowEvent e) {
-        // TODO add your code here
-    }
-
-    private void thisWindowDeiconified(WindowEvent e) {
-        // TODO add your code here
-    }
-
-    private void label4MouseClicked() {
-        // TODO add your code here
-    }
-
     private void btnCliente(ActionEvent e) {
-        cambiarPanel(new pnlCliente());
+        cambiarPanel(pnlCliente.getInstancia());
+        pnlCliente.getInstancia().checkAdmin();
     }
 
     private void cambiarPanel(JPanel pnl) {
         pnlContenido.removeAll();
         pnlContenido.add(pnl);
         pnlContenido.revalidate();
+        pnlContenido.repaint();
 
     }
 
     private void btnEvento(ActionEvent e) {
-        pnlEventos = new pnlEventos();
-        cambiarPanel(pnlEventos);
+        cambiarPanel(pnlEventos.getInstancia());
+        pnlEventos.getInstancia().checkAdmin();
     }
 
     private void btnProveedores(ActionEvent e) {
-        cambiarPanel(new pnlProveedores());
+        cambiarPanel(pnlProveedores.getInstancia());
+        pnlProveedores.getInstancia().checkAdmin();
     }
 
     private void btnPago(ActionEvent e) {
-        cambiarPanel(new pnlAbono());
-    }
-
-    private void btnModoOscuro(ActionEvent e) {
-        // TODO add your code here
+        cambiarPanel(pnlAbono.getInstancia());
     }
 
     private void pnlMenuMouseDragged(MouseEvent e) {
@@ -107,25 +174,18 @@ public class Principal extends JFrame {
         mouseY = e.getY();
     }
 
-    private void btnCerrar(ActionEvent e) {
-//        controladorCliente.desactivarClienteActivo();
-        System.exit(0);
-    }
-
-    private void btnMinimizar(ActionEvent e) {
-        this.setState(ICONIFIED);
-    }
-
     private void btnQuiz(ActionEvent e) {
-        cambiarPanel(new pnlQuiz());
+        cambiarPanel(pnlQuiz.getInstancia());
+        pnlQuiz.getInstancia().checkAdmin();
     }
 
     private void btnAgenda(ActionEvent e) {
-        cambiarPanel(new pnlAgenda());
+        cambiarPanel(pnlAgenda.getInstancia());
     }
 
     private void btnEventosDestacados(ActionEvent e) {
-        cambiarPanel(new pnlEventosDestacados());
+        cambiarPanel(pnlEventosDestacados.getInstancia());
+        pnlEventosDestacados.getInstancia().checkAdmin();
     }
 
     private void maximizar() {
@@ -135,12 +195,69 @@ public class Principal extends JFrame {
 
     }
 
-    private void btnMaximizar(ActionEvent e) {
+    private void btnUsuarios(ActionEvent e) {
+        new DialogUsuario().setVisible(true);
+    }
+
+    private void button1(ActionEvent e) {
+        try {
+            FlatAnimatedLafChange.showSnapshot();
+            UIManager.setLookAndFeel(new FlatArcDarkOrangeIJTheme());
+            FlatLaf.updateUI();
+            FlatAnimatedLafChange.hideSnapshotWithAnimation();
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+//        Font font = new Font("Helvetica",Font.PLAIN,12);
+
+    }
+
+    private void btnMinimizarMouseClicked(MouseEvent e) {
+        this.setState(ICONIFIED);
+    }
+
+    private void lblMaximizarMouseClicked(MouseEvent e) {
         maximizar();
     }
 
-    private void btnUsuarios(ActionEvent e) {
-       new DialogUsuario().setVisible(true);
+    private void lblSalirMouseClicked(MouseEvent e) {
+        String[] opciones = new String[]{"Si", "Iniciar Sesion", "Cancelar"};
+        int x = JOptionPane.showOptionDialog(null, "¿Seguro que desea salir?", "Seleccione una opcion", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opciones, opciones[0]);
+        if (x == 0) {
+            ControladorCliente.getInstancia().desactivarClienteActivo();
+            System.exit(0);
+        } else if (x == 1) {
+            new Inicio(getInstancia(), true).setVisible(true);
+        }
+
+    }
+
+    private void lblClienteMouseClicked(MouseEvent e) {
+        if (!admin) {
+            return;
+        }
+        if (Constante.getClienteTemporal() != null && ControladorCliente.getInstancia().obtenerClienteActivo2() != null) {
+            String[] opciones = new String[]{"Cliente Temporal", "Cliente Normal", "Cancelar"};
+            int x = JOptionPane.showOptionDialog(null, "¿Que Cliente desea cerrar?", "Seleccione", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opciones, opciones[0]);
+            if (x == 0) {
+                Constante.removeClienteTemporal();
+            } else if (x == 1) {
+                ControladorCliente.getInstancia().desactivarClienteActivo();
+            }
+
+        } else if (Constante.getClienteTemporal() != null) {
+            lblCliente.setEnabled(false);
+            Constante.removeClienteTemporal();
+        } else if (ControladorCliente.getInstancia().obtenerClienteActivo2() != null) {
+            lblCliente.setEnabled(false);
+            ControladorCliente.getInstancia().desactivarClienteActivo();
+        }
+        lblCliente.setEnabled(false);
+        lblCliente.setText("Actualizando...");
+//                else if (Constante.getClienteTemporal() == null && ControladorCliente.getInstancia().obtenerClienteActivo2() == null) {
+//                    Constante.mensaje("Nada por hacer", Message.Tipo.ADVERTENCIA);
+//                }
+
     }
 
     private void initComponents() {
@@ -148,7 +265,7 @@ public class Principal extends JFrame {
         pnlOpciones = new JPanel();
         separator1 = new JPopupMenu.Separator();
         pnlBienvenida = new JPanel();
-        label4 = new JLabel();
+        lblTitulo = new JLabel();
         pnlOpcionesCliente = new JPanel();
         btnCliente = new Buttont();
         btnQuiz = new Buttont();
@@ -160,12 +277,13 @@ public class Principal extends JFrame {
         btnCotizacion = new Buttont();
         btnAgenda = new Buttont();
         btnUsuarios = new Buttont();
+        button1 = new JButton();
         pnlMenu = new JPanel();
         lblCliente = new JLabel();
         panel1 = new JPanel();
-        btnCerrar = new JButton();
-        btnMinimizar = new JButton();
-        btnMaximizar = new JButton();
+        btnMinimizar = new SvgIcon();
+        lblMaximizar = new SvgIcon();
+        lblSalir = new SvgIcon();
         lblPresupuesto = new JLabel();
         pnlContenido = new JPanel();
 
@@ -174,16 +292,6 @@ public class Principal extends JFrame {
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setUndecorated(true);
         setTitle("Marina Meza Project");
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-                thisWindowDeiconified(e);
-            }
-            @Override
-            public void windowIconified(WindowEvent e) {
-                thisWindowIconified(e);
-            }
-        });
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
@@ -209,21 +317,15 @@ public class Principal extends JFrame {
                 pnlBienvenida.setBackground(Color.pink);
                 pnlBienvenida.setLayout(new BorderLayout());
 
-                //---- label4 ----
-                label4.setText("<html> <H2 align=\"center\"> Bienvenido Marina Meza </H2></html>");
-                label4.setHorizontalAlignment(SwingConstants.CENTER);
-                label4.setMaximumSize(new Dimension(150, 70));
-                label4.setMinimumSize(new Dimension(150, 70));
-                label4.setPreferredSize(new Dimension(150, 170));
-                label4.setRequestFocusEnabled(false);
-                label4.setBackground(Color.pink);
-                label4.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        label4MouseClicked();
-                    }
-                });
-                pnlBienvenida.add(label4, BorderLayout.CENTER);
+                //---- lblTitulo ----
+                lblTitulo.setText("<html> <H2 align=\"center\"> Bienvenido Marina Meza </H2></html>");
+                lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+                lblTitulo.setMaximumSize(new Dimension(150, 70));
+                lblTitulo.setMinimumSize(new Dimension(150, 70));
+                lblTitulo.setPreferredSize(new Dimension(150, 170));
+                lblTitulo.setRequestFocusEnabled(false);
+                lblTitulo.setBackground(Color.pink);
+                pnlBienvenida.add(lblTitulo, BorderLayout.CENTER);
             }
             pnlOpciones.add(pnlBienvenida, "cell 0 0");
 
@@ -244,6 +346,7 @@ public class Principal extends JFrame {
                 //---- btnCliente ----
                 btnCliente.setText("Cliente");
                 btnCliente.setHoverColor(new Color(102, 153, 255));
+                btnCliente.setFont(new Font("Constantia", btnCliente.getFont().getStyle(), btnCliente.getFont().getSize()));
                 btnCliente.addActionListener(e -> btnCliente(e));
                 pnlOpcionesCliente.add(btnCliente, "cell 0 0, growx");
 
@@ -276,11 +379,13 @@ public class Principal extends JFrame {
             //======== pnlAdmin ========
             {
                 pnlAdmin.setBackground(Color.pink);
+                pnlAdmin.setVisible(false);
                 pnlAdmin.setLayout(new MigLayout(
                     "fill",
                     // columns
                     "0[]0",
                     // rows
+                    "[]" +
                     "[]" +
                     "[]" +
                     "[]" +
@@ -308,6 +413,13 @@ public class Principal extends JFrame {
                 btnUsuarios.setHoverColor(new Color(102, 153, 255));
                 btnUsuarios.addActionListener(e -> btnUsuarios(e));
                 pnlAdmin.add(btnUsuarios, "cell 0 3,grow");
+
+                //---- button1 ----
+                button1.setText("text");
+                button1.setHorizontalTextPosition(SwingConstants.CENTER);
+                button1.setVisible(false);
+                button1.addActionListener(e -> button1(e));
+                pnlAdmin.add(button1, "cell 0 4");
             }
             pnlOpciones.add(pnlAdmin, "cell 0 3");
         }
@@ -334,6 +446,12 @@ public class Principal extends JFrame {
 
             //---- lblCliente ----
             lblCliente.setText("Cliente Activo: ");
+            lblCliente.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    lblClienteMouseClicked(e);
+                }
+            });
             pnlMenu.add(lblCliente, BorderLayout.LINE_START);
 
             //======== panel1 ========
@@ -341,41 +459,38 @@ public class Principal extends JFrame {
                 panel1.setBackground(Color.pink);
                 panel1.setLayout(new BorderLayout());
 
-                //---- btnCerrar ----
-                btnCerrar.setBorderPainted(false);
-                btnCerrar.setBorder(null);
-                btnCerrar.setMaximumSize(new Dimension(30, 21));
-                btnCerrar.setMinimumSize(new Dimension(50, 21));
-                btnCerrar.setPreferredSize(new Dimension(50, 21));
-                btnCerrar.setIcon(new ImageIcon(getClass().getResource("/img/icons8_Close_48px.png")));
-                btnCerrar.setOpaque(true);
-                btnCerrar.setContentAreaFilled(false);
-                btnCerrar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                btnCerrar.setMargin(new Insets(5, 30, 2, 30));
-                btnCerrar.addActionListener(e -> btnCerrar(e));
-                panel1.add(btnCerrar, BorderLayout.EAST);
-
                 //---- btnMinimizar ----
-                btnMinimizar.setBorderPainted(false);
-                btnMinimizar.setBorder(null);
-                btnMinimizar.setMaximumSize(new Dimension(30, 21));
-                btnMinimizar.setMinimumSize(new Dimension(50, 21));
-                btnMinimizar.setPreferredSize(new Dimension(50, 21));
-                btnMinimizar.setIcon(new ImageIcon(getClass().getResource("/img/icons8_minimize_window_48px_1.png")));
-                btnMinimizar.setOpaque(true);
-                btnMinimizar.setContentAreaFilled(false);
+                btnMinimizar.setIcon(new ImageIcon("C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\minimize.svg"));
                 btnMinimizar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                btnMinimizar.setMargin(new Insets(5, 30, 2, 30));
-                btnMinimizar.addActionListener(e -> btnMinimizar(e));
+                btnMinimizar.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        btnMinimizarMouseClicked(e);
+                    }
+                });
                 panel1.add(btnMinimizar, BorderLayout.WEST);
 
-                //---- btnMaximizar ----
-                btnMaximizar.setIcon(new ImageIcon(getClass().getResource("/img/icons8_maximize_window_48px.png")));
-                btnMaximizar.setBorderPainted(false);
-                btnMaximizar.setContentAreaFilled(false);
-                btnMaximizar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                btnMaximizar.addActionListener(e -> btnMaximizar(e));
-                panel1.add(btnMaximizar, BorderLayout.CENTER);
+                //---- lblMaximizar ----
+                lblMaximizar.setIcon(new ImageIcon("C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\maximize.svg"));
+                lblMaximizar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                lblMaximizar.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        lblMaximizarMouseClicked(e);
+                    }
+                });
+                panel1.add(lblMaximizar, BorderLayout.CENTER);
+
+                //---- lblSalir ----
+                lblSalir.setIcon(new ImageIcon("C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\close.svg"));
+                lblSalir.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                lblSalir.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        lblSalirMouseClicked(e);
+                    }
+                });
+                panel1.add(lblSalir, BorderLayout.EAST);
             }
             pnlMenu.add(panel1, BorderLayout.LINE_END);
 
@@ -414,6 +529,7 @@ public class Principal extends JFrame {
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(new FlatIntelliJLaf());
+
         } catch (UnsupportedLookAndFeelException e) {
             System.err.println(e.getMessage());
         }
@@ -421,27 +537,28 @@ public class Principal extends JFrame {
         new Inicio(getInstancia(), true).setVisible(true);
     }
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    private JPanel pnlOpciones;
+    public JPanel pnlOpciones;
     private JPopupMenu.Separator separator1;
     private JPanel pnlBienvenida;
-    protected JLabel label4;
+    protected JLabel lblTitulo;
     private JPanel pnlOpcionesCliente;
     protected Buttont btnCliente;
-    private Buttont btnQuiz;
+    public Buttont btnQuiz;
     public Buttont btnEvento;
-    private Buttont btnProveedores;
-    private Buttont btnEventosDestacados;
-    private JPanel pnlAdmin;
+    public Buttont btnProveedores;
+    public Buttont btnEventosDestacados;
+    protected JPanel pnlAdmin;
     private Buttont btnPago;
     private Buttont btnCotizacion;
     private Buttont btnAgenda;
     private Buttont btnUsuarios;
+    private JButton button1;
     public JPanel pnlMenu;
     public JLabel lblCliente;
     private JPanel panel1;
-    private JButton btnCerrar;
-    private JButton btnMinimizar;
-    private JButton btnMaximizar;
+    private SvgIcon btnMinimizar;
+    private SvgIcon lblMaximizar;
+    private SvgIcon lblSalir;
     public JLabel lblPresupuesto;
     protected JPanel pnlContenido;
     // JFormDesigner - End of variables declaration  //GEN-END:variables

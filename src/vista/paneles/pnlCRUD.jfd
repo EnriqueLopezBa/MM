@@ -135,16 +135,16 @@ new FormModel {
 				}
 			} )
 			add( new FormComponent( "javax.swing.JMenuItem" ) {
-				name: "btnEventos"
-				"text": "Eventos"
-				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/event.png" )
+				name: "btnSeleccionarTemp"
+				"text": "Seleccionar Cliente Temporal"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/personTemp.png" )
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 562 )
-			"size": new java.awt.Dimension( 167, 70 )
+			"size": new java.awt.Dimension( 226, 70 )
 		} )
 	}
 }

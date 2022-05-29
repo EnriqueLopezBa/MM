@@ -11,18 +11,19 @@ import modelo.Cliente;
  * @author Enrique
  */
 public class ControladorCliente {
-    
+
     private static ControladorCliente instancia;
+
     private ControladorCliente() {
     }
-    public static ControladorCliente getInstancia(){
+
+    public static ControladorCliente getInstancia() {
         if (instancia == null) {
             instancia = new ControladorCliente();
         }
         return instancia;
     }
 
-    
     public ArrayList<Cliente> obtenerClientes(String cadena) {
         return ClienteDAOImp.getInstancia().obtenerListaByCadena(cadena);
     }
@@ -32,11 +33,19 @@ public class ControladorCliente {
     }
 
     public Cliente obtenerClienteActivo() {
-        return Constante.getClienteTemporal() != null ? Constante.getClienteTemporal() : ClienteDAOImp.getInstancia().obtenerClienteActivo();
+        return Constante.getClienteTemporal() != null ? Constante.getClienteTemporal() : obtenerClienteActivo2();
+    }
+
+    public Cliente obtenerClienteActivo2() {
+        return ClienteDAOImp.getInstancia().obtenerClienteActivo();
     }
 
     public void desactivarClienteActivo() {
         ClienteDAOImp.getInstancia().desactivarClienteActivo();
+    }
+
+    public void desactivarClienteTemporal() {
+        ClienteDAOImp.getInstancia().desactivarClienteTemporal();
     }
 
     public boolean setClienteActivoById(int idCliente) {

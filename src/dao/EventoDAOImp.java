@@ -66,25 +66,36 @@ public class EventoDAOImp implements IEventoDAO {
 
     @Override
     public Mensaje registrar(Evento t) {
-        String x = yaExiste(t);
-        if (!x.isEmpty()) {
-            return new Mensaje(Message.Tipo.ERROR, x + " ya existe");
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO WHERE IDCLIENTE = " + t.getIdCliente()
+                + " AND NOMBREEVENTO = '" + t.getNombreEvento() + "'")) {
+            if (rs.next()) {
+                return new Mensaje(Message.Tipo.ERROR, "Usted ya cuenta con un evento con este nombre!");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error registrar Eventoo, " + e.getMessage());
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO EVENTO(idCliente, idTipoEvento, idLugar, fechaInicio, fechaFinal, noInvitados, presupuesto, estilo, nombreEvento, precioEvento) VALUES(?,?,?,?,?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO EVENTO(IDCLIENTE, NOMBREEVENTO) VALUES(?,?)")) {
             ps.setInt(1, t.getIdCliente());
-            ps.setInt(2, t.getIdTipoEvento());
-            ps.setInt(3, t.getIdLugar());
-            ps.setTimestamp(4, new java.sql.Timestamp(t.getFechaInicio().getTime()));
-            ps.setTimestamp(5, new java.sql.Timestamp(t.getFechaFinal().getTime()));
-            ps.setInt(6, t.getNoInvitados());
-            ps.setInt(7, t.getPresupuesto());
-            ps.setString(8, t.getEstilo());
-            ps.setString(9, t.getNombreEvento());
-            ps.setInt(10, t.getPrecioFinal());
+            ps.setString(2, t.getNombreEvento());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
         } catch (SQLException e) {
-            System.err.println("Error registrar Evento, " + e.getMessage());
+            System.err.println(e.getMessage());
         }
+//        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO EVENTO(idCliente, idTipoEvento, idLugar, fechaInicio, fechaFinal, noInvitados, presupuesto, estilo, nombreEvento, precioEvento) VALUES(?,?,?,?,?,?,?,?,?)")) {
+//            ps.setInt(1, t.getIdCliente());
+//            ps.setInt(2, t.getIdTipoEvento());
+//            ps.setInt(3, t.getIdLugar());
+//            ps.setTimestamp(4, new java.sql.Timestamp(t.getFechaInicio().getTime()));
+//            ps.setTimestamp(5, new java.sql.Timestamp(t.getFechaFinal().getTime()));
+//            ps.setInt(6, t.getNoInvitados());
+//            ps.setInt(7, t.getPresupuesto());
+//            ps.setString(8, t.getEstilo());
+//            ps.setString(9, t.getNombreEvento());
+//            ps.setInt(10, t.getPrecioFinal());
+//            return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
+//        } catch (SQLException e) {
+//            System.err.println("Error registrar Evento, " + e.getMessage());
+//        }
         return new Mensaje(Message.Tipo.ERROR, "Error");
     }
 

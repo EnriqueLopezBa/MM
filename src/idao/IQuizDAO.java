@@ -1,5 +1,6 @@
 package idao;
 
+import independientes.Mensaje;
 import java.util.ArrayList;
 import modelo.Quiz;
 
@@ -9,7 +10,7 @@ import modelo.Quiz;
  */
 public interface IQuizDAO extends CRUD<Quiz> {
 
-    ArrayList<Quiz> obtenerListaByIdCliente(int idCliente);
-
+    ArrayList<Quiz> obtenerListaByIdClienteAndIdEvento(int idCliente, int idEvento);
     Quiz obtenerByIdPreguntaAndIdEvento(int idPregunta, int idEvento);
+    Mensaje eliminarRespuesta(int idPregunta, int idEvento, int idCliente);
 }

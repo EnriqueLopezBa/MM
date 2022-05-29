@@ -45,7 +45,6 @@ public final class Dates extends javax.swing.JPanel {
 
 
     public void showDate(int month, int year, SelectedDate select) {
-        System.out.println("salamanca");
             List<Date> fechas = new ArrayList<>();
             ControladorEvento.getInstancia().obtenerEventoByAnio(YEAR).forEach(fecha -> fechas.add(fecha.getFechaInicio()));
             diasNoDisponibles = fechas;

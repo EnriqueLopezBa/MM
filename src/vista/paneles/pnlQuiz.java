@@ -33,8 +33,22 @@ public class pnlQuiz extends JPanel {
     private MigLayout mig;
     JPanel panelOpciones = null;
 
-    public pnlQuiz() {
-        initComponents();
+    private static pnlQuiz instancia;
+
+    public static pnlQuiz getInstancia() {
+        if (instancia == null) {
+            instancia = new pnlQuiz();
+        }
+        return instancia;
+    }
+
+    public void checkAdmin() {
+        lblEliminar.setVisible(Constante.getAdmin());
+        lblModificar.setVisible(Constante.getAdmin());
+        init();
+    }
+
+    private void init() {
         mig = (MigLayout) this.getLayout();
         lista = ControladorPregunta.getInstancia().obtenerListaByCadenaAndIsEncuesta("", false);
         constante = 100 / lista.size();
@@ -44,67 +58,80 @@ public class pnlQuiz extends JPanel {
         cargarEventos();
     }
 
+    private pnlQuiz() {
+        initComponents();
+    }
+
     public void cargarEventos() {
+        if (Constante.getClienteActivo() == null) {
+            btnAtras.setEnabled(false);
+            btnSiguiente.setEnabled(false);
+            return;
+        }
+        btnAtras.setEnabled(true);
+        btnSiguiente.setEnabled(true);
         cmbEvento.removeAllItems();
         ArrayList<Evento> eventos = null;
-        if (Constante.getClienteTemporal() != null) {
-            eventos = ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.getClienteTemporal().getIdCliente());
+        eventoActual = null;
+        eventos = ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.getClienteActivo().getIdCliente());
 
-        } else {
-            eventos = ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
-        }
         for (Evento e : eventos) {
             cmbEvento.addItem(e.getNombreEvento());
         }
+
     }
 
     private void checkOpciones() {
         String opciones[] = null;
+        try {
+            if (lista.get(contador).getOpciones() != null) {
 
-        if (lista.get(contador).getOpciones() != null) {
-            opciones = lista.get(contador).getOpciones().split(",");
-            mig.setRowConstraints("[][][][][]");
-            mig.setComponentConstraints(scrollPane1, "cell 0 3, spanx, grow");
-            mig.setComponentConstraints(btnSiguiente, "cell 1 4,align right top");
-            mig.setComponentConstraints(btnAtras, "cell 0 4,align left top");
-            mig.setComponentConstraints(lblModificar, "cell 0 5, spanx");
-            panelOpciones = new JPanel();
-            panelOpciones.setBackground(Color.white);
-            panelOpciones.setLayout(new MigLayout("fill"));
-            add(panelOpciones, "cell 0 2, spanx, grow");
-            ButtonGroup grupo = new ButtonGroup();
-            for (String texto : opciones) {
-                JToggleButton boton = new JToggleButton(texto);
-                boton.setFont(new Font("Segoe UI", Font.BOLD, 18));
-
-                boton.addChangeListener(new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        if (boton.isSelected()) {
-                            boton.setBackground(new Color(204, 255, 204));
-                        } else {
-                            boton.setBackground(Color.white);
+                opciones = lista.get(contador).getOpciones().split(",");
+                mig.setRowConstraints("[][][][][]");
+                mig.setComponentConstraints(scrollPane1, "cell 0 3, spanx, grow");
+                mig.setComponentConstraints(btnSiguiente, "cell 1 4,align right top");
+                mig.setComponentConstraints(btnAtras, "cell 0 4,align left top");
+                mig.setComponentConstraints(lblModificar, "cell 0 5, spanx");
+                panelOpciones = new JPanel();
+                panelOpciones.setBackground(Color.white);
+                panelOpciones.setLayout(new MigLayout("fill"));
+                add(panelOpciones, "cell 0 2, spanx, grow");
+                ButtonGroup grupo = new ButtonGroup();
+                for (String texto : opciones) {
+                    JToggleButton boton = new JToggleButton(texto);
+                    boton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+                    boton.addChangeListener(new ChangeListener() {
+                        @Override
+                        public void stateChanged(ChangeEvent e) {
+                            if (boton.isSelected()) {
+                                boton.setBackground(new Color(204, 255, 204));
+                            } else {
+                                boton.setBackground(Color.white);
+                            }
                         }
-                    }
-                });
-                panelOpciones.add(boton, " align center");
-                grupo.add(boton);
-            }
+                    });
+                    panelOpciones.add(boton, " align center");
+                    grupo.add(boton);
+                }
 
-        } else {
-            if (panelOpciones != null) {
-                remove(panelOpciones);
-                mig.setRowConstraints("[][][][]");
-                mig.setComponentConstraints(scrollPane1, "cell 0 2, spanx, grow");
-                mig.setComponentConstraints(btnSiguiente, "cell 1 3,align right top");
-                mig.setComponentConstraints(btnAtras, "cell 0 3,align left top");
-                mig.setComponentConstraints(lblModificar, "cell 0 4, spanx");
-                panelOpciones = null;
-            }
+            } else {
+                if (panelOpciones != null) {
+                    remove(panelOpciones);
+                    mig.setRowConstraints("[][][][]");
+                    mig.setComponentConstraints(scrollPane1, "cell 0 2, spanx, grow");
+                    mig.setComponentConstraints(btnSiguiente, "cell 1 3,align right top");
+                    mig.setComponentConstraints(btnAtras, "cell 0 3,align left top");
+                    mig.setComponentConstraints(lblModificar, "cell 0 4, spanx");
+                    panelOpciones = null;
+                }
 
+            }
+            revalidate();
+            repaint();
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("das");
         }
-        revalidate();
-        repaint();
+
     }
 
     private void btnAtras(ActionEvent e) {
@@ -120,15 +147,15 @@ public class pnlQuiz extends JPanel {
                 if (com instanceof JToggleButton) {
                     if (((JToggleButton) com).isSelected()) {
                         opciones = ((JToggleButton) com).getText();
+                        break;
                     }
                 }
             }
         }
         Quiz q = new Quiz();
         q.setIdPregunta(lista.get(contador).getIdPregunta());
-        q.setIdCliente((Constante.getClienteTemporal() != null)
-                ? Constante.getClienteTemporal().getIdCliente()
-                : ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
+        q.setIdCliente(Constante.getClienteActivo().getIdCliente());
+        q.setIdEvento(eventoActual.getIdEvento());
         q.setRespuesta(respuesta);
         q.setOpciones(opciones);
         if (respuesta.equals("Escribenos tu respuesta")) {
@@ -136,7 +163,7 @@ public class pnlQuiz extends JPanel {
         }
         if (!respuesta.isEmpty() || !opciones.isEmpty()) {
             Mensaje m = ControladorQuiz.getInstancia().registrar(q);
-
+    
         }
 
         if (contador == 0) {
@@ -164,10 +191,10 @@ public class pnlQuiz extends JPanel {
     private void btnSiguiente(ActionEvent e) {
         if (eventoActual == null) {
             cmbEvento.requestFocus();
-            Constante.mensaje("Selecciona un evento", Tipo.ERROR);
+            Constante.mensaje("Selecciona un evento", Tipo.ADVERTENCIA);
             return;
         }
-      
+
         String respuesta = txtRespuesta.getText();
         String opciones = "";
         if (panelOpciones != null) {
@@ -181,11 +208,9 @@ public class pnlQuiz extends JPanel {
         }
         Quiz q = new Quiz();
         q.setIdPregunta(lista.get(contador).getIdPregunta());
-        q.setIdCliente((Constante.getClienteTemporal() != null)
-                ? Constante.getClienteTemporal().getIdCliente()
-                : ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
+        q.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
         q.setIdEvento(eventoActual.getIdEvento());
-      
+
         q.setRespuesta(respuesta);
         q.setOpciones(opciones);
         if (respuesta.equals("Escribenos tu respuesta")) {
@@ -193,11 +218,10 @@ public class pnlQuiz extends JPanel {
         }
         if (!respuesta.isEmpty() || !opciones.isEmpty()) {
             Mensaje m = ControladorQuiz.getInstancia().registrar(q);
-            showMessageDialog(null, m.getMensaje());
         }
-
         if (contador == lista.size() - 1) {
-
+            circleProgressBar1.setValor(100);
+            Constante.mensaje("Hemos terminado con las preguntas", Tipo.OK);
             return;
         }
         txtRespuesta.setText("Escribenos tu respuesta");
@@ -263,21 +287,21 @@ public class pnlQuiz extends JPanel {
             return;
         }
         Cliente clienteTemp = Constante.getClienteTemporal();
- 
+
         if (clienteTemp != null) {
             for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(clienteTemp.getIdCliente())) {
                 if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
                     eventoActual = ev;
                 }
             }
-        }else{
-             for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
+        } else {
+            for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
                 if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
                     eventoActual = ev;
                 }
             }
         }
-     
+
     }
 
     private void initComponents() {

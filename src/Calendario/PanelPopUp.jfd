@@ -16,14 +16,13 @@ new FormModel {
 				"background": sfield java.awt.Color white
 				"shadowSize": 5
 				"shadowType": enum Componentes.DropShadow.ShadowType BOT
-				"shadowOpacity": 0.4f
-				add( new FormComponent( "javax.swing.JLabel" ) {
-					name: "label1"
+				"shadowOpacity": 6.0f
+				"shadowColor": new java.awt.Color( 204, 204, 204, 255 )
+				add( new FormComponent( "Componentes.SvgIcon" ) {
+					name: "svgIcon1"
+					"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\info.svg" )
 					"horizontalAlignment": 0
-					"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/icons8_info_100px_1.png" )
-					"horizontalTextPosition": 0
-					"verticalTextPosition": 3
-					"font": new java.awt.Font( "Segoe UI", 1, 16 )
+					"porcentaje": 8
 				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 					"value": "cell 0 0"
 				} )

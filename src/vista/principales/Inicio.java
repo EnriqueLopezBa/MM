@@ -31,11 +31,24 @@ public class Inicio extends JDialog {
         u.setClave(new String(txtClave.getPassword()));
         u = ControladorUsuario.getInstancia().inicioSesion(u);
         if (u == null) {
-            lblError.setVisible(true);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        lblError.setVisible(true);
+                        Thread.sleep(2000);
+                        lblError.setVisible(false);
+                    } catch (Exception e) {
+                    }
+                }
+            }).start();
+
         } else {
-            this.dispose();
             p.admin = true;
-            p.label4.setText("<html> <H2 align=\"center\"> Bienvenido " + u.getNombre() + " " + u.getApellido() + " </H2></html>");
+            p.checkAdmin();
+            this.dispose();
+            p.lblTitulo.setText("<html> <H2 align=\"center\"> Bienvenido " + u.getNombre() + " " + u.getApellido() + " </H2></html>");
+
         }
 
     }
@@ -50,18 +63,15 @@ public class Inicio extends JDialog {
         iniciar();
     }
 
-    private void label3MouseClicked() {
-        this.dispose();
-    }
-
     private void thisWindowClosing(WindowEvent e) {
 
     }
 
     private void thisWindowClosed(WindowEvent e) {
-//       if(u == null ||  u.getIdSuario() == null) {   
-//            System.exit(0);
-//        }
+        if (u == null || u.getIdSuario() == null) {
+            p.admin = false;
+        }
+        p.checkAdmin();
     }
 
     private void initComponents() {
@@ -142,7 +152,7 @@ public class Inicio extends JDialog {
             panel2.add(lblError, "cell 0 2");
         }
         contentPane.add(panel2, BorderLayout.CENTER);
-        setSize(332, 250);
+        setSize(350, 250);
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }

@@ -19,15 +19,14 @@ new FormModel {
 					name: "mi"
 					"background": new java.awt.Color( 255, 255, 255, 255 )
 					"name": "miglayout"
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "btnAtras"
-						"contentAreaFilled": false
-						"borderPainted": false
-						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/back.png" )
+					add( new FormComponent( "Componentes.SvgIcon" ) {
+						name: "lblAnterior"
 						"text": "Anterior"
-						"cursor": &Cursor0 new java.awt.Cursor( 12 )
-						"font": &SwingDerivedFont0 new com.jformdesigner.model.SwingDerivedFont( "Source Sans Pro", 1, 5, false )
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAtras", true ) )
+						"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\back.svg" )
+						"porcentaje": 3
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 3, false )
+						"cursor": new java.awt.Cursor( 12 )
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblAnteriorMouseClicked", true ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 0, grow 0 0, align left"
 					} )
@@ -39,15 +38,15 @@ new FormModel {
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 1 0, spanx 2"
 					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "btnSiguiente"
-						"text": "Siguiente"
-						"borderPainted": false
-						"contentAreaFilled": false
-						"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/next.png" )
-						"cursor": #Cursor0
-						"font": #SwingDerivedFont0
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnSiguiente", true ) )
+					add( new FormComponent( "Componentes.SvgIcon" ) {
+						name: "lblProximo"
+						"text": "Posterior"
+						"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\next.svg" )
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 3, false )
+						"horizontalTextPosition": 2
+						"porcentaje": 3
+						"cursor": new java.awt.Cursor( 12 )
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblProximoMouseClicked", true ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 3 0, grow 0 0, align right"
 					} )
@@ -60,7 +59,7 @@ new FormModel {
 						"value": "cell 0 1"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label1"
+						name: "lblFebrero"
 						"text": "Febrero"
 						"font": &Font0 new java.awt.Font( "Segoe UI", 1, 15 )
 						"horizontalAlignment": 0
@@ -68,7 +67,7 @@ new FormModel {
 						"value": "cell 1 1"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label2"
+						name: "lblMarzo"
 						"text": "Marzo"
 						"font": #Font0
 						"horizontalAlignment": 0
@@ -76,7 +75,7 @@ new FormModel {
 						"value": "cell 2 1"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label3"
+						name: "lblAbril"
 						"text": "Abril"
 						"font": #Font0
 						"horizontalAlignment": 0
@@ -104,7 +103,7 @@ new FormModel {
 						"value": "cell 3 2,dock center"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label4"
+						name: "lblMayo"
 						"text": "Mayo"
 						"font": #Font0
 						"horizontalAlignment": 0
@@ -112,7 +111,7 @@ new FormModel {
 						"value": "cell 0 3"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label5"
+						name: "lblJunio"
 						"text": "Junio"
 						"font": #Font0
 						"horizontalAlignment": 0
@@ -120,7 +119,7 @@ new FormModel {
 						"value": "cell 1 3"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label6"
+						name: "lblJulio"
 						"text": "Julio"
 						"font": #Font0
 						"horizontalAlignment": 0
@@ -128,7 +127,7 @@ new FormModel {
 						"value": "cell 2 3"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label7"
+						name: "lblAgosto"
 						"text": "Agosto"
 						"font": #Font0
 						"horizontalAlignment": 0
@@ -156,7 +155,7 @@ new FormModel {
 						"value": "cell 3 4,dock center"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label8"
+						name: "lblSeptiembre"
 						"text": "Septiembre"
 						"font": #Font0
 						"horizontalAlignment": 0
@@ -164,7 +163,7 @@ new FormModel {
 						"value": "cell 0 5"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label9"
+						name: "lblOctubre"
 						"text": "Octubre"
 						"font": #Font0
 						"horizontalAlignment": 0
@@ -172,7 +171,7 @@ new FormModel {
 						"value": "cell 1 5"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label10"
+						name: "lblNoviembre"
 						"text": "Noviembre"
 						"font": #Font0
 						"horizontalAlignment": 0
@@ -180,7 +179,7 @@ new FormModel {
 						"value": "cell 2 5"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label11"
+						name: "lblDiciembre"
 						"text": "Diciembre"
 						"font": #Font0
 						"horizontalAlignment": 0

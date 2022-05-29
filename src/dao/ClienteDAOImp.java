@@ -3,6 +3,7 @@ package dao;
 import Componentes.Sweet_Alert.Message;
 import independientes.Conexion;
 import idao.IClienteDAO;
+import independientes.Constante;
 import independientes.Mensaje;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -177,11 +178,14 @@ public class ClienteDAOImp implements IClienteDAO {
     }
 
     public void desactivarClienteActivo() {
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE cliente SET ACTIVO = 0;")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE cliente SET ACTIVO = 0 WHERE ACTIVO = 1;")) {
             ps.execute();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
     }
-
+    
+    public void desactivarClienteTemporal(){
+        Constante.removeClienteTemporal();
+    }
 }

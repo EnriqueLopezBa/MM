@@ -75,10 +75,9 @@ new FormModel {
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 3 1 1 9,grow 50 100"
 			} )
-			add( new FormComponent( "javax.swing.JLabel" ) {
-				name: "label1"
-				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/icons8_info_40px.png" )
-				"horizontalAlignment": 4
+			add( new FormComponent( "Componentes.SvgIcon" ) {
+				name: "svgIcon1"
+				"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\info.svg" )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 2"
 			} )
@@ -137,10 +136,9 @@ new FormModel {
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 1 4,grow 0 0"
 			} )
-			add( new FormComponent( "javax.swing.JLabel" ) {
-				name: "label2"
-				"horizontalAlignment": 4
-				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/icons8_info_40px.png" )
+			add( new FormComponent( "Componentes.SvgIcon" ) {
+				name: "svgIcon2"
+				"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\info.svg" )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 5"
 			} )

@@ -74,27 +74,40 @@ public class pnlEventos extends JPanel {
 
     public frmEtiquetas frm;
 
-    public pnlEventos() {
-        initComponents();
-        txtPresupuesto.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
-        txtCantInvitados.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
-        cargarEtiquetas();
-        cargarTipoEvento();
-        cargarEstado();
-        cargarCiudad();
-        cargarLugares();
-        i.init(ScrollBar.VERTICAL);
-        modoAdmin();
+    private static pnlEventos instancia;
 
+    public static pnlEventos getInstancia() {
+        if (instancia == null) {
+            instancia = new pnlEventos();
+        }
+        return instancia;
     }
 
-    private void modoAdmin() {
+    public void checkAdmin() {
         btnAdmin.setVisible(Constante.getAdmin());
         lblEditEstado.setVisible(Constante.getAdmin());
         lblEditEtiqueta.setVisible(Constante.getAdmin());
         lblEditLugar.setVisible(Constante.getAdmin());
         lblEditTipoEvento.setVisible(Constante.getAdmin());
         lblEditciudad.setVisible(Constante.getAdmin());
+        lblNombreEvento.setVisible(Constante.getAdmin());
+        txtNombreEvento.setVisible(Constante.getAdmin());
+        init();
+    }
+
+    private void init() {
+        cargarEtiquetas();
+        cargarTipoEvento();
+        cargarEstado();
+        cargarCiudad();
+        cargarLugares();
+        i.init(ScrollBar.VERTICAL);
+    }
+
+    private pnlEventos() {
+        initComponents();
+        txtPresupuesto.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        txtCantInvitados.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
     }
 
     public void cargarEtiquetas() {
@@ -472,7 +485,7 @@ public class pnlEventos extends JPanel {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        label1 = new JLabel();
+        lblTitulo = new JLabel();
         lblNombreEvento = new JLabel();
         lblPresupuesto = new JLabel();
         lblCantInvitados = new JLabel();
@@ -537,15 +550,16 @@ public class pnlEventos extends JPanel {
             "[fill]unrel" +
             "[fill]unrel"));
 
-        //---- label1 ----
-        label1.setText("Agregar Evento");
-        label1.setHorizontalAlignment(SwingConstants.CENTER);
-        label1.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        add(label1, "cell 0 0, spanx, grow");
+        //---- lblTitulo ----
+        lblTitulo.setText("Agregar Evento");
+        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        add(lblTitulo, "cell 0 0, spanx, grow");
 
         //---- lblNombreEvento ----
         lblNombreEvento.setText("Nombre Evento");
         lblNombreEvento.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblNombreEvento.setVisible(false);
         add(lblNombreEvento, "cell 0 1");
 
         //---- lblPresupuesto ----
@@ -582,6 +596,7 @@ public class pnlEventos extends JPanel {
         txtNombreEvento.setFont(new Font("Segoe UI", Font.BOLD, 16));
         txtNombreEvento.setHorizontalAlignment(SwingConstants.CENTER);
         txtNombreEvento.setNextFocusableComponent(txtPresupuesto);
+        txtNombreEvento.setVisible(false);
         add(txtNombreEvento, "cell 1 1");
 
         //---- txtPresupuesto ----
@@ -816,7 +831,7 @@ public class pnlEventos extends JPanel {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    private JLabel label1;
+    private JLabel lblTitulo;
     private JLabel lblNombreEvento;
     private JLabel lblPresupuesto;
     private JLabel lblCantInvitados;

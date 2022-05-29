@@ -15,31 +15,42 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import static javax.swing.JOptionPane.showConfirmDialog;
 import modelo.Cliente;
 import net.miginfocom.swing.*;
+import vista.paneles.edit.DialogNewEvent;
 import vista.principales.Principal;
 
 public class pnlCliente extends JPanel {
 
-    private pnlCRUD pnlCrud;
 
-    public pnlCliente() {
-        initComponents();
-        pnlCrud = new pnlCRUD();
-        pnlCrud.init(new String[]{"idCliente", "Nombre", "Apellido", "Email", "Telefono", "Telefono 2"}, 1, false);
-        if (!Constante.getAdmin()) {
-            pnlEdicion.setVisible(false);
-            return;
+
+    private static pnlCliente instancia;
+
+    public static pnlCliente getInstancia() {
+        if (instancia == null) {
+            instancia = new pnlCliente();
+        } else {
+
         }
-        pnlEdicion.add(pnlCrud);
-        pnlEdicion.revalidate();
-        pnlCrud.tblBuscar.setComponentPopupMenu(pnlCrud.jPopupMenu1); //Asignar Popup de cliente
+        return instancia;
+    }
+
+    public void checkAdmin() {
+        pnlEdicion.setVisible(Constante.getAdmin());
+        init();
+    }
+
+    private void init() {
+      
+        p.init(new String[]{"idCliente", "Nombre", "Apellido", "Email", "Telefono", "Telefono 2"}, 1, false);
+
+        p.tblBuscar.setComponentPopupMenu(p.jPopupMenu1); //Asignar Popup de cliente
         cargarClientes();
 
         //Modificar
-        pnlCrud.btnModificar.addActionListener(new ActionListener() {
+        p.btnModificar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int x = pnlCrud.tblBuscar.getSelectedRow();
+                    int x = p.tblBuscar.getSelectedRow();
                     if (x != -1) {
                         validaDatos(txtNombre, txtApellido, txtCorreo, txtTelefono, txtTelefono2);
                         Cliente cliente = new Cliente();
@@ -48,9 +59,8 @@ public class pnlCliente extends JPanel {
                         cliente.setCorreo(txtCorreo.getText());
                         cliente.setTelefono(txtTelefono.getText());
                         cliente.setTelefono2(txtTelefono2.getText());
-                        cliente.setIdCliente((int) pnlCrud.tblModel.getValueAt(x, 0));
+                        cliente.setIdCliente((int) p.tblModel.getValueAt(x, 0));
                         Mensaje m = ControladorCliente.getInstancia().actualizarCliente(cliente);
-
                         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
                         if (m.getTipoMensaje() == Message.Tipo.OK) {
                             cargarClientes();
@@ -66,7 +76,7 @@ public class pnlCliente extends JPanel {
         });
 
         //txtBusqueda
-        pnlCrud.txtBusqueda.addKeyListener(new KeyAdapter() {
+        p.txtBusqueda.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 cargarClientes();
@@ -74,17 +84,18 @@ public class pnlCliente extends JPanel {
         });
 
         //Cargar los datos en los campos
-        pnlCrud.tblBuscar.addMouseListener(new MouseAdapter() {
+        p.tblBuscar.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                int x = pnlCrud.tblBuscar.getSelectedRow();
+                int x = p.tblBuscar.getSelectedRow();
+               
                 if (x != -1) {
-                    txtNombre.setText(pnlCrud.tblModel.getValueAt(x, 1).toString());
-                    txtApellido.setText(pnlCrud.tblModel.getValueAt(x, 2).toString());
-                    txtCorreo.setText(pnlCrud.tblModel.getValueAt(x, 3).toString());
-                    txtTelefono.setText(pnlCrud.tblModel.getValueAt(x, 4).toString());
-                    if (pnlCrud.tblModel.getValueAt(x, 5) != null) {
-                        txtTelefono2.setText(pnlCrud.tblModel.getValueAt(x, 5).toString());
+                    txtNombre.setText(p.tblModel.getValueAt(x, 1).toString());
+                    txtApellido.setText(p.tblModel.getValueAt(x, 2).toString());
+                    txtCorreo.setText(p.tblModel.getValueAt(x, 3).toString());
+                    txtTelefono.setText(p.tblModel.getValueAt(x, 4).toString());
+                    if (p.tblModel.getValueAt(x, 5) != null) {
+                        txtTelefono2.setText(p.tblModel.getValueAt(x, 5).toString());
                     }
                 } else {
                     Constante.mensaje("Selecciona una fila", Message.Tipo.ADVERTENCIA);
@@ -95,15 +106,15 @@ public class pnlCliente extends JPanel {
         });
 
         //Boton eliminar
-        pnlCrud.btnEliminar.addActionListener(new ActionListener() {
+        p.btnEliminar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int x = pnlCrud.tblBuscar.getSelectedRow();
+                int x = p.tblBuscar.getSelectedRow();
                 if (x != -1) {
                     Cliente cliente = new Cliente();
-                    cliente.setIdCliente((int) pnlCrud.tblModel.getValueAt(x, 0));
-                    cliente.setNombre(pnlCrud.tblModel.getValueAt(x, 1).toString());
-                    if (showConfirmDialog(null, "Seguro que desea a " + cliente.getNombre() + " ? ") != 0) {
+                    cliente.setIdCliente((int) p.tblModel.getValueAt(x, 0));
+                    cliente.setNombre(p.tblModel.getValueAt(x, 1).toString());
+                    if (showConfirmDialog(null, "Seguro que desea eliminar a " + cliente.getNombre() + " ? ") != 0) {
                         return;
                     }
                     Mensaje m = ControladorCliente.getInstancia().eliminarCliente(cliente);
@@ -116,26 +127,39 @@ public class pnlCliente extends JPanel {
             }
         });
 
-        pnlCrud.btnSeleccionar.addActionListener(new ActionListener() {
+        p.btnSeleccionar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!Constante.filaSeleccionada(pnlCrud.tblBuscar)) {
+                if (!Constante.filaSeleccionada(p.tblBuscar)) {
                     return;
                 }
-                int x = pnlCrud.tblBuscar.getSelectedRow();
-                if (ControladorCliente.getInstancia().setClienteActivoById((int) pnlCrud.tblModel.getValueAt(x, 0))) {
-                    Cliente cliente = ControladorCliente.getInstancia().obtenerClienteActivo();
-                    Principal.getInstancia().lblCliente.setText("Cliente Activo: " + cliente.getCorreo()
-                            + " - " + cliente.getNombre() + " " + cliente.getApellido());
+                int x = p.tblBuscar.getSelectedRow();
+                ControladorCliente.getInstancia().setClienteActivoById((int) p.tblModel.getValueAt(x, 0));
+                p.tblBuscar.setRowSelectionInterval(0, 0);
+            }
+        });
+        p.btnSeleccionarTemp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!Constante.filaSeleccionada(p.tblBuscar)) {
+                    return;
                 }
+                int x = p.tblBuscar.getSelectedRow();
+                Cliente cliente = ControladorCliente.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 0));
+                Constante.setClienteTemporal(cliente);
+                 p.tblBuscar.setRowSelectionInterval(0, 0);
             }
         });
     }
 
+    private pnlCliente() {
+        initComponents();
+    }
+
     private void cargarClientes() {
-        pnlCrud.tblModel.setRowCount(0);
-        for (Cliente c : ControladorCliente.getInstancia().obtenerClientes(pnlCrud.txtBusqueda.getText())) {
-            pnlCrud.tblModel.addRow(new Object[]{c.getIdCliente(), c.getNombre(), c.getApellido(), c.getCorreo(), c.getTelefono(), c.getTelefono2()});
+        p.tblModel.setRowCount(0);
+        for (Cliente c : ControladorCliente.getInstancia().obtenerClientes(p.txtBusqueda.getText())) {
+            p.tblModel.addRow(new Object[]{c.getIdCliente(), c.getNombre(), c.getApellido(), c.getCorreo(), c.getTelefono(), c.getTelefono2()});
         }
     }
 
@@ -152,14 +176,6 @@ public class pnlCliente extends JPanel {
         }
     }
 
-    private void label1MouseClicked() {
-//        try {
-//            validaDatos(txtNombre, txtApellido, txtCorreo, txtTelefono, txtTelefono2);
-//            update(null, Accion.AGREGAR);
-//        } catch (MMException e) {
-//            new Message(p, true, e.getMessage(), Message.Tipo.ADVERTENCIA).showAlert();
-//        }
-    }
 
     private void btnAceptar(ActionEvent e) {
         try {
@@ -173,8 +189,10 @@ public class pnlCliente extends JPanel {
             Mensaje m = ControladorCliente.getInstancia().registrarCliente(cliente);
             if (m.getTipoMensaje() == Message.Tipo.OK) {
                 cargarClientes();
-            }
-         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+                new DialogNewEvent(Principal.getInstancia()).setVisible(true);
+            }else{
+                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+            }  
         } catch (MMException ee) {
             Constante.mensaje(ee.getMessage(), Message.Tipo.ERROR);
         }
@@ -192,6 +210,7 @@ public class pnlCliente extends JPanel {
         txtTelefono = new TextField();
         txtTelefono2 = new TextField();
         pnlEdicion = new JPanel();
+        p = new pnlCRUD();
 
         //======== this ========
         setBackground(Color.red);
@@ -213,7 +232,7 @@ public class pnlCliente extends JPanel {
                 "[grow,fill]"));
 
             //---- btnAceptar ----
-            btnAceptar.setText("Registrar");
+            btnAceptar.setText("Registrarse");
             btnAceptar.setFont(new Font("Segoe UI", Font.BOLD, 18));
             btnAceptar.addActionListener(e -> btnAceptar(e));
             panel1.add(btnAceptar, "cell 1 0,growx,height 30%:30%:30%,");
@@ -282,6 +301,7 @@ public class pnlCliente extends JPanel {
             pnlEdicion.setBorder(new TitledBorder(null, "Editar", TitledBorder.CENTER, TitledBorder.TOP));
             pnlEdicion.setPreferredSize(new Dimension(772, 349));
             pnlEdicion.setLayout(new BorderLayout());
+            pnlEdicion.add(p, BorderLayout.CENTER);
         }
 
         GroupLayout layout = new GroupLayout(this);
@@ -342,6 +362,7 @@ public class pnlCliente extends JPanel {
     public TextField txtTelefono;
     public TextField txtTelefono2;
     private JPanel pnlEdicion;
+    private pnlCRUD p;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
 }

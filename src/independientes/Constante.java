@@ -8,6 +8,8 @@ package independientes;
 import Componentes.Sweet_Alert.Message;
 import Componentes.Sweet_Alert.Message.Tipo;
 import controlador.ControladorCliente;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import javax.swing.JTable;
 import modelo.Cliente;
 import vista.principales.Principal;
@@ -18,6 +20,8 @@ import vista.principales.Principal;
  */
 public class Constante {
 
+    private static Cliente clienteTemporal;
+ 
     public static void mensaje(String texto, Tipo tipo) {
         new Message(Principal.getInstancia(), true, texto, tipo).showAlert();
     }
@@ -34,28 +38,19 @@ public class Constante {
         return Principal.getInstancia().admin;
     }
 
-    private static Cliente clienteTemporal;
-    
-    public static Cliente getClienteTemporal(){
+  
+    public static Cliente getClienteTemporal() {
         return clienteTemporal;
     }
-    public static void setClienteTemporal(Cliente cliente){
+
+    public static void setClienteTemporal(Cliente cliente) {
         clienteTemporal = cliente;
-        Principal.getInstancia().lblCliente.setText("Cliente activo (SOLO ADMIN): " + cliente.getNombre() +" " + cliente.getApellido()+
-                " | "+ cliente.getCorreo());
     }
 
-    public static void removeClienteTemporal(){
+    public static void removeClienteTemporal() {
         clienteTemporal = null;
-        Cliente cliente = ControladorCliente.getInstancia().obtenerClienteActivo();
-        if (cliente != null) {
-             Principal.getInstancia().lblCliente.setText("Cliente activo: " + cliente.getNombre() +" " + cliente.getApellido()+
-                " | "+ cliente.getCorreo());
-        }else{
-                Principal.getInstancia().lblCliente.setText("Sin cliente activo");
-        }
-       
     }
+
     private static int presupuesto = 0;
 
     public static int getPresupuesto() {
@@ -66,22 +61,28 @@ public class Constante {
         presupuesto = cantidad;
         Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presupuesto);
     }
-    
-    public static void setPresupuesto(int cantidad, boolean restar){
-        if (presupuesto == 0 ) {
+
+    public static void setPresupuesto(int cantidad, boolean restar) {
+        if (presupuesto == 0) {
             return;
         }
         if (restar) {
             presupuesto -= cantidad;
-        }else{
+        } else {
             presupuesto += cantidad;
         }
-         Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presupuesto);
+        Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presupuesto);
     }
-    
-    public static void setPresupuesto(int cantidad){
+
+    public static void setPresupuesto(int cantidad) {
         presupuesto = cantidad;
     }
-    
 
+    public static Cliente getClienteActivo() {
+        return ControladorCliente.getInstancia().obtenerClienteActivo();
+    }
+
+    public static Dimension getScreenSize() {
+        return Toolkit.getDefaultToolkit().getScreenSize();
+    }
 }

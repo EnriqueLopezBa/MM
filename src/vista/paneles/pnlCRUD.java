@@ -7,6 +7,8 @@ import javax.swing.table.*;
 import Componentes.TextField;
 import Componentes.Sweet_Alert.Button;
 import Componentes.tableC.*;
+import independientes.Constante;
+import modelo.Cliente;
 import net.miginfocom.swing.*;
 
 public class pnlCRUD extends JPanel {
@@ -44,6 +46,8 @@ public class pnlCRUD extends JPanel {
     }
 
 
+
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         pnlBusqueda = new JPanel();
@@ -57,7 +61,7 @@ public class pnlCRUD extends JPanel {
         btnEliminar = new Button();
         jPopupMenu1 = new JPopupMenu();
         btnSeleccionar = new JMenuItem();
-        btnEventos = new JMenuItem();
+        btnSeleccionarTemp = new JMenuItem();
 
         //======== this ========
         setBackground(Color.white);
@@ -162,10 +166,10 @@ public class pnlCRUD extends JPanel {
             btnSeleccionar.setText("Seleccionar Cliente");
             jPopupMenu1.add(btnSeleccionar);
 
-            //---- btnEventos ----
-            btnEventos.setText("Eventos");
-            btnEventos.setIcon(new ImageIcon(getClass().getResource("/img/event.png")));
-            jPopupMenu1.add(btnEventos);
+            //---- btnSeleccionarTemp ----
+            btnSeleccionarTemp.setText("Seleccionar Cliente Temporal");
+            btnSeleccionarTemp.setIcon(new ImageIcon(getClass().getResource("/img/personTemp.png")));
+            jPopupMenu1.add(btnSeleccionarTemp);
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
@@ -182,6 +186,6 @@ public class pnlCRUD extends JPanel {
     public Button btnEliminar;
     public JPopupMenu jPopupMenu1;
     public JMenuItem btnSeleccionar;
-    public JMenuItem btnEventos;
+    public JMenuItem btnSeleccionarTemp;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

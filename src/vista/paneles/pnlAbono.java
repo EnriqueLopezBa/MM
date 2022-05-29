@@ -8,7 +8,6 @@ import Componentes.Sweet_Alert.Button;
 import Componentes.Sweet_Alert.Message.Tipo;
 import Componentes.TabbedPane.*;
 import Componentes.tableC.*;
-import com.raven.datechooser.*;
 import com.raven.datechooserV2.*;
 import controlador.ControladorAbono;
 import controlador.ControladorCliente;
@@ -38,7 +37,16 @@ public class pnlAbono extends JPanel {
     private Evento eventoActual = null;
     private Proveedor proveedorActual = null;
 
-    public pnlAbono() {
+    
+    private static pnlAbono instancia;
+    public static pnlAbono getInstancia(){
+        if (instancia == null) {
+            instancia = new pnlAbono();
+        }
+        return instancia;
+    }
+    
+    private pnlAbono() {
         initComponents();
         mClientes = (DefaultTableModel) tblCliente.getModel();
         mProveedores = (DefaultTableModel) tblProveedores.getModel();

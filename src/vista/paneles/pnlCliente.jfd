@@ -25,7 +25,7 @@ new FormModel {
 				"maximumSize": new java.awt.Dimension( 772, 32767 )
 				add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
 					name: "btnAceptar"
-					"text": "Registrar"
+					"text": "Registrarse"
 					"font": new java.awt.Font( "Segoe UI", 1, 18 )
 					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAceptar", true ) )
 				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
@@ -104,6 +104,11 @@ new FormModel {
 				"background": new java.awt.Color( 255, 255, 255, 255 )
 				"border": new javax.swing.border.TitledBorder( null, "Editar", 2, 2 )
 				"preferredSize": new java.awt.Dimension( 772, 349 )
+				add( new FormComponent( "vista.paneles.pnlCRUD" ) {
+					name: "p"
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "Center"
+				} )
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 6, 0 )

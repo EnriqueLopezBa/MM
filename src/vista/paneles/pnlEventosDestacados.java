@@ -7,6 +7,7 @@ import controlador.ControladorEvento;
 import java.awt.event.*;
 import javax.swing.border.*;
 import controlador.ControladorEventosDestacados;
+import independientes.Constante;
 import java.awt.*;
 import javax.swing.*;
 import independientes.image_slider.*;
@@ -21,7 +22,18 @@ import vista.principales.Principal;
  */
 public class pnlEventosDestacados extends JPanel {
 
-    public pnlEventosDestacados() {
+    private static pnlEventosDestacados instancia;
+    public static pnlEventosDestacados getInstancia(){
+        if (instancia == null) {
+            instancia = new pnlEventosDestacados();
+        }
+        return instancia;
+    }
+    
+    public void checkAdmin(){
+        lblEdicion.setVisible(Constante.getAdmin());
+    }
+    private pnlEventosDestacados() {
         initComponents();
 
         for (EventosDestacados e : ControladorEventosDestacados.getInstancia().obtenerLista()) {

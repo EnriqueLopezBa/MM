@@ -32,11 +32,15 @@ public class ControladorQuiz {
         return QuizDAOImp.getInstancia().obtenerByIdPreguntaAndIdEvento(idPregunta, idEvento);
     }
 
+    public Mensaje eliminarRespuesta(int idPregunta, int idEvento, int idCliente) {
+        return QuizDAOImp.getInstancia().eliminarRespuesta(idPregunta, idEvento, idCliente);
+    }
+
     public Mensaje registrar(Quiz t) {
         return QuizDAOImp.getInstancia().registrar(t);
     }
 
-    public ArrayList<Quiz> obtenerListaByIdCliente(int idCliente) {
-        return QuizDAOImp.getInstancia().obtenerListaByIdCliente(idCliente);
+    public ArrayList<Quiz> obtenerListaByIdClienteAndIdEvento(int idCliente, int idEvento) {
+        return QuizDAOImp.getInstancia().obtenerListaByIdClienteAndIdEvento(idCliente, idEvento);
     }
 }

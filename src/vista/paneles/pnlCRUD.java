@@ -7,8 +7,6 @@ import javax.swing.table.*;
 import Componentes.TextField;
 import Componentes.Sweet_Alert.Button;
 import Componentes.tableC.*;
-import independientes.Constante;
-import modelo.Cliente;
 import net.miginfocom.swing.*;
 
 public class pnlCRUD extends JPanel {
@@ -17,6 +15,7 @@ public class pnlCRUD extends JPanel {
 
     public pnlCRUD() {
         initComponents();
+      
     }
 
     public void init(String columnas[], int hideColumnsCount, boolean btnAgregar) {
@@ -28,7 +27,6 @@ public class pnlCRUD extends JPanel {
             mig.setComponentConstraints(btnEliminar, "cell 0 1,height 50, growx");
             
         }
-//        this.btnAgregar.setVisible(btnAgregar);
         tblBuscar.setModel(new DefaultTableModel(
                 new Object[][]{},
                 columnas
@@ -48,6 +46,8 @@ public class pnlCRUD extends JPanel {
 
 
 
+
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         pnlBusqueda = new JPanel();
@@ -62,6 +62,7 @@ public class pnlCRUD extends JPanel {
         jPopupMenu1 = new JPopupMenu();
         btnSeleccionar = new JMenuItem();
         btnSeleccionarTemp = new JMenuItem();
+        btnNuevoEvento = new JMenuItem();
 
         //======== this ========
         setBackground(Color.white);
@@ -170,6 +171,11 @@ public class pnlCRUD extends JPanel {
             btnSeleccionarTemp.setText("Seleccionar Cliente Temporal");
             btnSeleccionarTemp.setIcon(new ImageIcon(getClass().getResource("/img/personTemp.png")));
             jPopupMenu1.add(btnSeleccionarTemp);
+
+            //---- btnNuevoEvento ----
+            btnNuevoEvento.setText("Nuevo Evento");
+            btnNuevoEvento.setIcon(new ImageIcon(getClass().getResource("/img/new.png")));
+            jPopupMenu1.add(btnNuevoEvento);
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
@@ -187,5 +193,6 @@ public class pnlCRUD extends JPanel {
     public JPopupMenu jPopupMenu1;
     public JMenuItem btnSeleccionar;
     public JMenuItem btnSeleccionarTemp;
+    protected JMenuItem btnNuevoEvento;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

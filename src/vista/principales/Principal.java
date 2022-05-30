@@ -45,13 +45,23 @@ public class Principal extends JFrame {
         new Timer(2000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                if (admin) {
-//                    ((Timer) e.getSource()).stop();
-//                }
                 getClienteActivo();
             }
         }).start();
 
+    }
+
+    public void recargarPanelActivo() {
+        if (pnlContenido.getComponents().length == 0) {
+            return;
+        }
+        
+        if (pnlProveedores.class == pnlContenido.getComponents()[0].getClass()) {
+            pnlProveedores.getInstancia().recargar();
+        }else if (pnlQuiz.class == pnlContenido.getComponents()[0].getClass()) {
+            pnlQuiz.getInstancia().checkAdmin();
+        }
+        
     }
 
     protected void checkAdmin() {
@@ -102,13 +112,12 @@ public class Principal extends JFrame {
         if (cliente != null) {
             if (Constante.getClienteTemporal() != null && ControladorCliente.getInstancia().obtenerClienteActivo2() != null) {
                 Cliente cliente2 = ControladorCliente.getInstancia().obtenerClienteActivo2();
-                lblCliente.setText("Cliente (SOLO ADMIN): " + cliente.getNombre()+ " " + cliente.getApellido()+ " (" + cliente.getCorreo()+") "
-                        + " <<>> Cliente ACTIVO:" + cliente2.getNombre()+" " + cliente2.getApellido() + " ("+cliente2.getCorreo()+")");  
-            }
-            else if (Constante.getClienteTemporal() != null) {
-                lblCliente.setText("Cliente (SOLO ADMIN): " + cliente.getNombre()+ " - " + cliente.getApellido()+ " (" + cliente.getCorreo()+")");
+                lblCliente.setText("Cliente (SOLO ADMIN): " + cliente.getNombre() + " " + cliente.getApellido() + " (" + cliente.getCorreo() + ") "
+                        + " <<>> Cliente ACTIVO:" + cliente2.getNombre() + " " + cliente2.getApellido() + " (" + cliente2.getCorreo() + ")");
+            } else if (Constante.getClienteTemporal() != null) {
+                lblCliente.setText("Cliente (SOLO ADMIN): " + cliente.getNombre() + " - " + cliente.getApellido() + " (" + cliente.getCorreo() + ")");
             } else {
-                lblCliente.setText("Cliente ACTIVO: " + cliente.getNombre()+ " - " + cliente.getApellido()+ " (" + cliente.getCorreo()+") ");
+                lblCliente.setText("Cliente ACTIVO: " + cliente.getNombre() + " - " + cliente.getApellido() + " (" + cliente.getCorreo() + ") ");
             }
             lblCliente.setEnabled(true);
             if (!admin) {
@@ -159,6 +168,8 @@ public class Principal extends JFrame {
     private void btnProveedores(ActionEvent e) {
         cambiarPanel(pnlProveedores.getInstancia());
         pnlProveedores.getInstancia().checkAdmin();
+        pnlProveedores.getInstancia().recargar();
+        
     }
 
     private void btnPago(ActionEvent e) {

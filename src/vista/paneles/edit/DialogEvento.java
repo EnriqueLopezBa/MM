@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,20 +38,19 @@ import vista.principales.Principal;
  */
 public class DialogEvento extends JDialog {
 
-    pnlEventos pun;
+    private pnlEventos pun;
 
-    public DialogEvento(Principal owner, pnlEventos puntero) {
+    public DialogEvento(Principal owner) {
         super(owner);
         initComponents();
-        pun = puntero;
+        pun = pnlEventos.getInstancia();
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         double asd = screensize.getWidth() / 1.9;
         int x = (int) asd;
-        setSize(new Dimension(x, getPreferredSize().height));
-        setLocationRelativeTo(pun.i);
-        getContentPane().setBackground(Color.white);
-        
-        
+        super.setSize(new Dimension(x, super.getPreferredSize().height));
+        super.setLocationRelativeTo(pun.i);
+        super.getContentPane().setBackground(Color.white);
+
         p.init(new String[]{"idEvento", "idCliente", "idTipoEvento", "idLugar", "Fecha Inicio", "Fecha Final", "Nombre de Evento", "Num. Invitados", "Presupuesto", "Estilo", "Precio Total"}, 4, false);
         llenarTabla();
         p.txtBusqueda.addKeyListener(new KeyAdapter() {
@@ -68,15 +68,20 @@ public class DialogEvento extends JDialog {
                 if (!Constante.filaSeleccionada(p.tblBuscar)) {
                     return;
                 }
+                Principal.getInstancia().recargarPanelActivo();
                 int x = p.tblBuscar.getSelectedRow();
                 pun.txtNombreEvento.setText(p.tblModel.getValueAt(x, 6).toString());
                 pun.txtCantInvitados.setText(p.tblModel.getValueAt(x, 7).toString());
                 pun.txtPresupuesto.setText(p.tblModel.getValueAt(x, 8).toString());
                 try {
-                    Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(p.tblModel.getValueAt(x, 4).toString());
+                    String fecg = p.tblModel.getValueAt(x, 4).toString().replaceAll("\\(", "").replaceAll("\\)", "");
+                    Date date1 = new SimpleDateFormat("yyyy-MM-dd k:mm").parse(fecg);
                     pun.fechaInicio.setSelectedDate(date1);
-//                    Date date2 = new SimpleDateFormat("yyyy-MM-dd").parse(p.tblModel.getValueAt(x, 5).toString());
-//                    pun.fechaFinal.setSelectedDate(date2);
+                    pun.timePickerInicio.setSelectedTime(date1);
+                    fecg = p.tblModel.getValueAt(x, 5).toString().replaceAll("\\(", "").replaceAll("\\)", "");
+                    date1 = new SimpleDateFormat("yyyy-MM-dd k:mm").parse(fecg);
+                    pun.fechaFinal.setSelectedDate(date1);
+                    pun.timePickerFinal.setSelectedTime(date1);
                     pun.cmbTipoEvento.setSelectedItem(ControladorTipoEvento.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 2)).getTematica());
                     Lugar lug = ControladorLugar.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 3));
                     Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lug.getIdCiudad());
@@ -85,11 +90,8 @@ public class DialogEvento extends JDialog {
                     pun.cmbLugar.setSelectedItem(lug.getNombreLocal());
                     pun.txtEstilo.setText(p.tblModel.getValueAt(x, 7).toString());
                     Cliente cliente = ControladorCliente.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 1));
-//                    Principal.getInstancia().lblCliente.setText("Cliente activo (SOLO ADMIN): "
-//                            + cliente.getCorreo() + " - " + cliente.getNombre() + " " + cliente.getApellido());
-//                    lblCliente.setText("Cliente: " + cliente.getCorreo() + " - "
-//                            + cliente.getNombre() + " " + cliente.getApellido());
                     Constante.setClienteTemporal(cliente);
+                    lblCliente.setText("Cliente: " + cliente.getNombre() + " " + cliente.getApellido());
                 } catch (ParseException ex) {
                     Logger.getLogger(DialogEvento.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -117,8 +119,13 @@ public class DialogEvento extends JDialog {
                 } else {
                     evento.setIdLugar(pun.lugarActual.getIdLugar());
                 }
+               
                 evento.setFechaInicio(pun.obtenerFecha(pun.txtFechaInicio, pun.txtHorarioInicio));
                 evento.setFechaFinal(pun.obtenerFecha(pun.txtFechaFinal, pun.txtHorarioFinal));
+                if (evento.getFechaInicio().after(evento.getFechaFinal()) || evento.getFechaInicio().equals(evento.getFechaFinal())) {
+                    Constante.mensaje("Fecha final incorrecta", Tipo.ADVERTENCIA);
+                    return;
+                }
                 evento.setNoInvitados(Integer.parseInt(pun.txtCantInvitados.getText()));
                 evento.setPresupuesto(Integer.parseInt(pun.txtPresupuesto.getText()));
                 evento.setEstilo(pun.txtEstilo.getText());
@@ -142,17 +149,23 @@ public class DialogEvento extends JDialog {
                     return;
                 }
                 int x = p.tblBuscar.getSelectedRow();
-                if (JOptionPane.showConfirmDialog(getParent(), "Seguro que desea eliminar " + p.tblModel.getValueAt(x, 0).toString()) != 0) {
+                if (JOptionPane.showConfirmDialog(getParent(), "Seguro que desea eliminar " + p.tblModel.getValueAt(x, 6).toString()+"?") != 0) {
                     return;
                 }
                 Evento ev = new Evento();
                 ev.setIdEvento((int) p.tblModel.getValueAt(x, 0));
                 Mensaje m = ControladorEvento.getInstancia().eliminar(ev);
+                if (m.getTipoMensaje() == Tipo.OK) {
+                    llenarTabla();
+                }
                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
             }
         });
     }
-   private SimpleDateFormat localDateFormat = new SimpleDateFormat("yyyy-MM-dd (HH:mm)");
+    
+  
+    private SimpleDateFormat localDateFormat = new SimpleDateFormat("yyyy-MM-dd (HH:mm)");
+
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
         for (Evento e : ControladorEvento.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
@@ -160,10 +173,9 @@ public class DialogEvento extends JDialog {
                 e.getIdLugar(), localDateFormat.format(e.getFechaInicio()), localDateFormat.format(e.getFechaFinal()), e.getNombreEvento(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo(), e.getPrecioFinal()});
         }
     }
-    
-    
+
     private void thisWindowClosed(WindowEvent e) {
-      
+
     }
 
     private void txtPrecioTotalKeyReleased(KeyEvent e) {

@@ -1,27 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package independientes;
 
 import Componentes.Sweet_Alert.Message;
 import Componentes.Sweet_Alert.Message.Tipo;
 import controlador.ControladorCliente;
+import controlador.ControladorProveedor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.JTable;
 import modelo.Cliente;
+import modelo.Lugar;
+import modelo.Proveedor;
+import vista.paneles.pnlEventos;
+import vista.paneles.pnlProveedores;
 import vista.principales.Principal;
 
-/**
- *
- * @author Enrique
- */
 public class Constante {
 
     private static Cliente clienteTemporal;
- 
+
     public static void mensaje(String texto, Tipo tipo) {
         new Message(Principal.getInstancia(), true, texto, tipo).showAlert();
     }
@@ -38,7 +34,6 @@ public class Constante {
         return Principal.getInstancia().admin;
     }
 
-  
     public static Cliente getClienteTemporal() {
         return clienteTemporal;
     }
@@ -53,29 +48,29 @@ public class Constante {
 
     private static int presupuesto = 0;
 
+    public static void setPresupuesto(int cantidad) {
+        presupuesto = cantidad;
+    }
+
     public static int getPresupuesto() {
         return presupuesto;
     }
 
-    public static void iniciarPresupuesto(int cantidad) {
-        presupuesto = cantidad;
-        Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presupuesto);
-    }
-
-    public static void setPresupuesto(int cantidad, boolean restar) {
-        if (presupuesto == 0) {
-            return;
+    public static void actualizarPresupuesto() {
+        Lugar lugar = pnlEventos.getInstancia().lugarActual;
+        if (presupuesto == 0 && !pnlEventos.getInstancia().txtPresupuesto.getText().isEmpty()) {
+            presupuesto = Integer.parseInt(pnlEventos.getInstancia().txtPresupuesto.getText().replaceAll(",", ""));
         }
-        if (restar) {
-            presupuesto -= cantidad;
-        } else {
-            presupuesto += cantidad;
+        int presupuestoTemp = presupuesto;
+        if (lugar != null) {
+            presupuestoTemp -= lugar.getPrecio();
         }
-        Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presupuesto);
-    }
-
-    public static void setPresupuesto(int cantidad) {
-        presupuesto = cantidad;
+        for (int i = 0; i < pnlProveedores.getInstancia().m.getRowCount(); i++) {
+            if (pnlProveedores.getInstancia().m.getValueAt(i, 6) != null) {
+                presupuestoTemp -= (int) pnlProveedores.getInstancia().m.getValueAt(i, 6);
+            }
+        }
+        Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presupuestoTemp);
     }
 
     public static Cliente getClienteActivo() {

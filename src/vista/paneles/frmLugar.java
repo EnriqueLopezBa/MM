@@ -75,7 +75,7 @@ public class frmLugar extends JPanel {
         add(txtCapacidad, "cell 0 2,growx");
 
         //---- txtPrecioAprox ----
-        txtPrecioAprox.setLabelText("Precio Aprox");
+        txtPrecioAprox.setLabelText("Precio Aprox (Hora)");
         add(txtPrecioAprox, "cell 1 2,growx");
 
         //---- btnGaleria ----

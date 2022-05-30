@@ -48,7 +48,7 @@ new FormModel {
 			} )
 			add( new FormComponent( "Componentes.TextField" ) {
 				name: "txtPrecioAprox"
-				"labelText": "Precio Aprox"
+				"labelText": "Precio Aprox (Hora)"
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}

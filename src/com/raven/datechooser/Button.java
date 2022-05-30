@@ -1,5 +1,6 @@
 package com.raven.datechooser;
 
+import independientes.Constante;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -39,7 +40,7 @@ public final class Button extends JButton {
             public void mousePressed(MouseEvent me) {
                 if (!getText().equals("") && getName() != null) {
                     if (getName().equals("day") || getName().equals("year")) {
-                        if (!diaDisponible) {
+                        if (!diaDisponible && !Constante.getAdmin()) {
                             return;
                         }
                         

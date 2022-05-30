@@ -64,7 +64,7 @@ import vista.principales.Principal;
 
 public class pnlEventos extends JPanel {
 
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm aa");
     private SimpleDateFormat sdfT = new SimpleDateFormat("hh:mm:ss");
 
     public Estado estadoActual = null;
@@ -155,7 +155,7 @@ public class pnlEventos extends JPanel {
     }
 
     private void btnAdmin(ActionEvent e) {
-        DialogEvento temp = new DialogEvento(Principal.getInstancia(), this);
+        DialogEvento temp = new DialogEvento(Principal.getInstancia());
         temp.setVisible(true);
     }
 
@@ -216,7 +216,8 @@ public class pnlEventos extends JPanel {
             txtPresupuesto.commitEdit();
             txtPresupuesto.setValue(txtPresupuesto.getValue());
             txtPresupuesto.setCaretPosition(txtPresupuesto.getText().length());
-            Constante.iniciarPresupuesto(Integer.parseInt(txtPresupuesto.getText().replaceAll(",", "")));
+            Constante.setPresupuesto(Integer.parseInt(txtPresupuesto.getText().replaceAll(",", "")));
+            Constante.actualizarPresupuesto();
         } catch (ParseException ee) {
         }
     }
@@ -264,30 +265,19 @@ public class pnlEventos extends JPanel {
         });
     }
 
-    private Lugar lugarTemp = null;
+
 
     private void cmbLugar(ActionEvent e) {
-        if (cbOtro.isSelected()) {
+      
+        if (cbOtro.isSelected() || Constante.getPresupuesto() == 0) {
             return;
         }
         if (cmbLugar.getSelectedIndex() != -1) {
             for (Lugar lu : ControladorLugar.getInstancia().obtenerListaByIDCIudad(ciudadActual.getIdCiudad())) {
                 if (lu.getNombreLocal().equals(cmbLugar.getSelectedItem().toString())) {
                     lugarActual = lu;
-                    if (Constante.getPresupuesto() == 0) {
-                        return;
-                    }
-                    if (lugarTemp != null && lugarTemp.getIdLugar() == lu.getIdLugar()) {
-                        return;
-                    }
-                    if (lugarTemp != null && lugarTemp.getIdLugar() != lu.getIdLugar()) {
-                        Constante.setPresupuesto(lugarTemp.getPrecio(), false);
-                        Constante.setPresupuesto(lu.getPrecio(), true);
-                        lugarTemp = lu;
-                        return;
-                    }
-                    Constante.setPresupuesto(lu.getPrecio(), true);
-                    lugarTemp = lu;
+                    Constante.actualizarPresupuesto();
+                    break;
                 }
             }
         }
@@ -378,7 +368,6 @@ public class pnlEventos extends JPanel {
 
         Date fechaInicioo = obtenerFecha(txtFechaInicio, txtHorarioInicio);
         Date fechaFinall = obtenerFecha(txtFechaFinal, txtHorarioFinal);
-        System.out.println(fechaInicioo + " | " + fechaFinall);
         if (fechaFinall.before(fechaInicioo) || fechaFinall.equals(fechaInicioo)) {
             throw new MMException("Fecha final incorrecta!");
         }
@@ -389,11 +378,9 @@ public class pnlEventos extends JPanel {
 
     public Date obtenerFecha(JTextField fecha, JTextField hora) {
         try {
-            String sp[] = hora.getText().split(":");
+            String fech = fecha.getText() + " " + hora.getText();
             Calendar calendario = Calendar.getInstance();
-            calendario.setTime(sdf.parse(fecha.getText()));
-            calendario.set(Calendar.HOUR, Integer.parseInt(sp[0]));
-            calendario.set(Calendar.MINUTE, Integer.parseInt(sp[1].substring(0, 2)));
+            calendario.setTime(sdf.parse(fech));
             return calendario.getTime();
         } catch (ParseException ex) {
             Logger.getLogger(pnlEventos.class.getName()).log(Level.SEVERE, null, ex);
@@ -406,41 +393,6 @@ public class pnlEventos extends JPanel {
         d11 = d11.plusDays(7);
 
         fechaInicio.setSelectedDate(new SelectedDate(d11.getDayOfMonth(), d11.getMonthValue(), d11.getYear()));
-    }
-
-    private void dateChooserPropertyChange(PropertyChangeEvent e) {
-
-//        if (txtFecha.getText().length() > 0) {
-//            LocalDate d1 = LocalDate.parse(format.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
-//            LocalDate d2 = LocalDate.parse(txtFecha.getText(), DateTimeFormatter.ISO_LOCAL_DATE);
-//
-//            ArrayList<Evento> eventos = ControladorEvento.getInstancia().obtenerEventoByAnio(d2.getYear());
-//            for (Evento eve : eventos) {
-//                Date input = null;
-//                try {
-//                    input = format.parse(eve.getFecha() + "");
-//                } catch (ParseException ex) {
-//                    Logger.getLogger(pnlEventos.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//                LocalDate date = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//                if (date.getDayOfMonth() == d2.getDayOfMonth()) {
-//                    if (date.getMonthValue() == d2.getMonthValue()) {
-//                        if (date.getYear() == d2.getYear()) {
-//                            Constante.mensaje("Este dia se encuentra ocupado", Message.Tipo.ADVERTENCIA);
-//                            setMinDate();
-//                            return;
-//                        }
-//                    }
-//                }
-//
-//            }
-//            Duration diff = Duration.between(d1.atStartOfDay(), d2.atStartOfDay());
-//            long diffDays = diff.toDays();
-//            if (diffDays < 7) {
-//                Constante.mensaje("Minimo 1 semana de anticipacion", Message.Tipo.ADVERTENCIA);
-//                setMinDate();
-//            }
-//        }
     }
 
     private void lblEditEtiquetaMousePressed(MouseEvent e) {
@@ -465,18 +417,6 @@ public class pnlEventos extends JPanel {
         int x = getPointerInfo().getLocation().x - txtHorarioFinal.getLocationOnScreen().x;
         int y = getPointerInfo().getLocation().y - txtHorarioFinal.getLocationOnScreen().y - timePickerFinal.getHeight();
         timePickerFinal.showPopup(txtHorarioFinal, x, y);
-    }
-
-    private void fechaInicioMouseWheelMoved(MouseWheelEvent e) {
-//         if (e.getWheelRotation() > 0) {  
-//            fechaInicio.cmdPrevious.doClick();
-//        }else{
-//           fechaInicio.cmdForward.doClick();    
-//        }
-    }
-
-    private void txtFechaInicioKeyPressed(KeyEvent e) {
-        // TODO add your code here
     }
 
     private void txtHorarioInicioKeyPressed(KeyEvent e) {
@@ -868,7 +808,7 @@ public class pnlEventos extends JPanel {
     private Button btnAceptar;
     public DateChooser fechaInicio;
     public DateChooser fechaFinal;
-    private TimePicker timePickerInicio;
-    private TimePicker timePickerFinal;
+    public TimePicker timePickerInicio;
+    public TimePicker timePickerFinal;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

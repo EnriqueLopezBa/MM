@@ -142,6 +142,14 @@ new FormModel {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
 			} )
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "btnNuevoEvento"
+				"text": "Nuevo Evento"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/new.png" )
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 4
+				}
+			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 562 )
 			"size": new java.awt.Dimension( 226, 70 )

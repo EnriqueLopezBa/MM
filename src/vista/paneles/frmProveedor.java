@@ -105,7 +105,7 @@ public class frmProveedor extends JPanel{
         add(cbDisponible, "cell 0 1");
 
         //---- txtPrecioAprox ----
-        txtPrecioAprox.setLabelText("Precio Aprox");
+        txtPrecioAprox.setLabelText("Precio Aprox (Hora)");
         txtPrecioAprox.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {

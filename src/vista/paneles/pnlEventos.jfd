@@ -358,6 +358,9 @@ new FormModel {
 			name: "timePickerInicio"
 			"foreground": new java.awt.Color( 153, 102, 255, 255 )
 			"displayText": new FormReference( "txtHorarioInicio" )
+			auxiliary() {
+				"JavaCodeGenerator.variableModifiers": 1
+			}
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 255, 690 )
 		} )
@@ -365,6 +368,9 @@ new FormModel {
 			name: "timePickerFinal"
 			"foreground": new java.awt.Color( 153, 102, 255, 255 )
 			"displayText": new FormReference( "txtHorarioFinal" )
+			auxiliary() {
+				"JavaCodeGenerator.variableModifiers": 1
+			}
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 706, 695 )
 		} )

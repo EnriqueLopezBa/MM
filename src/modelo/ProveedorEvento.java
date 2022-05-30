@@ -11,17 +11,16 @@ public class ProveedorEvento {
     private int idEvento;
     private int idProveedor;
     private Date horaInicio, horaFinal;
-    private int pago;
+
 
     public ProveedorEvento() {
     }
 
-    public ProveedorEvento(int idEvento, int idProveedor, Date horaInicio, Date horaFinal, int pago) {
+    public ProveedorEvento(int idEvento, int idProveedor, Date horaInicio, Date horaFinal) {
         this.idEvento = idEvento;
         this.idProveedor = idProveedor;
         this.horaInicio = horaInicio;
         this.horaFinal = horaFinal;
-        this.pago = pago;
     }
 
    
@@ -57,15 +56,5 @@ public class ProveedorEvento {
 
     public void setHoraFinal(Date horaFinal) {
         this.horaFinal = horaFinal;
-    }
-
-    public int getPago() {
-        return pago;
-    }
-
-    public void setPago(int pago) {
-        this.pago = pago;
-    }
-
-    
+    }    
 }

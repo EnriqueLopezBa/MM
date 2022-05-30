@@ -3,11 +3,14 @@ package vista.paneles;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.table.*;
 import Componentes.*;
 import Componentes.Sweet_Alert.Button;
 import Componentes.Sweet_Alert.Message;
 import Componentes.tableC.*;
+import com.raven.datechooserV2.*;
+import com.raven.event.EventTimePicker;
 import com.raven.swing.*;
 import controlador.ControladorCiudad;
 import controlador.ControladorCliente;
@@ -23,9 +26,19 @@ import independientes.Mensaje;
 import independientes.image_slider.*;
 import static java.awt.MouseInfo.getPointerInfo;
 import java.awt.event.ActionEvent;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import modelo.Ciudad;
@@ -48,9 +61,11 @@ public class pnlProveedores extends JPanel {
     private Proveedor proveedorActual;
     private Evento eventoActual;
 
-    private DefaultTableModel m;
+    public DefaultTableModel m;
 
-    private SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
+    private SimpleDateFormat localDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm aa");
+    private SimpleDateFormat soloFecha = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat soloHora = new SimpleDateFormat("hh:mm aa");
 
     private static pnlProveedores instancia;
 
@@ -64,35 +79,86 @@ public class pnlProveedores extends JPanel {
     public void checkAdmin() {
         lblEditProveedor.setVisible(Constante.getAdmin());
         lblEditTipoProveedor.setVisible(Constante.getAdmin());
-        init();
+
     }
 
     private void init() {
         m = (DefaultTableModel) tblProveedor.getModel();
-        int presuInicial = Constante.getPresupuesto();
         m.addTableModelListener(new TableModelListener() { // PARA RECALCULAR EL PRESUPUESTO
             @Override
             public void tableChanged(TableModelEvent e) {
-                Constante.setPresupuesto(presuInicial);
-                Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presuInicial);
-                for (int j = 0; j < m.getRowCount(); j++) {
-                    if (m.getValueAt(j, 1) != null) {
-                        Proveedor prov = ControladorProveedor.getInstancia().obtenerByID((int) m.getValueAt(j, 1));
-                        Constante.setPresupuesto(prov.getPrecioAprox(), true);
-                    }
-                }
+                Constante.actualizarPresupuesto();
             }
         });
         cargarNombreEvento();
         cargarTipoProveedor();
         cargarProveedores();
+        try {
+            tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
+            tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
+//            tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(4));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("xd");
+        }
 
-        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
-        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
+    }
+
+    public void recargar() {
+        cargarNombreEvento();
+        cargarTipoProveedor();
+        cargarProveedores();
     }
 
     private pnlProveedores() {
         initComponents();
+        init();
+        timePicker2.addEventTimePicker(new EventTimePicker() {
+            @Override
+            public void timeSelected(String string) {
+                restar(null);
+            }
+        });
+
+    }
+
+    private int restar(ProveedorEvento provEve) {
+        if (provEve != null) {
+            DateTimeFormatter formateador = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm");
+            LocalDateTime fechaYHoraLocal1 = LocalDateTime.parse(provEve.getHoraInicio().toString().substring(0, provEve.getHoraInicio().toString().length() - 5), formateador);
+            LocalDateTime fechaYHoraLocal2 = LocalDateTime.parse(provEve.getHoraFinal().toString().substring(0, provEve.getHoraFinal().toString().length() - 5), formateador);
+            long minutos = ChronoUnit.MINUTES.between(fechaYHoraLocal1, fechaYHoraLocal2);
+            Proveedor pro = ControladorProveedor.getInstancia().obtenerByID(provEve.getIdProveedor());
+            int precio = new Double(((double) pro.getPrecioAprox() / 60) * minutos).intValue();
+            return precio;
+        }
+        if (eventoActual == null || proveedorActual == null) {
+            return -1;
+        }
+        if (eventoActual.getFechaInicio() == null) {
+            Constante.mensaje("Termina de registrar este evento", Message.Tipo.ADVERTENCIA);
+            return -1;
+        }
+        SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
+        String fech = "";
+        String fech2 = "";
+        if (!form.format(eventoActual.getFechaInicio()).equals(form.format(eventoActual.getFechaFinal()))) {
+            fech = rbFechaIni.isSelected() ? rbFechaIni.getText() : rbFechaFin.getText();
+            fech2 = rbFechaIni1.isSelected() ? rbFechaIni1.getText() : rbFechaFin1.getText();
+        } else {
+            fech = form.format(eventoActual.getFechaInicio());
+            fech2 = form.format(eventoActual.getFechaInicio());
+        }
+        DateTimeFormatter formateador = DateTimeFormatter.ofPattern("uuuu-MM-dd hh:mm a");
+        LocalDateTime fechaYHoraLocal1 = LocalDateTime.parse(fech + " " + timePicker1.getSelectedTime(), formateador);
+        LocalDateTime fechaYHoraLocal2 = LocalDateTime.parse(fech2 + " " + timePicker2.getSelectedTime(), formateador);
+        long minutos = ChronoUnit.MINUTES.between(fechaYHoraLocal1, fechaYHoraLocal2);
+        if (minutos < 0) {
+            lblInfoProv.setText("Aprox x Hora: $" + proveedorActual.getPrecioAprox());
+            return -1;
+        }
+        int precio = new Double(((double) proveedorActual.getPrecioAprox() / 60) * minutos).intValue();
+        lblInfoProv.setText("Aprox x Hora: $" + proveedorActual.getPrecioAprox() + " -- Precio Calculado: $" + precio);
+        return precio;
     }
 
     private void cargarTipoProveedor() {
@@ -162,9 +228,28 @@ public class pnlProveedores extends JPanel {
                 Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lugar.getIdCiudad());
                 Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdEstado());
                 lblInfo.setText(estado.getEstado() + ", " + ciudad.getCiudad());
+                SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
+                if (!form.format(eventoActual.getFechaInicio()).equals(form.format(eventoActual.getFechaFinal()))) {
+                    lblFechaIni.setVisible(true);
+                    lblFechaFin.setVisible(true);
+                    rbFechaIni.setVisible(true);
+                    rbFechaFin.setVisible(true);
+                    rbFechaIni1.setVisible(true);
+                    rbFechaFin1.setVisible(true);
+                    rbFechaIni.setText(form.format(eventoActual.getFechaInicio()));
+                    rbFechaFin.setText(form.format(eventoActual.getFechaFinal()));
+                    rbFechaIni1.setText(form.format(eventoActual.getFechaInicio()));
+                    rbFechaFin1.setText(form.format(eventoActual.getFechaFinal()));
+                } else {
+                    lblFechaIni.setVisible(false);
+                    lblFechaFin.setVisible(false);
+                    rbFechaIni.setVisible(false);
+                    rbFechaFin.setVisible(false);
+                    rbFechaIni1.setVisible(false);
+                    rbFechaFin1.setVisible(false);
+                }
             }
         }
-
         cargarProveedorEvento();
 
     }
@@ -182,7 +267,7 @@ public class pnlProveedores extends JPanel {
             String timeInicio = localDateFormat.format(provE.getHoraInicio());
             String timeFinal = localDateFormat.format(provE.getHoraFinal());
             m.addRow(new Object[]{tipo.getIdTipoProveedor(), proveedor.getIdProveedor(),
-                tipo.getTipoProveedor(), proveedor.getNombreEmpresa(), timeInicio, timeFinal});
+                tipo.getTipoProveedor(), proveedor.getNombreEmpresa(), timeInicio, timeFinal, restar(provE)});
         }
     }
 
@@ -193,7 +278,7 @@ public class pnlProveedores extends JPanel {
         for (Proveedor pro : ControladorProveedor.getInstancia().obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())) {
             if (pro.getNombreEmpresa().equals(cmbProveedor.getSelectedItem().toString())) {
                 proveedorActual = pro;
-                lblInfoProv.setText("Precio aprox: " + pro.getPrecioAprox() + "");
+                lblInfoProv.setText("Precio Aprox (Hora): " + pro.getPrecioAprox());
             }
         }
     }
@@ -208,8 +293,35 @@ public class pnlProveedores extends JPanel {
         temp.setVisible(true);
     }
 
-    private void btnAgregarProveedor(ActionEvent e) {
+    private String[] getFecha() {
+        String[] ar = new String[2];
+        if (rbFechaIni.isVisible()) {
+            if (rbFechaIni.isSelected()) {
+                ar[0] = rbFechaIni.getText();
+            } else {
+                ar[0] = rbFechaFin.getText();
+            }
+            if (rbFechaIni1.isSelected()) {
+                ar[1] = rbFechaIni1.getText();
+            } else {
+                ar[1] = rbFechaFin1.getText();
+            }
+            ar[0] += " " + txtHoraEntrada.getText();
+            ar[1] += " " + txtHoraSalida.getText();
+            return ar;
+        } else {
 
+            ar[0] = soloFecha.format(eventoActual.getFechaInicio()) + " " + txtHoraEntrada.getText();
+            ar[1] = soloFecha.format(eventoActual.getFechaInicio()) + " " + txtHoraSalida.getText();
+            return ar;
+        }
+
+    }
+
+    private void btnAgregarProveedor(ActionEvent e) {
+        if (proveedorActual == null || txtHoraEntrada.getText().isEmpty() || txtHoraSalida.getText().isEmpty()) {
+            return;
+        }
         if (cbOtro.isSelected()) {
             for (int j = 0; j < m.getRowCount(); j++) {
                 if (m.getValueAt(j, 3).toString().equals(cmbProveedor.getEditor().getItem().toString())) {
@@ -217,21 +329,36 @@ public class pnlProveedores extends JPanel {
                     return;
                 }
             }
-
             m.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), null,
-                tipoProveedorActual.getTipoProveedor(), cmbProveedor.getEditor().getItem().toString(), txtHoraEntrada.getText(), txtHoraSalida.getText()});
+                tipoProveedorActual.getTipoProveedor(), cmbProveedor.getEditor().getItem().toString(), getFecha()[0], getFecha()[1], null});
         } else {
+            int precio = restar(null);
+            if (precio == -1) {
+                Constante.mensaje("Introduzca una fecha/hora correcta", Message.Tipo.ADVERTENCIA);
+                return;
+            }
+            try {
+                Date dateInicio = localDateFormat.parse(getFecha()[0]);
+                Date dateFinal = localDateFormat.parse(getFecha()[1]);
+                if (dateInicio.before(eventoActual.getFechaInicio())) {
+                    Constante.mensaje("Su evento inicia a las " + soloHora.format(eventoActual.getFechaInicio()) + "\nModifique la fecha de inicio del proveedor", Message.Tipo.ADVERTENCIA);
+                    return;
+                } else if (dateFinal.after(eventoActual.getFechaFinal())) {
+                    Constante.mensaje("Su evento termina a las " + soloHora.format(eventoActual.getFechaFinal()) + "\nModifique la fecha final del proveedor", Message.Tipo.ADVERTENCIA);
+                    return;
+                }
+            } catch (ParseException ex) {
+                Logger.getLogger(pnlProveedores.class.getName()).log(Level.SEVERE, null, ex);
+            }
             for (int j = 0; j < m.getRowCount(); j++) {
-
                 if ((int) m.getValueAt(j, 1) == proveedorActual.getIdProveedor()) {
                     Constante.mensaje("Este ya existe", Message.Tipo.ERROR);
-
                     return;
                 }
             }
-
             m.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), proveedorActual.getIdProveedor(),
-                tipoProveedorActual.getTipoProveedor(), proveedorActual.getNombreEmpresa(), txtHoraEntrada.getText(), txtHoraSalida.getText()});
+                tipoProveedorActual.getTipoProveedor(), proveedorActual.getNombreEmpresa(), getFecha()[0], getFecha()[1], restar(null)});
+            Constante.actualizarPresupuesto();
 
         }
     }
@@ -258,30 +385,22 @@ public class pnlProveedores extends JPanel {
             return;
         }
         ArrayList<ProveedorEvento> proE = new ArrayList<>();
-        for (int j = 0; j < m.getRowCount(); j++) { // comprobrar que existen proveedores nuevo a registrar
-            if (m.getValueAt(j, 1) == null) {
-                Proveedor pro = new Proveedor();
-                pro.setNombreEmpresa(m.getValueAt(j, 3).toString());
-                ControladorProveedor.getInstancia().registrar(pro);
-                m.setValueAt(ControladorProveedor.getInstancia().obtenerByLast().getIdProveedor(), j, 1);
+        for (int j = 0; j < m.getRowCount(); j++) {
+            try {
+                // comprobrar que existen proveedores nuevo a registrar
+                if (m.getValueAt(j, 1) == null) {
+                    Proveedor pro = new Proveedor();
+                    pro.setNombreEmpresa(m.getValueAt(j, 3).toString());
+                    ControladorProveedor.getInstancia().registrar(pro);
+                    m.setValueAt(ControladorProveedor.getInstancia().obtenerByLast().getIdProveedor(), j, 1);
+                }
+                proE.add(new ProveedorEvento(eventoActual.getIdEvento(), (int) m.getValueAt(j, 1), localDateFormat.parse(m.getValueAt(j, 4).toString()), localDateFormat.parse(m.getValueAt(j, 5).toString())));
+                Mensaje m = ControladorProveedorEvento.getInstancia().registrarLote(proE);
+                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+            } catch (ParseException ex) {
+                Logger.getLogger(pnlProveedores.class.getName()).log(Level.SEVERE, null, ex);
             }
-            Calendar ca = Calendar.getInstance();
-            Calendar ca2 = Calendar.getInstance();
-
-            ca.setTime(eventoActual.getFechaInicio());
-            ca2.setTime(eventoActual.getFechaInicio());
-            String timesplit[] = m.getValueAt(j, 4).toString().replaceAll(" ", "").split(":");
-            ca.set(Calendar.HOUR, Integer.parseInt(timesplit[0]));
-            ca.set(Calendar.MINUTE, Integer.parseInt(timesplit[1].substring(0, 2)));
-
-            String timesplit2[] = m.getValueAt(j, 5).toString().replaceAll(" ", "").split(":");
-            ca2.set(Calendar.HOUR, Integer.parseInt(timesplit2[0]));
-            ca2.set(Calendar.MINUTE, Integer.parseInt(timesplit2[1].substring(0, 2)));
-
-            proE.add(new ProveedorEvento(eventoActual.getIdEvento(), (int) m.getValueAt(j, 1), ca.getTime(), ca2.getTime(), 0));
         }
-        Mensaje m = ControladorProveedorEvento.getInstancia().registrarLote(proE);
-        Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
 
     }
 
@@ -295,6 +414,19 @@ public class pnlProveedores extends JPanel {
         int x = getPointerInfo().getLocation().x - txtHoraSalida.getLocationOnScreen().x;
         int y = getPointerInfo().getLocation().y - txtHoraSalida.getLocationOnScreen().y - timePicker2.getHeight();
         timePicker2.showPopup(txtHoraSalida, x, y);
+    }
+
+    private void rbFechaFin(ActionEvent e) {
+
+    }
+
+    private void rbFechaFinStateChanged(ChangeEvent e) {
+        if (rbFechaFin.isSelected()) {
+            rbFechaIni1.setEnabled(false);
+            rbFechaFin1.setSelected(true);
+        } else {
+            rbFechaIni1.setEnabled(true);
+        }
     }
 
     private void initComponents() {
@@ -316,8 +448,14 @@ public class pnlProveedores extends JPanel {
         lblEditProveedor = new JLabel();
         svgIcon2 = new SvgIcon();
         lblInfoProv = new JLabel();
+        lblFechaIni = new JLabel();
+        rbFechaIni = new JRadioButton();
+        rbFechaFin = new JRadioButton();
         label3 = new JLabel();
         txtHoraEntrada = new JTextField();
+        lblFechaFin = new JLabel();
+        rbFechaIni1 = new JRadioButton();
+        rbFechaFin1 = new JRadioButton();
         label4 = new JLabel();
         txtHoraSalida = new JTextField();
         btnAgregarProveedor = new Button();
@@ -332,9 +470,9 @@ public class pnlProveedores extends JPanel {
         setLayout(new MigLayout(
             "fill",
             // columns
-            "[fill]" +
+            "[fill]para" +
             "[grow,fill]" +
-            "[fill]" +
+            "[grow,fill]" +
             "[fill]",
             // rows
             "[grow,fill]" +
@@ -370,11 +508,11 @@ public class pnlProveedores extends JPanel {
                 new Object[][] {
                 },
                 new String[] {
-                    "idTipoProveedor", "idProveedor", "Tipo Proveedor", "Proveedor", "Hora Entrada", "Hora Salida"
+                    "idTipoProveedor", "idProveedor", "Tipo", "Proveedor", "Inicio", "Fin", "Precio Calculado"
                 }
             ) {
                 boolean[] columnEditable = new boolean[] {
-                    false, false, false, false, true, true
+                    false, false, false, false, false, false, false
                 };
                 @Override
                 public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -393,7 +531,7 @@ public class pnlProveedores extends JPanel {
 
         //---- svgIcon1 ----
         svgIcon1.setIcon(new ImageIcon("C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\info.svg"));
-        add(svgIcon1, "cell 0 2");
+        add(svgIcon1, "cell 0 2,alignx right,growx 0");
 
         //---- lblInfo ----
         lblInfo.setHorizontalAlignment(SwingConstants.LEFT);
@@ -446,15 +584,30 @@ public class pnlProveedores extends JPanel {
 
         //---- svgIcon2 ----
         svgIcon2.setIcon(new ImageIcon("C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\info.svg"));
-        add(svgIcon2, "cell 0 5");
+        add(svgIcon2, "cell 0 7,alignx right,growx 0");
 
         //---- lblInfoProv ----
         lblInfoProv.setFont(lblInfoProv.getFont().deriveFont(lblInfoProv.getFont().getStyle() | Font.BOLD));
-        add(lblInfoProv, "cell 1 5");
+        add(lblInfoProv, "cell 1 7");
+
+        //---- lblFechaIni ----
+        lblFechaIni.setText("Fecha Inicio:");
+        add(lblFechaIni, "cell 0 5");
+
+        //---- rbFechaIni ----
+        rbFechaIni.setText("text");
+        rbFechaIni.setSelected(true);
+        add(rbFechaIni, "cell 0 5");
+
+        //---- rbFechaFin ----
+        rbFechaFin.setText("text");
+        rbFechaFin.addActionListener(e -> rbFechaFin(e));
+        rbFechaFin.addChangeListener(e -> rbFechaFinStateChanged(e));
+        add(rbFechaFin, "cell 0 5");
 
         //---- label3 ----
         label3.setText("Hora Entrada");
-        add(label3, "cell 0 6");
+        add(label3, "cell 1 5,alignx right,growx 0");
 
         //---- txtHoraEntrada ----
         txtHoraEntrada.setEnabled(false);
@@ -464,11 +617,24 @@ public class pnlProveedores extends JPanel {
                 txtHoraEntradaMouseClicked(e);
             }
         });
-        add(txtHoraEntrada, "cell 1 6");
+        add(txtHoraEntrada, "cell 1 5");
+
+        //---- lblFechaFin ----
+        lblFechaFin.setText("Fecha Fin:");
+        add(lblFechaFin, "cell 0 6");
+
+        //---- rbFechaIni1 ----
+        rbFechaIni1.setText("text");
+        rbFechaIni1.setSelected(true);
+        add(rbFechaIni1, "cell 0 6");
+
+        //---- rbFechaFin1 ----
+        rbFechaFin1.setText("text");
+        add(rbFechaFin1, "cell 0 6");
 
         //---- label4 ----
         label4.setText("Hora Salida");
-        add(label4, "cell 0 7");
+        add(label4, "cell 1 6,alignx right,growx 0");
 
         //---- txtHoraSalida ----
         txtHoraSalida.setEnabled(false);
@@ -478,7 +644,7 @@ public class pnlProveedores extends JPanel {
                 txtHoraSalidaMouseClicked(e);
             }
         });
-        add(txtHoraSalida, "cell 1 7");
+        add(txtHoraSalida, "cell 1 6");
 
         //---- btnAgregarProveedor ----
         btnAgregarProveedor.setText("Agregar Proveedor");
@@ -504,11 +670,22 @@ public class pnlProveedores extends JPanel {
 
         //---- timePicker1 ----
         timePicker1.setDisplayText(txtHoraEntrada);
-        timePicker1.setForeground(Color.pink);
+        timePicker1.setBackground(Color.pink);
 
         //---- timePicker2 ----
-        timePicker2.setForeground(Color.pink);
+        timePicker2.setForeground(Color.gray);
         timePicker2.setDisplayText(txtHoraSalida);
+        timePicker2.setBackground(Color.pink);
+
+        //---- buttonGroup1 ----
+        ButtonGroup buttonGroup1 = new ButtonGroup();
+        buttonGroup1.add(rbFechaIni);
+        buttonGroup1.add(rbFechaFin);
+
+        //---- buttonGroup2 ----
+        ButtonGroup buttonGroup2 = new ButtonGroup();
+        buttonGroup2.add(rbFechaIni1);
+        buttonGroup2.add(rbFechaFin1);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -530,8 +707,14 @@ public class pnlProveedores extends JPanel {
     private JLabel lblEditProveedor;
     private SvgIcon svgIcon2;
     private JLabel lblInfoProv;
+    private JLabel lblFechaIni;
+    private JRadioButton rbFechaIni;
+    private JRadioButton rbFechaFin;
     private JLabel label3;
     private JTextField txtHoraEntrada;
+    private JLabel lblFechaFin;
+    private JRadioButton rbFechaIni1;
+    private JRadioButton rbFechaFin1;
     private JLabel label4;
     private JTextField txtHoraSalida;
     private Button btnAgregarProveedor;

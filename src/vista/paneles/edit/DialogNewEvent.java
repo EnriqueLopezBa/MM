@@ -13,7 +13,6 @@ import independientes.Mensaje;
 import static javax.swing.JOptionPane.showMessageDialog;
 import modelo.Evento;
 import net.miginfocom.swing.*;
-import vista.paneles.pnlQuiz;
 import vista.principales.Principal;
 
 /**
@@ -25,14 +24,11 @@ public class DialogNewEvent extends JDialog {
         super(owner);
         initComponents();
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        getContentPane().setBackground(new Color(231, 245, 254));
-        setMinimumSize(new Dimension(new Double(screensize.getSize().width / 3.5).intValue(), new Double(screensize.getSize().height / 1.6).intValue()));
-        setLocationRelativeTo(null);
+        super.getContentPane().setBackground(new Color(231, 245, 254));
+        super.setMinimumSize(new Dimension(new Double(screensize.getSize().width / 3.5).intValue(), new Double(screensize.getSize().height / 1.6).intValue()));
+        super.setLocationRelativeTo(null);
     }
 
-    private void button2(ActionEvent e) {
-        dispose();
-    }
 
     private void btnAceptar(ActionEvent e) {
         aceptar();

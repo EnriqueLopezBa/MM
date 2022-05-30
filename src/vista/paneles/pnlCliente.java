@@ -8,19 +8,19 @@ import Componentes.TextField;
 import Componentes.Sweet_Alert.Button;
 import Componentes.Sweet_Alert.Message;
 import controlador.ControladorCliente;
+import controlador.ControladorEvento;
 import independientes.Constante;
 import independientes.MMException;
 import independientes.Mensaje;
 import static javax.swing.JOptionPane.showMessageDialog;
 import static javax.swing.JOptionPane.showConfirmDialog;
 import modelo.Cliente;
+import modelo.Evento;
 import net.miginfocom.swing.*;
 import vista.paneles.edit.DialogNewEvent;
 import vista.principales.Principal;
 
 public class pnlCliente extends JPanel {
-
-
 
     private static pnlCliente instancia;
 
@@ -35,11 +35,11 @@ public class pnlCliente extends JPanel {
 
     public void checkAdmin() {
         pnlEdicion.setVisible(Constante.getAdmin());
-        init();
+
     }
 
-    private void init() {
-      
+    private pnlCliente() {
+        initComponents();
         p.init(new String[]{"idCliente", "Nombre", "Apellido", "Email", "Telefono", "Telefono 2"}, 1, false);
 
         p.tblBuscar.setComponentPopupMenu(p.jPopupMenu1); //Asignar Popup de cliente
@@ -88,7 +88,7 @@ public class pnlCliente extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 int x = p.tblBuscar.getSelectedRow();
-               
+
                 if (x != -1) {
                     txtNombre.setText(p.tblModel.getValueAt(x, 1).toString());
                     txtApellido.setText(p.tblModel.getValueAt(x, 2).toString());
@@ -147,13 +147,18 @@ public class pnlCliente extends JPanel {
                 int x = p.tblBuscar.getSelectedRow();
                 Cliente cliente = ControladorCliente.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 0));
                 Constante.setClienteTemporal(cliente);
-                 p.tblBuscar.setRowSelectionInterval(0, 0);
+                p.tblBuscar.setRowSelectionInterval(0, 0);
             }
         });
-    }
+        p.btnNuevoEvento.addActionListener((e) -> {
+            p.btnSeleccionarTemp.doClick();
+            if (Constante.getClienteActivo() == null) {
+                showMessageDialog(null, "Sin cliente");
+                return;
+            }
+            new DialogNewEvent(Principal.getInstancia()).setVisible(true);
 
-    private pnlCliente() {
-        initComponents();
+        });
     }
 
     private void cargarClientes() {
@@ -176,7 +181,6 @@ public class pnlCliente extends JPanel {
         }
     }
 
-
     private void btnAceptar(ActionEvent e) {
         try {
             validaDatos(txtNombre, txtApellido, txtCorreo, txtTelefono, txtTelefono2);
@@ -190,9 +194,9 @@ public class pnlCliente extends JPanel {
             if (m.getTipoMensaje() == Message.Tipo.OK) {
                 cargarClientes();
                 new DialogNewEvent(Principal.getInstancia()).setVisible(true);
-            }else{
-                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-            }  
+            } else {
+                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+            }
         } catch (MMException ee) {
             Constante.mensaje(ee.getMessage(), Message.Tipo.ERROR);
         }

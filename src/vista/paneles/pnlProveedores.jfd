@@ -5,8 +5,8 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$layoutConstraints": "fill"
-			"$columnConstraints": "[fill]para[grow,fill][grow,fill][fill]"
-			"$rowConstraints": "[grow,fill][grow,fill]0[][grow,fill][grow,fill][][][][grow,fill][grow,fill]unrel"
+			"$columnConstraints": "[10%:10%,grow,fill]para[10%:12%,grow,fill][20%:20%,grow,fill][30%:30%,grow,fill]"
+			"$rowConstraints": "[grow,fill][grow,fill]0[][grow,fill][grow,fill][10%:10%,fill][][][][fill][grow,fill][grow,fill]unrel"
 		} ) {
 			name: "this"
 			"background": new java.awt.Color( 255, 255, 255, 255 )
@@ -16,7 +16,7 @@ new FormModel {
 				"horizontalAlignment": 0
 				"font": new java.awt.Font( "Segoe UI", 1, 28 )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 0,spanx, al center"
+				"value": "cell 0 0 4 1,alignx center"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblNombreEvento"
@@ -69,15 +69,16 @@ new FormModel {
 					} )
 					"componentPopupMenu": new FormReference( "popupMenu1" )
 					"selectionMode": 0
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "tblProveedorMouseClicked", true ) )
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 2 1 1 9,grow"
+				"value": "cell 2 1 1 11,grow"
 			} )
 			add( new FormComponent( "independientes.image_slider.ImageSlider" ) {
 				name: "i"
 				"background": new java.awt.Color( 255, 255, 255, 255 )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 3 1 1 9,grow 50 100"
+				"value": "cell 3 1 1 11,grow 50 100"
 			} )
 			add( new FormComponent( "Componentes.SvgIcon" ) {
 				name: "svgIcon1"
@@ -140,94 +141,124 @@ new FormModel {
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 1 4,grow 0 0"
 			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane3"
+				add( new FormComponent( "javax.swing.JEditorPane" ) {
+					name: "txtDescripcion"
+					"editable": false
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 5, spanx 2, wmax 30%, align center"
+			} )
 			add( new FormComponent( "Componentes.SvgIcon" ) {
 				name: "svgIcon2"
 				"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\info.svg" )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 7,alignx right,growx 0"
+				"value": "cell 0 8,alignx right,growx 0"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblInfoProv"
 				"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 0, false )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 7"
+				"value": "cell 1 8"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblFechaIni"
 				"text": "Fecha Inicio:"
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 5"
+				"value": "cell 0 6"
 			} )
 			add( new FormComponent( "javax.swing.JRadioButton" ) {
 				name: "rbFechaIni"
-				"text": "text"
+				"text": "1"
 				"$buttonGroup": &FormReference0 new FormReference( "buttonGroup1" )
 				"selected": true
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 5"
+				"value": "cell 0 6"
 			} )
 			add( new FormComponent( "javax.swing.JRadioButton" ) {
 				name: "rbFechaFin"
-				"text": "text"
+				"text": "2"
 				"$buttonGroup": #FormReference0
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "rbFechaFin", true ) )
 				addEvent( new FormEvent( "javax.swing.event.ChangeListener", "stateChanged", "rbFechaFinStateChanged", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 5"
+				"value": "cell 0 6"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label3"
 				"text": "Hora Entrada"
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 5,alignx right,growx 0"
+				"value": "cell 1 6,alignx right,growx 0"
 			} )
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "txtHoraEntrada"
 				"enabled": false
 				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "txtHoraEntradaMouseClicked", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 5"
+				"value": "cell 1 6"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblFechaFin"
 				"text": "Fecha Fin:"
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 6"
+				"value": "cell 0 7"
 			} )
 			add( new FormComponent( "javax.swing.JRadioButton" ) {
 				name: "rbFechaIni1"
-				"text": "text"
+				"text": "1"
 				"$buttonGroup": &FormReference1 new FormReference( "buttonGroup2" )
 				"selected": true
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 6"
+				"value": "cell 0 7"
 			} )
 			add( new FormComponent( "javax.swing.JRadioButton" ) {
 				name: "rbFechaFin1"
-				"text": "text"
+				"text": "2"
 				"$buttonGroup": #FormReference1
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 6"
+				"value": "cell 0 7"
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label4"
 				"text": "Hora Salida"
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 6,alignx right,growx 0"
+				"value": "cell 1 7,alignx right,growx 0"
 			} )
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "txtHoraSalida"
 				"enabled": false
 				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "txtHoraSalidaMouseClicked", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 6"
+				"value": "cell 1 7"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "Comentario"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 9"
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane2"
+				add( new FormComponent( "javax.swing.JTextArea" ) {
+					name: "txtComentario"
+					"text": "Si deseas algo en especifico de este proveedoor, puedes escribirlo aqui"
+					"wrapStyleWord": true
+					"lineWrap": true
+					"rows": 5
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 2, false )
+					addEvent( new FormEvent( "java.awt.event.FocusListener", "focusGained", "txtComentarioFocusGained", true ) )
+					addEvent( new FormEvent( "java.awt.event.FocusListener", "focusLost", "txtComentarioFocusLost", true ) )
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 9"
 			} )
 			add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
 				name: "btnAgregarProveedor"
 				"text": "Agregar Proveedor"
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAgregarProveedor", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 8,hmax 6%"
+				"value": "cell 1 10,hmax 6%"
 			} )
 			add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
 				name: "btnFinalizarProveedor"
@@ -236,11 +267,11 @@ new FormModel {
 				"colorBackground2": new java.awt.Color( 51, 255, 102, 255 )
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnFinalizarProveedor", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 9,hmax 6%"
+				"value": "cell 1 11,hmax 6%"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 1155, 355 )
+			"size": new java.awt.Dimension( 1155, 426 )
 		} )
 		add( new FormContainer( "javax.swing.JPopupMenu", new FormLayoutManager( class javax.swing.JPopupMenu ) ) {
 			name: "popupMenu1"
@@ -251,14 +282,14 @@ new FormModel {
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEliminar", true ) )
 			} )
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 20, 370 )
+			"location": new java.awt.Point( 15, 446 )
 		} )
 		add( new FormComponent( "com.raven.swing.TimePicker" ) {
 			name: "timePicker1"
 			"displayText": new FormReference( "txtHoraEntrada" )
 			"background": sfield java.awt.Color pink
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 260, 430 )
+			"location": new java.awt.Point( 255, 506 )
 		} )
 		add( new FormComponent( "com.raven.swing.TimePicker" ) {
 			name: "timePicker2"
@@ -266,17 +297,17 @@ new FormModel {
 			"displayText": new FormReference( "txtHoraSalida" )
 			"background": sfield java.awt.Color pink
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 490, 426 )
+			"location": new java.awt.Point( 480, 530 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroup1"
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 26, 435 )
+			"location": new java.awt.Point( 20, 510 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroup2"
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 135, 435 )
+			"location": new java.awt.Point( 135, 510 )
 		} )
 	}
 }

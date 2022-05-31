@@ -11,17 +11,28 @@ public class ProveedorEvento {
     private int idEvento;
     private int idProveedor;
     private Date horaInicio, horaFinal;
-
+    private String comentario;
 
     public ProveedorEvento() {
     }
 
-    public ProveedorEvento(int idEvento, int idProveedor, Date horaInicio, Date horaFinal) {
+    public ProveedorEvento(int idEvento, int idProveedor, Date horaInicio, Date horaFinal, String comentario) {
         this.idEvento = idEvento;
         this.idProveedor = idProveedor;
         this.horaInicio = horaInicio;
         this.horaFinal = horaFinal;
+        this.comentario = comentario;
     }
+
+    public String getComentario() {
+        return comentario;
+    }
+
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
+    }
+
+
 
    
 

@@ -66,14 +66,6 @@ public class pnlAbono extends JPanel {
         cargarEventos(true);
         cargarClientes();
         cargarProveedores();
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            protected void finalize() throws Throwable {
-                super.finalize(); //To change body of generated methods, choose Tools | Templates.
-                Constante.removeClienteTemporal();
-            }
-
-        });
         p.tblBuscar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -120,6 +112,9 @@ public class pnlAbono extends JPanel {
     }
 
     private void cargarEventos(boolean cliente) {
+        if (Constante.getClienteActivo() == null) {
+            return;
+        }
         if (cbSoloAdeudo.isSelected()) {
             if (cliente) {
                 cmbEvento.removeAllItems();
@@ -338,6 +333,7 @@ public class pnlAbono extends JPanel {
         popupMenu2 = new JPopupMenu();
         btnEliminar2 = new JMenuItem();
         dateChooser1 = new DateChooserV2();
+        dateChooserV21 = new DateChooserV2();
 
         //======== this ========
         setBackground(Color.white);
@@ -577,6 +573,9 @@ public class pnlAbono extends JPanel {
 
         //---- dateChooser1 ----
         dateChooser1.setTextRefernce(txtFecha);
+
+        //---- dateChooserV21 ----
+        dateChooserV21.setTextRefernce(txtFechaP);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -613,5 +612,6 @@ public class pnlAbono extends JPanel {
     private JPopupMenu popupMenu2;
     private JMenuItem btnEliminar2;
     private DateChooserV2 dateChooser1;
+    private DateChooserV2 dateChooserV21;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

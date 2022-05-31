@@ -5,7 +5,7 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$columnConstraints": "rel[grow 40,shrink 0,sizegroup 1,fill]unrel[grow 30,shrink 0,sizegroup 1,fill]unrel[grow 30,shrink 0,sizegroup 1,fill]10"
-			"$rowConstraints": "[fill]para[][]"
+			"$rowConstraints": "[fill]para[][grow,fill][]"
 			"$layoutConstraints": "fill"
 		} ) {
 			name: "this"
@@ -76,6 +76,18 @@ new FormModel {
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 2 1,aligny top,growx"
 			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane1"
+				add( new FormComponent( "javax.swing.JTextPane" ) {
+					name: "txtDescripcion"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 65536, 2, false )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 2, spanx"
+			} )
 			add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
 				name: "btnGaleria"
 				"text": "Galeria"
@@ -84,11 +96,11 @@ new FormModel {
 				}
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnGaleria", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 2, spanx, aligny top, grow"
+				"value": "cell 0 3 3 1,aligny top,grow"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 460, 166 )
+			"size": new java.awt.Dimension( 506, 235 )
 		} )
 	}
 }

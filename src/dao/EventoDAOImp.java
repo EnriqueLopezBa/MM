@@ -119,7 +119,7 @@ public class EventoDAOImp implements IEventoDAO {
             ps.setString(9, t.getNombreEvento());
             ps.setInt(10, t.getPrecioFinal());
             ps.setInt(11, t.getIdEvento());
-            return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
+            return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Excelente!") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al efectuar cambios");
         } catch (SQLException e) {
             System.err.println("Error actualizar Evento, " + e.getMessage());
         }

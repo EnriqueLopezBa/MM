@@ -35,7 +35,7 @@ public class DialogProveedor extends JDialog {
         initComponents();
         super.getContentPane().setBackground(Color.white);
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        super.setSize(new Dimension(new Double(screensize.getWidth() / 2).intValue(), super.getPreferredSize().height));
+        super.setSize(new Dimension(new Double(screensize.getWidth() / 2).intValue(), new Double(screensize.getHeight()/ 1.2).intValue()));
         super.setLocationRelativeTo(null);
         p.init(new String[]{"idProveedor", "idTipoProveedor", "Nombre", "Nombre Empresa", "Telefono", "Telefono 2", "Precio Aprox"}, 2, true);
 //        p.tblBuscar.removeColumn(p.tblBuscar.getColumnModel().getColumn(0));
@@ -61,12 +61,14 @@ public class DialogProveedor extends JDialog {
                     return;
                 }
                 TipoProveedor tipoProv = ControladorTipoProveedor.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 1));
+                Proveedor prov = ControladorProveedor.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 0));
                 fProveedor.txtNombre.setText(valorTabla(x, 2));
                 fProveedor.txtNombreEmpresa.setText(valorTabla(x, 3));
                 fProveedor.txtTelefono.setText(valorTabla(x, 4));
                 fProveedor.txtTelefono2.setText(valorTabla(x, 5));
                 fProveedor.txtPrecioAprox.setText(valorTabla(x, 6));
                 fProveedor.cbDisponible.setSelected(ControladorProveedor.getInstancia().obtenerByID(Integer.parseInt(valorTabla(x, 0))).isDisponible());
+                fProveedor.txtDescripcion.setText(prov.getDescripcion());
                 llenarAreaDeProveedor(Integer.parseInt(valorTabla(x, 0)));
                  fProveedor.cmbTipoProveedor.setSelectedItem(tipoProv.getTipoProveedor());
             }
@@ -84,6 +86,7 @@ public class DialogProveedor extends JDialog {
                 proveedor.setTelefono2(fProveedor.txtTelefono2.getText());
                 proveedor.setPrecioAprox(Integer.parseInt(fProveedor.txtPrecioAprox.getText()));
                 proveedor.setDisponible(fProveedor.cbDisponible.isSelected());
+                proveedor.setDescripcion(fProveedor.txtDescripcion.getText());
                 Mensaje m = ControladorProveedor.getInstancia().registrar(proveedor);
                 if (m.getTipoMensaje() == Tipo.OK) { //Suponiendo que se agregó el proveedor correctamente
                     llenarTabla();
@@ -122,10 +125,10 @@ public class DialogProveedor extends JDialog {
                 proveedor.setTelefono2(fProveedor.txtTelefono2.getText());
                 proveedor.setPrecioAprox(Integer.parseInt(fProveedor.txtPrecioAprox.getText()));
                 proveedor.setDisponible(fProveedor.cbDisponible.isSelected());
+                proveedor.setDescripcion(fProveedor.txtDescripcion.getText());
                 Mensaje m = ControladorProveedor.getInstancia().actualizar(proveedor);
                 if (m.getTipoMensaje() == Tipo.OK) {
                     llenarTabla();
-                    
                     ArrayList<ProveedorArea> lote = new ArrayList<>();
                        Ciudad ciudad = null;
                     for(Object objeto : fProveedorArea.listModel.toArray()){
@@ -218,9 +221,9 @@ public class DialogProveedor extends JDialog {
             // columns
             "[fill]",
             // rows
-            "[fill]" +
-            "[grow, fill]" +
-            "[grow, fill]"));
+            "[30%,fill]" +
+            "[grow,fill]" +
+            "[grow,fill]"));
         contentPane.add(p, "cell 0 0");
         contentPane.add(fProveedor, "cell 0 1");
         contentPane.add(fProveedorArea, "cell 0 2");

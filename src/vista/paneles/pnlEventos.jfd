@@ -20,11 +20,19 @@ new FormModel {
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 0, spanx, grow"
 			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbEventos"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbEventosItemStateChanged", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 1"
+			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblNombreEvento"
 				"text": "Nombre Evento"
 				"font": &Font0 new java.awt.Font( "Segoe UI", 1, 14 )
-				"visible": false
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 1"
 			} )
@@ -69,18 +77,6 @@ new FormModel {
 				"font": #Font0
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 9"
-			} )
-			add( new FormComponent( "javax.swing.JTextField" ) {
-				name: "txtNombreEvento"
-				"font": new java.awt.Font( "Segoe UI", 1, 16 )
-				"horizontalAlignment": 0
-				"nextFocusableComponent": new FormReference( "txtPresupuesto" )
-				"visible": false
-				auxiliary() {
-					"JavaCodeGenerator.variableModifiers": 1
-				}
-			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 1"
 			} )
 			add( new FormComponent( "javax.swing.JFormattedTextField" ) {
 				name: "txtPresupuesto"

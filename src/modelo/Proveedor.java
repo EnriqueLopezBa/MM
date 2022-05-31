@@ -7,11 +7,12 @@ public class Proveedor {
     private String nombre, nombreEmpresa, telefono, telefono2;
     private int precioAprox;
     private boolean disponible;
+    private String descripcion;
 
     public Proveedor() {
     }
 
-    public Proveedor(int idProveedor, int idtipoProveedor, String nombre, String nombreEmpresa, String telefono, String telefono2, int precioAprox, boolean disponible) {
+    public Proveedor(int idProveedor, int idtipoProveedor, String nombre, String nombreEmpresa, String telefono, String telefono2, int precioAprox, boolean disponible, String descripcion) {
         this.idProveedor = idProveedor;
         this.idtipoProveedor = idtipoProveedor;
         this.nombre = nombre;
@@ -20,8 +21,18 @@ public class Proveedor {
         this.telefono2 = telefono2;
         this.precioAprox = precioAprox;
         this.disponible = disponible;
+        this.descripcion = descripcion;
     }
 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+   
     public boolean isDisponible() {
         return disponible;
     }

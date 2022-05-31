@@ -6,7 +6,7 @@ new FormModel {
 		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$layoutConstraints": "fill"
 			"$columnConstraints": "[fill]"
-			"$rowConstraints": "[fill][grow, fill][grow, fill]"
+			"$rowConstraints": "[30%,fill][grow,fill][grow,fill]"
 		} ) {
 			name: "this"
 			"defaultCloseOperation": 2
@@ -28,7 +28,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 515, 490 )
+			"size": new java.awt.Dimension( 580, 520 )
 		} )
 	}
 }

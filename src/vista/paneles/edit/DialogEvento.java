@@ -51,7 +51,7 @@ public class DialogEvento extends JDialog {
         super.setLocationRelativeTo(pun.i);
         super.getContentPane().setBackground(Color.white);
 
-        p.init(new String[]{"idEvento", "idCliente", "idTipoEvento", "idLugar", "Fecha Inicio", "Fecha Final", "Nombre de Evento", "Num. Invitados", "Presupuesto", "Estilo", "Precio Total"}, 4, false);
+        p.init(new String[]{"idEvento", "idCliente", "idTipoEvento", "idLugar", "Fecha Inicio", "Fecha Final", "Nombre de Evento", "Num. Invitados", "Presupuesto", "Estilo", "Precio Total"}, 0, false);
         llenarTabla();
         p.txtBusqueda.addKeyListener(new KeyAdapter() {
             @Override
@@ -68,12 +68,20 @@ public class DialogEvento extends JDialog {
                 if (!Constante.filaSeleccionada(p.tblBuscar)) {
                     return;
                 }
-                Principal.getInstancia().recargarPanelActivo();
-                int x = p.tblBuscar.getSelectedRow();
-                pun.txtNombreEvento.setText(p.tblModel.getValueAt(x, 6).toString());
-                pun.txtCantInvitados.setText(p.tblModel.getValueAt(x, 7).toString());
-                pun.txtPresupuesto.setText(p.tblModel.getValueAt(x, 8).toString());
+
                 try {
+                    int x = p.tblBuscar.getSelectedRow();
+                    Cliente cliente = ControladorCliente.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 1));
+
+                    Constante.setClienteTemporal(cliente);
+                    lblCliente.setText("Cliente: " + cliente.getNombre() + " " + cliente.getApellido());
+                    Principal.getInstancia().recargarPanelActivo();
+
+                    pun.cargarEventos();
+                    pun.cmbEventos.setSelectedItem(p.tblModel.getValueAt(x, 6).toString());
+//                    pun.txtNombreEvento.setText(p.tblModel.getValueAt(x, 6).toString());
+                    pun.txtCantInvitados.setText(p.tblModel.getValueAt(x, 7).toString());
+                    pun.txtPresupuesto.setText(p.tblModel.getValueAt(x, 8).toString());
                     String fecg = p.tblModel.getValueAt(x, 4).toString().replaceAll("\\(", "").replaceAll("\\)", "");
                     Date date1 = new SimpleDateFormat("yyyy-MM-dd k:mm").parse(fecg);
                     pun.fechaInicio.setSelectedDate(date1);
@@ -82,6 +90,11 @@ public class DialogEvento extends JDialog {
                     date1 = new SimpleDateFormat("yyyy-MM-dd k:mm").parse(fecg);
                     pun.fechaFinal.setSelectedDate(date1);
                     pun.timePickerFinal.setSelectedTime(date1);
+                    if ((int) p.tblModel.getValueAt(x, 2) == 0) {
+                        lblCliente.setText(lblCliente.getText() + " -- Evento no terminado de registrar");
+                        return;
+                    }
+
                     pun.cmbTipoEvento.setSelectedItem(ControladorTipoEvento.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 2)).getTematica());
                     Lugar lug = ControladorLugar.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 3));
                     Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lug.getIdCiudad());
@@ -89,58 +102,56 @@ public class DialogEvento extends JDialog {
                     pun.cmbCiudad.setSelectedItem(ciudad.getCiudad());
                     pun.cmbLugar.setSelectedItem(lug.getNombreLocal());
                     pun.txtEstilo.setText(p.tblModel.getValueAt(x, 7).toString());
-                    Cliente cliente = ControladorCliente.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 1));
-                    Constante.setClienteTemporal(cliente);
-                    lblCliente.setText("Cliente: " + cliente.getNombre() + " " + cliente.getApellido());
+
                 } catch (ParseException ex) {
                     Logger.getLogger(DialogEvento.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
         });
-
-        p.btnModificar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!Constante.filaSeleccionada(p.tblBuscar)) {
-                    return;
-                }
-                int x = p.tblBuscar.getSelectedRow();
-                Evento evento = new Evento();
-                evento.setIdEvento((int) p.tblModel.getValueAt(x, 0));
-                evento.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
-                evento.setIdTipoEvento(pun.tipoEventoActual.getIdTipoEvento());
-                if (pun.lugarActual == null) {
-                    Lugar lugar = new Lugar();
-                    lugar.setIdCiudad(pun.ciudadActual.getIdCiudad());
-                    lugar.setNombreLocal(pun.cmbLugar.getEditor().getItem().toString());
-                    ControladorLugar.getInstancia().registrar(lugar);
-                    evento.setIdLugar(ControladorLugar.getInstancia().obtenerLugarByLast().getIdLugar());
-                } else {
-                    evento.setIdLugar(pun.lugarActual.getIdLugar());
-                }
-               
-                evento.setFechaInicio(pun.obtenerFecha(pun.txtFechaInicio, pun.txtHorarioInicio));
-                evento.setFechaFinal(pun.obtenerFecha(pun.txtFechaFinal, pun.txtHorarioFinal));
-                if (evento.getFechaInicio().after(evento.getFechaFinal()) || evento.getFechaInicio().equals(evento.getFechaFinal())) {
-                    Constante.mensaje("Fecha final incorrecta", Tipo.ADVERTENCIA);
-                    return;
-                }
-                evento.setNoInvitados(Integer.parseInt(pun.txtCantInvitados.getText()));
-                evento.setPresupuesto(Integer.parseInt(pun.txtPresupuesto.getText()));
-                evento.setEstilo(pun.txtEstilo.getText());
-                evento.setNombreEvento(pun.txtNombreEvento.getText());
-                if (!txtPrecioTotal.getText().isEmpty()) {
-                    evento.setPrecioFinal(Integer.parseInt(txtPrecioTotal.getText()));
-                }
-                Mensaje m = ControladorEvento.getInstancia().actualizar(evento);
-                if (m.getTipoMensaje() == Tipo.OK) {
-                    llenarTabla();
-                }
-                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-
-            }
-        });
+        p.btnModificar.setVisible(false);
+//        p.btnModificar.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                if (!Constante.filaSeleccionada(p.tblBuscar)) {
+//                    return;
+//                }
+//                int x = p.tblBuscar.getSelectedRow();
+//                Evento evento = new Evento();
+//                evento.setIdEvento((int) p.tblModel.getValueAt(x, 0));
+//                evento.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
+//                evento.setIdTipoEvento(pun.tipoEventoActual.getIdTipoEvento());
+//                if (pun.lugarActual == null) {
+//                    Lugar lugar = new Lugar();
+//                    lugar.setIdCiudad(pun.ciudadActual.getIdCiudad());
+//                    lugar.setNombreLocal(pun.cmbLugar.getEditor().getItem().toString());
+//                    ControladorLugar.getInstancia().registrar(lugar);
+//                    evento.setIdLugar(ControladorLugar.getInstancia().obtenerLugarByLast().getIdLugar());
+//                } else {
+//                    evento.setIdLugar(pun.lugarActual.getIdLugar());
+//                }
+//
+//                evento.setFechaInicio(pun.obtenerFecha(pun.txtFechaInicio, pun.txtHorarioInicio));
+//                evento.setFechaFinal(pun.obtenerFecha(pun.txtFechaFinal, pun.txtHorarioFinal));
+//                if (evento.getFechaInicio().after(evento.getFechaFinal()) || evento.getFechaInicio().equals(evento.getFechaFinal())) {
+//                    Constante.mensaje("Fecha final incorrecta", Tipo.ADVERTENCIA);
+//                    return;
+//                }
+//                evento.setNoInvitados(Integer.parseInt(pun.txtCantInvitados.getText()));
+//                evento.setPresupuesto(Integer.parseInt(pun.txtPresupuesto.getText()));
+//                evento.setEstilo(pun.txtEstilo.getText());
+//                evento.setNombreEvento(pun.txtNombreEvento.getText());
+//                if (!txtPrecioTotal.getText().isEmpty()) {
+//                    evento.setPrecioFinal(Integer.parseInt(txtPrecioTotal.getText()));
+//                }
+//                Mensaje m = ControladorEvento.getInstancia().actualizar(evento);
+//                if (m.getTipoMensaje() == Tipo.OK) {
+//                    llenarTabla();
+//                }
+//                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+//
+//            }
+//        });
 
         p.btnEliminar.addActionListener(new ActionListener() {
             @Override
@@ -149,7 +160,7 @@ public class DialogEvento extends JDialog {
                     return;
                 }
                 int x = p.tblBuscar.getSelectedRow();
-                if (JOptionPane.showConfirmDialog(getParent(), "Seguro que desea eliminar " + p.tblModel.getValueAt(x, 6).toString()+"?") != 0) {
+                if (JOptionPane.showConfirmDialog(getParent(), "Seguro que desea eliminar " + p.tblModel.getValueAt(x, 6).toString() + "?") != 0) {
                     return;
                 }
                 Evento ev = new Evento();
@@ -162,11 +173,10 @@ public class DialogEvento extends JDialog {
             }
         });
     }
-    
-  
+
     private SimpleDateFormat localDateFormat = new SimpleDateFormat("yyyy-MM-dd (HH:mm)");
 
-    private void llenarTabla() {
+    public void llenarTabla() {
         p.tblModel.setRowCount(0);
         for (Evento e : ControladorEvento.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdEvento(), e.getIdCliente(), e.getIdTipoEvento(),

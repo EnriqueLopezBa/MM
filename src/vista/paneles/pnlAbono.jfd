@@ -278,5 +278,11 @@ new FormModel {
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 646, 90 )
 		} )
+		add( new FormComponent( "com.raven.datechooserV2.DateChooserV2" ) {
+			name: "dateChooserV21"
+			"textRefernce": new FormReference( "txtFechaP" )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 650, 315 )
+		} )
 	}
 }

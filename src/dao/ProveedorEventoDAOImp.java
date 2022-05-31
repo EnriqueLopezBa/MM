@@ -1,6 +1,7 @@
 package dao;
 
 import Componentes.Sweet_Alert.Message;
+import com.sun.org.apache.bcel.internal.generic.Type;
 import idao.IProveedorEventoDAO;
 import independientes.Conexion;
 import independientes.Mensaje;
@@ -8,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import modelo.Proveedor;
 import modelo.ProveedorEvento;
@@ -68,19 +70,28 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
 
     @Override
     public Mensaje eliminar(ProveedorEvento t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM PROVEEDOREVENTO WHERE IDPROVEEDOR = ? AND IDEVENTO = ?" + t.getIdEvento())) {
+            ps.setInt(1, t.getIdProveedor());
+            ps.setInt(2, t.getIdEvento());
+            return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
+        } catch (SQLException e) {
+            System.err.println("Error eliminar ProveedorEvento, " + e.getMessage());
+        }
+        
+        return new Mensaje(Message.Tipo.ERROR, "Error");
+        
     }
 
     @Override
     public String yaExiste(ProveedorEvento t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO ="+t.getIdEvento()
-        +" and idProveedor = "+t.getIdProveedor())) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO =" + t.getIdEvento()
+                + " and idProveedor = " + t.getIdProveedor())) {
             if (rs.next()) {
                 return "Proveedor repetido";
             }
         } catch (SQLException e) {
             System.err.println("Error yaExiste ProveederEvennto, " + e.getMessage());
-        }        
+        }
         return "";
     }
 
@@ -92,10 +103,15 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
             }
             try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOREVENTO VALUES(?,?,?,?,?)")) {
                 ps.setInt(1, pro.getIdEvento());
-                ps.setInt(2, pro.getIdProveedor());      
+                ps.setInt(2, pro.getIdProveedor());
                 ps.setTimestamp(3, new java.sql.Timestamp(pro.getHoraInicio().getTime()));
                 ps.setTimestamp(4, new java.sql.Timestamp(pro.getHoraFinal().getTime()));
-                ps.setInt(5, 0);
+                if (pro.getComentario().isEmpty() || pro.getComentario().equals("Si deseas algo en especifico de este proveedoor, puedes escribirlo aqui")) {
+                    ps.setNull(5, Types.NULL);
+                } else {
+                    ps.setString(5, pro.getComentario());
+                }
+
                 ps.execute();
             } catch (SQLException e) {
                 System.err.println("Error registrarLote ProveedorEvento, " + e.getMessage());
@@ -130,45 +146,44 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
         return new Mensaje(Message.Tipo.OK, "ProvEvento actualizado correctamente");
     }
 
-
     @Override
     public ArrayList<ProveedorEvento> obtenerListaByIdEvento(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = "+idEvento)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = " + idEvento)) {
             ArrayList<ProveedorEvento> temp = new ArrayList<>();
-            while(rs.next()){
-                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getDate(3), rs.getDate(4)));
+            while (rs.next()) {
+                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getTimestamp(3), rs.getTimestamp(4), rs.getString(5)));
             }
             return temp;
         } catch (SQLException e) {
             System.err.println("Error obtenerListaByIdEvento ProveedorEvento," + e.getMessage());
-        }        
+        }
         return null;
     }
 
     @Override
     public ArrayList<ProveedorEvento> obtenerListaByIdProveedor(int idProveedor) {
-           try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE idProveedor = "+idProveedor)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE idProveedor = " + idProveedor)) {
             ArrayList<ProveedorEvento> temp = new ArrayList<>();
-            while(rs.next()){
-                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getDate(3), rs.getDate(4)));
+            while (rs.next()) {
+                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getTimestamp(3), rs.getTimestamp(4), rs.getString(5)));
             }
             return temp;
         } catch (SQLException e) {
             System.err.println("Error obtenerListaByIdEvento ProveedorEvento," + e.getMessage());
-        }        
+        }
         return null;
     }
 
     @Override
     public ProveedorEvento obtenerByIdEventoAndIdProveedor(int idEvento, int idProveedor) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = "+ idEvento+
-                " AND IDPROVEEDOR = " + idProveedor)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = " + idEvento
+                + " AND IDPROVEEDOR = " + idProveedor)) {
             if (rs.next()) {
-                return new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getTimestamp(3), rs.getTimestamp(4));
+                return new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getTimestamp(3), rs.getTimestamp(4), rs.getString(5));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
-        }        
+        }
         return null;
     }
 

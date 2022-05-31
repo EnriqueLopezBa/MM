@@ -18,6 +18,7 @@ import vista.paneles.edit.DialogUsuario;
 import vista.paneles.pnlAbono;
 import vista.paneles.pnlAgenda;
 import vista.paneles.pnlCliente;
+import vista.paneles.pnlCotizacion;
 import vista.paneles.pnlEventos;
 import vista.paneles.pnlEventosDestacados;
 import vista.paneles.pnlProveedores;
@@ -271,6 +272,11 @@ public class Principal extends JFrame {
 
     }
 
+    private void btnCotizacion(ActionEvent e) {
+        cambiarPanel(pnlCotizacion.getInstancia());
+        pnlCotizacion.getInstancia().cargarEventos();
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         pnlOpciones = new JPanel();
@@ -411,6 +417,7 @@ public class Principal extends JFrame {
                 //---- btnCotizacion ----
                 btnCotizacion.setText("Cotizacion");
                 btnCotizacion.setHoverColor(new Color(102, 153, 255));
+                btnCotizacion.addActionListener(e -> btnCotizacion(e));
                 pnlAdmin.add(btnCotizacion, "cell 0 1, grow");
 
                 //---- btnAgenda ----
@@ -553,7 +560,7 @@ public class Principal extends JFrame {
     private JPanel pnlBienvenida;
     protected JLabel lblTitulo;
     private JPanel pnlOpcionesCliente;
-    protected Buttont btnCliente;
+    public Buttont btnCliente;
     public Buttont btnQuiz;
     public Buttont btnEvento;
     public Buttont btnProveedores;

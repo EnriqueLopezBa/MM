@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import modelo.Proveedor;
 
@@ -45,7 +46,7 @@ public class ProveedorDAOImp implements IProveedorDAO {
                 + "OR telefono2 LIKE '%" + cadena + "%' OR precioAprox LIKE '%" + cadena + "%'")) {
             ArrayList<Proveedor> temp = new ArrayList<>();
             while (rs.next()) {
-                temp.add(new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getBoolean(8)));
+                temp.add(new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getBoolean(8), rs.getString(9)));
             }
             return temp;
         } catch (SQLException e) {
@@ -58,7 +59,7 @@ public class ProveedorDAOImp implements IProveedorDAO {
     public Proveedor obtenerByID(int id) {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR WHERE IDPROVEEDOR = " + id)) {
             if (rs.next()) {
-                return new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getBoolean(8));
+                return new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getBoolean(8), rs.getString(9));
             }
         } catch (SQLException e) {
             System.err.println("Error obtenerBYID Proveedor, " + e.getMessage());
@@ -72,7 +73,7 @@ public class ProveedorDAOImp implements IProveedorDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR VALUES (?,?,?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR VALUES (?,?,?,?,?,?,?,?)")) {
             ps.setInt(1, t.getIdtipoProveedor());
             ps.setString(2, t.getNombre());
             ps.setString(3, t.getNombreEmpresa());
@@ -80,6 +81,12 @@ public class ProveedorDAOImp implements IProveedorDAO {
             ps.setString(5, t.getTelefono2());
             ps.setInt(6, t.getPrecioAprox());
             ps.setBoolean(7, t.isDisponible());
+            if (t.getDescripcion().isEmpty()) {
+                ps.setNull(8, Types.NULL);
+            }else{
+                 ps.setString(8, t.getDescripcion());
+            }
+          
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
         } catch (SQLException e) {
             System.err.println("Error registrar Proveedor, " + e.getMessage());
@@ -94,7 +101,7 @@ public class ProveedorDAOImp implements IProveedorDAO {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
         try (PreparedStatement ps = cn.prepareStatement("UPDATE proveedor SET idTipoProveedor = ?, nombre = ?, nombreEmpresa = ?,"
-                + " telefono = ?, telefono2 = ?, precioAprox = ?, disponible = ? WHERE idProveedor = ?")) {
+                + " telefono = ?, telefono2 = ?, precioAprox = ?, disponible = ?, descripcion = ? WHERE idProveedor = ?")) {
             ps.setInt(1, t.getIdtipoProveedor());
             ps.setString(2, t.getNombre());
             ps.setString(3, t.getNombreEmpresa());
@@ -102,7 +109,12 @@ public class ProveedorDAOImp implements IProveedorDAO {
             ps.setString(5, t.getTelefono2());
             ps.setInt(6, t.getPrecioAprox());
             ps.setBoolean(7, t.isDisponible());
-            ps.setInt(8, t.getIdProveedor());
+             if (t.getDescripcion().isEmpty()) {
+                ps.setNull(8, Types.NULL);
+            }else{
+                 ps.setString(8, t.getDescripcion());
+            }
+            ps.setInt(9, t.getIdProveedor());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
         } catch (SQLException e) {
             System.err.println("Error actualizar Proveedor, " + e.getMessage());
@@ -152,7 +164,7 @@ public class ProveedorDAOImp implements IProveedorDAO {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR WHERE IDTIPOPROVEEDOR = " + idTipoProveedor)) {
             ArrayList<Proveedor> temp = new ArrayList<>();
             while (rs.next()) {
-                temp.add(new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getBoolean(8)));
+                temp.add(new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getBoolean(8), rs.getString(9)));
             }
             return temp;
         } catch (SQLException e) {
@@ -165,7 +177,7 @@ public class ProveedorDAOImp implements IProveedorDAO {
     public Proveedor obtenerByLast() {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT TOP 1 * FROM proveedor ORDER BY idProveedor DESC")) {
             if (rs.next()) {
-                return new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getBoolean(8));
+                return new Proveedor(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getBoolean(8), rs.getString(9));
             }
         } catch (SQLException e) {
             System.err.println("Error obtenerByLast Proveedor, " + e.getMessage());

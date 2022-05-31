@@ -3,11 +3,13 @@ package independientes;
 import Componentes.Sweet_Alert.Message;
 import Componentes.Sweet_Alert.Message.Tipo;
 import controlador.ControladorCliente;
+import controlador.ControladorEvento;
 import controlador.ControladorProveedor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.JTable;
 import modelo.Cliente;
+import modelo.Evento;
 import modelo.Lugar;
 import modelo.Proveedor;
 import vista.paneles.pnlEventos;
@@ -56,10 +58,14 @@ public class Constante {
         return presupuesto;
     }
 
-    public static void actualizarPresupuesto() {
+    public static void actualizarPresupuesto(Evento event) {
         Lugar lugar = pnlEventos.getInstancia().lugarActual;
-        if (presupuesto == 0 && !pnlEventos.getInstancia().txtPresupuesto.getText().isEmpty()) {
-            presupuesto = Integer.parseInt(pnlEventos.getInstancia().txtPresupuesto.getText().replaceAll(",", ""));
+        if (presupuesto <= 0) {
+            if (event != null) {
+                presupuesto = ControladorEvento.getInstancia().obtenerByID(event.getIdEvento()).getPresupuesto();
+            } else {
+                presupuesto = Integer.parseInt(pnlEventos.getInstancia().txtPresupuesto.getText().replaceAll(",", ""));
+            }
         }
         int presupuestoTemp = presupuesto;
         if (lugar != null) {

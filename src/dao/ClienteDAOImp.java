@@ -53,7 +53,7 @@ public class ClienteDAOImp implements IClienteDAO {
     @Override
     public ArrayList<Cliente> obtenerListaByCadena(String cadena) {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM Cliente WHERE "
-                + "nombre LIKE '%" + cadena + "%' OR apellido LIKE '%" + cadena + "%' OR email LIKE '%" + cadena + "%'"
+                + "nombre + ' ' + apellido LIKE '%" + cadena + "%' OR email LIKE '%" + cadena + "%'"
                 + " OR telefono LIKE '%" + cadena + "%' OR telefono2 LIKE '%" + cadena + "%'")) {
             ArrayList<Cliente> temp = new ArrayList<>();
             while (rs.next()) {

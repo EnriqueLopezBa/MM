@@ -62,7 +62,7 @@ new FormModel {
 						"$buttonGroup": &FormReference0 new FormReference( "buttonGroup1" )
 						"font": new com.jformdesigner.model.SwingDerivedFont( "Constantia", 0, 0, false )
 						auxiliary() {
-							"JavaCodeGenerator.variableModifiers": 4
+							"JavaCodeGenerator.variableModifiers": 1
 						}
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnCliente", true ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
@@ -144,6 +144,7 @@ new FormModel {
 						"text": "Cotizacion"
 						"$buttonGroup": &FormReference2 new FormReference( "buttonGroup1" )
 						"hoverColor": &Color2 new java.awt.Color( 102, 153, 255, 255 )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnCotizacion", true ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 1, grow"
 					} )

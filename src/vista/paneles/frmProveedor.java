@@ -75,6 +75,8 @@ public class frmProveedor extends JPanel{
         txtPrecioAprox = new TextField();
         txtTelefono = new TextField();
         txtTelefono2 = new TextField();
+        scrollPane1 = new JScrollPane();
+        txtDescripcion = new JTextPane();
         btnGaleria = new Button();
 
         //======== this ========
@@ -88,6 +90,7 @@ public class frmProveedor extends JPanel{
             // rows
             "[fill]para" +
             "[]" +
+            "[grow,fill]" +
             "[]"));
         add(cmbTipoProveedor, "cell 0 0");
 
@@ -134,10 +137,19 @@ public class frmProveedor extends JPanel{
         });
         add(txtTelefono2, "cell 2 1,aligny top,growx");
 
+        //======== scrollPane1 ========
+        {
+
+            //---- txtDescripcion ----
+            txtDescripcion.setFont(txtDescripcion.getFont().deriveFont(txtDescripcion.getFont().getStyle() & ~Font.BOLD, txtDescripcion.getFont().getSize() + 2f));
+            scrollPane1.setViewportView(txtDescripcion);
+        }
+        add(scrollPane1, "cell 0 2, spanx");
+
         //---- btnGaleria ----
         btnGaleria.setText("Galeria");
         btnGaleria.addActionListener(e -> btnGaleria(e));
-        add(btnGaleria, "cell 0 2, spanx, aligny top, grow");
+        add(btnGaleria, "cell 0 3 3 1,aligny top,grow");
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -149,6 +161,8 @@ public class frmProveedor extends JPanel{
     public TextField txtPrecioAprox;
     public TextField txtTelefono;
     public TextField txtTelefono2;
+    private JScrollPane scrollPane1;
+    public JTextPane txtDescripcion;
     public Button btnGaleria;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 

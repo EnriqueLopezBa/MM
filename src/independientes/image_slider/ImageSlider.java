@@ -90,11 +90,11 @@ public class ImageSlider extends javax.swing.JPanel {
 
     }
 
-    public void negocioImagenes(Proveedor proveedor) {
+    public void negocioImagenes(Negocio negocio) {
         panelItem.removeAll();
         panelItem.revalidate();
         panelItem.repaint();
-        for (NegocioImagenes lu : ControladorNegocioImagenes.getInstancia().obtenerListabyIdProveedor(proveedor.getIdProveedor())) {
+        for (NegocioImagenes lu : ControladorNegocioImagenes.getInstancia().obtenerListabyIdProveedor(negocio.getIdProveedor())) {
             panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 60%, h 30%");
         }
     }
@@ -103,7 +103,7 @@ public class ImageSlider extends javax.swing.JPanel {
         panelItem.removeAll();
         panelItem.revalidate();
         panelItem.repaint();
-        for (NegocioImagenes lu : ControladorNegocioImagenes.getInstancia().obtenerobtenerListabyIdCiudadAndTipoProveedor(idCiudad, idTipoProveedor)) {
+        for (NegocioImagenes lu : ControladorNegocioImagenes.getInstancia().obtenerListabyIdCiudadAndTipoProveedor(idCiudad, idTipoProveedor)) {
             Negocio negocio = ControladorNegocio.getInstancia().obtenerByID(lu.getIdNegocio());
             Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(negocio.getIdProveedor());
             if (!proveedor.isDisponible()) {

@@ -18,7 +18,7 @@ import controlador.ControladorEvento;
 import controlador.ControladorLugar;
 import controlador.ControladorNegocio;
 import controlador.ControladorProveedor;
-import controlador.ControladorProveedorArea;
+import controlador.ControladorNegocioArea;
 import controlador.ControladorProveedorEvento;
 import controlador.ControladorTipoProveedor;
 import independientes.Constante;
@@ -44,7 +44,7 @@ import modelo.Evento;
 import modelo.Lugar;
 import modelo.Negocio;
 import modelo.Proveedor;
-import modelo.ProveedorArea;
+import modelo.NegocioArea;
 import modelo.ProveedorEvento;
 import modelo.TipoProveedor;
 import net.miginfocom.swing.*;
@@ -126,7 +126,11 @@ public class pnlProveedores extends JPanel {
     }
 
     private void cargarTipoProveedor() {
+        if (eventoActual == null) {
+            return;
+        }
         cmbTipoProveedor.removeAllItems();
+        
         for (TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")) {
             if (tipo.getTipoProveedor().equalsIgnoreCase("local")) {
                 continue;
@@ -143,11 +147,11 @@ public class pnlProveedores extends JPanel {
         cmbNegocio.removeAllItems();
         //Cargar proveedores dependiendo del area donde trabajan los proveedores
         int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
-        for (ProveedorArea prov : ControladorProveedorArea.getInstancia().obtenerListaByIdCiudad(idCiudad)) {
-            if (!ControladorProveedor.getInstancia().obtenerByID(prov.getIdProveedor()).isDisponible()) { // si el proveedor no se encuentra disponible
+        for (NegocioArea prov : ControladorNegocioArea.getInstancia().obtenerListaByIdCiudad(idCiudad)) {
+            if (!ControladorProveedor.getInstancia().obtenerByID(prov.getIdNegocio()).isDisponible()) { // si el proveedor no se encuentra disponible
                 continue;
             }
-            for (Negocio negocio : ControladorNegocio.getInstancia().obtenerListaByIdProveedor(prov.getIdProveedor())) {
+            for (Negocio negocio : ControladorNegocio.getInstancia().obtenerListaByIdProveedor(prov.getIdNegocio())) {
                 if (!negocio.isDisponible()) { // puede ser que algunos de los negocios del proveedor no lo tenga disponible en ese momento
                     continue;
                 }
@@ -633,7 +637,7 @@ public class pnlProveedores extends JPanel {
         add(lblEditTipoProveedor, "cell 1 3,grow 0 0");
 
         //---- lblProveedor ----
-        lblProveedor.setText("Proveedor");
+        lblProveedor.setText("Negocio");
         add(lblProveedor, "cell 0 4");
 
         //---- cmbNegocio ----

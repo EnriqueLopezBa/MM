@@ -5,7 +5,7 @@ import Componentes.Sweet_Alert.Message.Tipo;
 import controlador.ControladorCiudad;
 import controlador.ControladorNegocio;
 import controlador.ControladorProveedor;
-import controlador.ControladorProveedorArea;
+import controlador.ControladorNegocioArea;
 import controlador.ControladorTipoProveedor;
 import independientes.Constante;
 import independientes.MMException;
@@ -22,7 +22,7 @@ import javax.swing.*;
 import modelo.Ciudad;
 import modelo.Negocio;
 import modelo.Proveedor;
-import modelo.ProveedorArea;
+import modelo.NegocioArea;
 import modelo.TipoProveedor;
 import net.miginfocom.swing.*;
 import vista.paneles.*;
@@ -229,19 +229,7 @@ public class DialogProveedor extends JDialog {
             }
 
         });
-        // BOTON para acceder a la galeria de proveedores
-        frmNeg.btnGaleria.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!Constante.filaSeleccionada(p.tblBuscar)) {
-                    return;
-                }
-                int x = p.tblBuscar.getSelectedRow();
-                Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID((int)p.tblModel.getValueAt(x, 0));
-                DialogProveedorImagenes dia = new DialogProveedorImagenes(Principal.getInstancia(), proveedor);
-                dia.setVisible(true);
-            }
-        });
+
     }
 
     private void validaDatosNegocio() throws MMException {
@@ -344,6 +332,18 @@ public class DialogProveedor extends JDialog {
             }
         }
         frmNeg = new frmNegocio();
+        frmNeg.btnGaleria.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!Constante.filaSeleccionada(p.tblBuscar)) {
+                    return;
+                }
+                int x = p.tblBuscar.getSelectedRow();
+                Negocio negocio = ControladorNegocio.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 0));
+                DialogNegocioImagenes dia = new DialogNegocioImagenes(Principal.getInstancia(), negocio);
+                dia.setVisible(true);
+            }
+        });
         mig.setRowConstraints("[40%,fill][][grow,fill]");
         frmNeg.init();
         p.init(new String[]{"idNegocio", "idProveedor", "idTipoProveedor", "Nombre Negocio", "Precio Aprox", "Disponible"}, 0, true);

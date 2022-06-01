@@ -30,7 +30,7 @@ public class ControladorNegocioImagenes {
         return NegocioImagenesDAOImp.getInstancia().obtenerByID2(id2);
     }
 
-    public ArrayList<NegocioImagenes> obtenerobtenerListabyIdCiudadAndTipoProveedor(int idCiudad, int idTipoProveedor) {
+    public ArrayList<NegocioImagenes> obtenerListabyIdCiudadAndTipoProveedor(int idCiudad, int idTipoProveedor) {
         return NegocioImagenesDAOImp.getInstancia().obtenerListabyIdCiudadAndTipoProveedor(idCiudad, idTipoProveedor);
     }
 

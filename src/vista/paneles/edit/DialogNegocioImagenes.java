@@ -6,6 +6,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import Componentes.TextField;
+import controlador.ControladorNegocio;
 import controlador.ControladorProveedor;
 import controlador.ControladorNegocioImagenes;
 import independientes.Constante;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import modelo.Negocio;
 import modelo.Proveedor;
 import modelo.NegocioImagenes;
 import net.miginfocom.swing.*;
@@ -27,7 +29,7 @@ import vista.principales.Principal;
 /**
  * @author das
  */
-public class DialogProveedorImagenes extends JDialog {
+public class DialogNegocioImagenes extends JDialog {
 
     private byte[] imagen = null;
     private File abre = null;
@@ -47,18 +49,18 @@ public class DialogProveedorImagenes extends JDialog {
         }
     }
 
-    public DialogProveedorImagenes(Principal owner, Proveedor proveedor) {
+    public DialogNegocioImagenes(Principal owner, Negocio negocio) {
         super(owner);
         initComponents();
-        getContentPane().setBackground(Color.white);
+        super.getContentPane().setBackground(Color.white);
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.2).intValue()));
-        setLocationRelativeTo(null);
-        p.init(new String[]{"idProveedor", "id2", "Descripcion"}, 2, true);
-        llenarTabla(proveedor.getIdProveedor());
-        Proveedor temp = ControladorProveedor.getInstancia().obtenerByID(proveedor.getIdProveedor());
+        super.setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.2).intValue()));
+        super.setLocationRelativeTo(null);
+        p.init(new String[]{"idNegocio", "id2", "Descripcion"}, 0, true);
+        llenarTabla(negocio.getIdProveedor());
+        
         i.init(ScrollBar.HORIZONTAL);
-        i.negocioImagenes(temp);
+        i.negocioImagenes(negocio);
 
         p.btnAgregar.addActionListener(new ActionListener() {
             @Override
@@ -66,14 +68,14 @@ public class DialogProveedorImagenes extends JDialog {
                 try {
                     validaDatos();
                     NegocioImagenes temp = new NegocioImagenes();
-                    temp.setIdNegocio(proveedor.getIdProveedor());
+                    temp.setIdNegocio(negocio.getIdProveedor());
                     temp.setImagen(getImagen());
                     temp.setDescripcion(txtDescripcion.getText());
                     temp.setPredeterminada(cbPredeterminada.isSelected());
                     Mensaje m = ControladorNegocioImagenes.getInstancia().registrar(temp);
                     Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-                    llenarTabla(proveedor.getIdProveedor());
-                    i.negocioImagenes(proveedor);
+                    llenarTabla(negocio.getIdProveedor());
+                    i.negocioImagenes(negocio);
                 } catch (MMException ee) {
                     Constante.mensaje(ee.getMessage(), Tipo.ADVERTENCIA);
                 }
@@ -95,8 +97,8 @@ public class DialogProveedorImagenes extends JDialog {
                         temp.setPredeterminada(cbPredeterminada.isSelected());
                         Mensaje m = ControladorNegocioImagenes.getInstancia().actualizar(temp);
                         if (m.getTipoMensaje() == Tipo.OK) {
-                            llenarTabla(proveedor.getIdProveedor());
-                            i.negocioImagenes(proveedor);
+                            llenarTabla(negocio.getIdProveedor());
+                            i.negocioImagenes(negocio);
                         }
                         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
                     } else {
@@ -146,7 +148,7 @@ public class DialogProveedorImagenes extends JDialog {
             try {
                 imagen = Files.readAllBytes(abre.toPath());
             } catch (IOException ex) {
-                Logger.getLogger(DialogProveedorImagenes.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DialogNegocioImagenes.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

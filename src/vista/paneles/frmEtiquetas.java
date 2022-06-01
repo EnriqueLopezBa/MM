@@ -2,7 +2,7 @@ package vista.paneles;
 
 import controlador.ControladorCiudad;
 import controlador.ControladorEtiqueta;
-import controlador.ControladorProveedorArea;
+import controlador.ControladorNegocioArea;
 import independientes.AutoComplete;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,7 +11,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import modelo.Ciudad;
 import modelo.Etiqueta;
-import modelo.ProveedorArea;
+import modelo.NegocioArea;
 import net.miginfocom.swing.*;
 
 public class frmEtiquetas extends JPanel {
@@ -34,7 +34,7 @@ public class frmEtiquetas extends JPanel {
             for (Etiqueta as : ControladorEtiqueta.getInstancia().obtenerLista()) {
                 lista.add(as.getEtiqueta().toLowerCase());
             }
-        }else if (objeto instanceof ProveedorArea) {
+        }else if (objeto instanceof NegocioArea) {
             for(Ciudad ciudad : ControladorCiudad.getInstancia().obtenerListaByCadena("")){
                 lista.add(ciudad.getCiudad().toLowerCase());
             }

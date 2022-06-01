@@ -115,7 +115,7 @@ public class DialogEventosDestacados extends JDialog {
             try {
                 imagen = Files.readAllBytes(abre.toPath());
             } catch (IOException ex) {
-                Logger.getLogger(DialogProveedorImagenes.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DialogNegocioImagenes.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

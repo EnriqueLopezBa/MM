@@ -115,7 +115,7 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
 
     @Override
     public ArrayList<NegocioImagenes> obtenerListabyIdProveedor(int idProveedor) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocioIMAGENES WHERE IDPROVEEDOR = " + idProveedor)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocioIMAGENES WHERE IDNegocio = " + idProveedor)) {
             ArrayList<NegocioImagenes> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new NegocioImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), rs.getBoolean(5)));
@@ -132,8 +132,8 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
         try (PreparedStatement ps = cn.prepareStatement("SELECT N.* FROM negocioImagenes N\n"
                 + "JOIN negocio NE ON\n"
                 + "N.idNegocio = NE.idNegocio\n"
-                + "JOIN proveedorArea P ON\n"
-                + "P.idProveedor = NE.idProveedor\n"
+                + "JOIN negocioArea P ON\n"
+                + "P.idNegocio = NE.idNegocio\n"
                 + "WHERE P.idCiudad = ? AND  NE.idTipoProveedor = ?;")) {
             ps.setInt(1, idCiudad);
             ps.setInt(2, idTipoProveedor);

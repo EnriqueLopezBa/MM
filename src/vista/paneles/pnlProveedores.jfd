@@ -115,7 +115,7 @@ new FormModel {
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblProveedor"
-				"text": "Proveedor"
+				"text": "Negocio"
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 4"
 			} )

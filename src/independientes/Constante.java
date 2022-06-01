@@ -32,6 +32,13 @@ public class Constante {
         return false;
     }
 
+    public static Object getInterfazActiva() {
+        if (Principal.getInstancia().pnlContenido.getComponents().length == 0) {
+            return null;
+        }
+        return Principal.getInstancia().pnlContenido.getComponents()[0].getClass();
+    }
+
     public static boolean getAdmin() {
         return Principal.getInstancia().admin;
     }
@@ -63,8 +70,11 @@ public class Constante {
         if (presupuesto <= 0) {
             if (event != null) {
                 presupuesto = ControladorEvento.getInstancia().obtenerByID(event.getIdEvento()).getPresupuesto();
-            } else {
+            } else if(!pnlEventos.getInstancia().txtPresupuesto.getText().isEmpty()) {
                 presupuesto = Integer.parseInt(pnlEventos.getInstancia().txtPresupuesto.getText().replaceAll(",", ""));
+            }
+            if (presupuesto <= 0) {
+                return;
             }
         }
         int presupuestoTemp = presupuesto;

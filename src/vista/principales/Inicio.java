@@ -7,6 +7,7 @@ import Componentes.TextField;
 import Componentes.BotonGradiente;
 import Componentes.PasswordField;
 import controlador.ControladorUsuario;
+import independientes.Constante;
 import modelo.Usuario;
 import net.miginfocom.swing.*;
 
@@ -16,13 +17,11 @@ import net.miginfocom.swing.*;
 public class Inicio extends JDialog {
 
     private Usuario u;
-    private Principal p;
 
     public Inicio(Principal owner, boolean modal) {
         super(owner, modal);
         initComponents();
-        getContentPane().setBackground(Color.white);
-        p = owner;
+        super.getContentPane().setBackground(Color.white);
     }
 
     private void iniciar() {
@@ -44,10 +43,12 @@ public class Inicio extends JDialog {
             }).start();
 
         } else {
-            p.admin = true;
-            p.checkAdmin();
+            Principal.getInstancia().admin = true;
+            if (Constante.getInterfazActiva() != null) {
+                 Principal.getInstancia().checkAdmin();
+            }
             this.dispose();
-            p.lblTitulo.setText("<html> <H2 align=\"center\"> Bienvenido " + u.getNombre() + " " + u.getApellido() + " </H2></html>");
+            Principal.getInstancia().lblTitulo.setText("<html> <H2 align=\"center\"> Bienvenido " + u.getNombre() + " " + u.getApellido() + " </H2></html>");
 
         }
 
@@ -69,9 +70,9 @@ public class Inicio extends JDialog {
 
     private void thisWindowClosed(WindowEvent e) {
         if (u == null || u.getIdSuario() == null) {
-            p.admin = false;
+            Principal.getInstancia().admin = false;
         }
-        p.checkAdmin();
+        Principal.getInstancia().checkAdmin();
     }
 
     private void initComponents() {
@@ -152,7 +153,7 @@ public class Inicio extends JDialog {
             panel2.add(lblError, "cell 0 2");
         }
         contentPane.add(panel2, BorderLayout.CENTER);
-        setSize(350, 250);
+        setSize(362, 262);
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }

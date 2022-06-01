@@ -94,9 +94,9 @@ public class EtiquetaDAOImp implements IEtiquetaDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE etiqueta SET etiqueta = '?' WHERE idEtiqueta = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE etiqueta SET etiqueta = ? WHERE idEtiqueta = ?")) {
             ps.setString(1, t.getEtiqueta());
-            ps.setInt(1, t.getIdEtiqueta());
+            ps.setInt(2, t.getIdEtiqueta());
             return (ps.executeUpdate() >= 1) ?new Mensaje(Message.Tipo.OK, "Etiqueta actualizada!") :new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar!");
         } catch (SQLException e) {
             System.err.println("Error actualizar Etiqueta, " + e.getMessage());
@@ -117,7 +117,7 @@ public class EtiquetaDAOImp implements IEtiquetaDAO {
 
     @Override
     public String yaExiste(Etiqueta etiqueta) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ETIQUETA idEtiqueta != "+etiqueta.getIdEtiqueta()+" and WHERE ETIQUETA = '"+etiqueta.getEtiqueta()+"'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ETIQUETA WHERE idEtiqueta <> "+etiqueta.getIdEtiqueta()+" and  ETIQUETA = '"+etiqueta.getEtiqueta()+"'")) {
             if (rs.next()) {
                 return etiqueta.getEtiqueta();
             }

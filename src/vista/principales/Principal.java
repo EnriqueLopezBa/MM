@@ -5,13 +5,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import Componentes.*;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
-import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
 import controlador.ControladorCliente;
 import independientes.Constante;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import modelo.Cliente;
 import net.miginfocom.swing.*;
 import vista.paneles.edit.DialogUsuario;
@@ -23,7 +18,6 @@ import vista.paneles.pnlEventos;
 import vista.paneles.pnlEventosDestacados;
 import vista.paneles.pnlProveedores;
 import vista.paneles.pnlQuiz;
-
 public class Principal extends JFrame {
 
     private static Principal instancia;
@@ -56,13 +50,13 @@ public class Principal extends JFrame {
         if (pnlContenido.getComponents().length == 0) {
             return;
         }
-        
+
         if (pnlProveedores.class == pnlContenido.getComponents()[0].getClass()) {
             pnlProveedores.getInstancia().recargar();
-        }else if (pnlQuiz.class == pnlContenido.getComponents()[0].getClass()) {
+        } else if (pnlQuiz.class == pnlContenido.getComponents()[0].getClass()) {
             pnlQuiz.getInstancia().checkAdmin();
         }
-        
+
     }
 
     protected void checkAdmin() {
@@ -170,7 +164,7 @@ public class Principal extends JFrame {
         cambiarPanel(pnlProveedores.getInstancia());
         pnlProveedores.getInstancia().checkAdmin();
         pnlProveedores.getInstancia().recargar();
-        
+
     }
 
     private void btnPago(ActionEvent e) {
@@ -210,17 +204,44 @@ public class Principal extends JFrame {
     private void btnUsuarios(ActionEvent e) {
         new DialogUsuario().setVisible(true);
     }
+    // Creating well formed document
+
+//    private org.w3c.dom.Document createWellFormedHtml(File inputHTML) throws IOException {
+//        Document document = Jsoup.parse(inputHTML, "UTF-8");
+//        document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+//        System.out.println("HTML parsing done...");
+//        return new W3CDom().fromJsoup(document);
+//    }
+//
+//    private void xhtmlToPdf(org.w3c.dom.Document doc, String outputPdf) throws IOException {
+//        try ( // base URI to resolve future resources
+//                OutputStream os = new FileOutputStream(outputPdf)) {
+//            PdfRendererBuilder builder = new PdfRendererBuilder();
+//            builder.withUri(outputPdf);
+//            builder.toStream(os);
+//            // add external font
+////    builder.useFont(new File(getClass().getClassLoader().getResource("fonts/PRISTINA.ttf").getFile()), "PRISTINA");
+//            builder.withW3cDocument(doc, "src/modelo/");
+//            builder.run();
+//            System.out.println("PDF creation completed");
+//        }
+//    }
 
     private void button1(ActionEvent e) {
-        try {
-            FlatAnimatedLafChange.showSnapshot();
-            UIManager.setLookAndFeel(new FlatArcDarkOrangeIJTheme());
-            FlatLaf.updateUI();
-            FlatAnimatedLafChange.hideSnapshotWithAnimation();
-        } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-//        Font font = new Font("Helvetica",Font.PLAIN,12);
+//        try {
+//            // HTML file - Input
+//            File inputHTML = new File("src/modelo/index.html");
+//            // Converted PDF file - Output
+//            String outputPdf = "cotizacion.pdf";
+//
+//            //create well formed HTML
+//            org.w3c.dom.Document doc = createWellFormedHtml(inputHTML);
+//            System.out.println("Starting conversion to PDF...");
+//            xhtmlToPdf(doc, outputPdf);
+//        } catch (IOException ex) {
+//            System.out.println("Error while converting HTML to PDF " + ex.getMessage());
+//            ex.printStackTrace();
+//        }
 
     }
 
@@ -249,20 +270,34 @@ public class Principal extends JFrame {
             return;
         }
         if (Constante.getClienteTemporal() != null && ControladorCliente.getInstancia().obtenerClienteActivo2() != null) {
-            String[] opciones = new String[]{"Cliente Temporal", "Cliente Normal", "Cancelar"};
+            String[] opciones = new String[]{"Cliente Temporal", "Cliente Normal", "Ambos"};
             int x = JOptionPane.showOptionDialog(null, "¿Que Cliente desea cerrar?", "Seleccione", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opciones, opciones[0]);
-            if (x == 0) {
-                Constante.removeClienteTemporal();
-            } else if (x == 1) {
-                ControladorCliente.getInstancia().desactivarClienteActivo();
+            switch (x) {
+                case 0:
+                    Constante.removeClienteTemporal();
+                    recargarPanelActivo();
+                    break;
+                case 1:
+                    ControladorCliente.getInstancia().desactivarClienteActivo();
+                    recargarPanelActivo();
+                    break;
+                case 2:
+                    Constante.removeClienteTemporal();
+                    ControladorCliente.getInstancia().desactivarClienteActivo();
+                    recargarPanelActivo();
+                    break;
+                default:
+                    return;
             }
 
         } else if (Constante.getClienteTemporal() != null) {
             lblCliente.setEnabled(false);
             Constante.removeClienteTemporal();
+            recargarPanelActivo();
         } else if (ControladorCliente.getInstancia().obtenerClienteActivo2() != null) {
             lblCliente.setEnabled(false);
             ControladorCliente.getInstancia().desactivarClienteActivo();
+            recargarPanelActivo();
         }
         lblCliente.setEnabled(false);
         lblCliente.setText("Actualizando...");
@@ -275,6 +310,11 @@ public class Principal extends JFrame {
     private void btnCotizacion(ActionEvent e) {
         cambiarPanel(pnlCotizacion.getInstancia());
         pnlCotizacion.getInstancia().cargarEventos();
+    }
+
+    private void createUIComponents() {
+        // TODO: add custom component creation code here
+
     }
 
     private void initComponents() {
@@ -435,7 +475,6 @@ public class Principal extends JFrame {
                 //---- button1 ----
                 button1.setText("text");
                 button1.setHorizontalTextPosition(SwingConstants.CENTER);
-                button1.setVisible(false);
                 button1.addActionListener(e -> button1(e));
                 pnlAdmin.add(button1, "cell 0 4");
             }
@@ -578,6 +617,6 @@ public class Principal extends JFrame {
     private SvgIcon lblMaximizar;
     private SvgIcon lblSalir;
     public JLabel lblPresupuesto;
-    protected JPanel pnlContenido;
+    public JPanel pnlContenido;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

@@ -37,7 +37,7 @@ public class EstadoDAOImp implements IEstadoDAO {
 
     @Override
     public ArrayList<Estado> obtenerListaByCadena(String cadena) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ESTADO WHERE ESTADO lIKE '%" + cadena + "%'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ESTADO WHERE ESTADO lIKE '%" + cadena + "%' ORDER BY ESTADO")) {
             ArrayList<Estado> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new Estado(rs.getInt(1), rs.getString(2)));

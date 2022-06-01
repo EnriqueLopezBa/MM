@@ -31,9 +31,9 @@ public class DialogEtiqueta extends JDialog {
         super(parent);
         initComponents();
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.5).intValue()));
-        setLocationRelativeTo(null);
-        getContentPane().setBackground(Color.white);
+        super.setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.5).intValue()));
+        super.setLocationRelativeTo(null);
+        super.getContentPane().setBackground(Color.white);
         p.init(new String[]{"idEtiqueta", "Etiqueta"}, 1, true);
         f.init(new Etiqueta());
         f.listEtiqueta.setEnabled(false);
@@ -85,10 +85,15 @@ public class DialogEtiqueta extends JDialog {
                 if (!Constante.filaSeleccionada(p.tblBuscar)) {
                     return;
                 }
+                if (f.txtEtiqueta.getText().isEmpty()) {
+                    Constante.mensaje("Campo vacio", Tipo.ADVERTENCIA);
+                    f.txtEtiqueta.requestFocus();
+                    return;
+                }
                 int x = p.tblBuscar.getSelectedRow();
                 Etiqueta etiqueta = new Etiqueta();
                 etiqueta.setIdEtiqueta((int) p.tblModel.getValueAt(x, 0));
-                etiqueta.setEtiqueta(p.tblModel.getValueAt(x, 1).toString());
+                etiqueta.setEtiqueta(f.txtEtiqueta.getText());
                 Mensaje m = ControladorEtiqueta.getInstancia().actualizar(etiqueta);
                 if (m.getTipoMensaje() == Tipo.OK) {
                     llenarTabla();
@@ -101,10 +106,10 @@ public class DialogEtiqueta extends JDialog {
             if (!Constante.filaSeleccionada(p.tblBuscar)) {
                 return;
             }
-            if (JOptionPane.showConfirmDialog(this, " Seguro que desea eliminar?") != 0) {
+            int x = p.tblBuscar.getSelectedRow();
+              if (JOptionPane.showConfirmDialog(this, " Seguro que desea eliminar a " + p.tblModel.getValueAt(x, 1) +" ?") != 0) {
                 return;
             }
-            int x = p.tblBuscar.getSelectedRow();
             Etiqueta etiqueta = new Etiqueta();
             etiqueta.setIdEtiqueta((int) p.tblModel.getValueAt(x, 0));
             Mensaje m = ControladorEtiqueta.getInstancia().eliminar(etiqueta);

@@ -6,7 +6,7 @@ new FormModel {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$layoutConstraints": "fill"
 			"$columnConstraints": "[][][]"
-			"$rowConstraints": "[][][][]"
+			"$rowConstraints": "[][][][][fill]"
 		} ) {
 			name: "this"
 			"background": sfield java.awt.Color white
@@ -25,15 +25,15 @@ new FormModel {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 0,,grow, hmax 15%"
+				"value": "cell 1 0,grow, hmax 15%"
 			} )
-			add( new FormComponent( "vista.paneles.frmEtiquetas" ) {
-				name: "frmEtiquetas1"
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbProveedor"
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 2 0 1 4,grow, hmax 50%"
+				"value": "cell 2 0,grow, hmax 15%"
 			} )
 			add( new FormComponent( "Componentes.TextField" ) {
 				name: "txtLugar"
@@ -53,12 +53,21 @@ new FormModel {
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 1 2 1,growx"
 			} )
+			add( new FormComponent( "vista.paneles.frmEtiquetas" ) {
+				name: "frmEtiquetas1"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 1,spany 2,grow,hmax 50%"
+			} )
 			add( new FormComponent( "Componentes.TextField" ) {
 				name: "txtCapacidad"
 				"labelText": "Capacidad"
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
+				addEvent( new FormEvent( "java.awt.event.KeyListener", "keyTyped", "txtCapacidadKeyTyped", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 2,growx"
 			} )
@@ -68,6 +77,7 @@ new FormModel {
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
+				addEvent( new FormEvent( "java.awt.event.KeyListener", "keyTyped", "txtPrecioAproxKeyTyped", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 1 2,growx"
 			} )
@@ -80,6 +90,15 @@ new FormModel {
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnGaleria", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 3 2 1,grow,hmax 20%"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblProveedor"
+				"text": "Proveedor:"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 4"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )

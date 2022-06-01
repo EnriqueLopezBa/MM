@@ -16,12 +16,14 @@ import controlador.ControladorCliente;
 import controlador.ControladorEstado;
 import controlador.ControladorEvento;
 import controlador.ControladorLugar;
+import controlador.ControladorNegocio;
 import controlador.ControladorProveedor;
 import controlador.ControladorProveedorArea;
 import controlador.ControladorProveedorEvento;
 import controlador.ControladorTipoProveedor;
 import independientes.Constante;
 import independientes.Mensaje;
+import independientes.MyObjectListCellRenderer;
 import independientes.image_slider.*;
 import static java.awt.MouseInfo.getPointerInfo;
 import java.awt.event.ActionEvent;
@@ -40,6 +42,7 @@ import modelo.Ciudad;
 import modelo.Estado;
 import modelo.Evento;
 import modelo.Lugar;
+import modelo.Negocio;
 import modelo.Proveedor;
 import modelo.ProveedorArea;
 import modelo.ProveedorEvento;
@@ -53,11 +56,13 @@ public class pnlProveedores extends JPanel {
 
     private TipoProveedor tipoProveedorActual;
     private Proveedor proveedorActual;
+    private Negocio negocioActual;
     private Evento eventoActual;
 
     public DefaultTableModel m;
 
-    private SimpleDateFormat localDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm aa");
+    private SimpleDateFormat todoFechaAMPM = new SimpleDateFormat("yyyy-MM-dd hh:mm aa");
+    private SimpleDateFormat todoFecha = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private SimpleDateFormat soloFecha = new SimpleDateFormat("yyyy-MM-dd");
     private SimpleDateFormat soloHora = new SimpleDateFormat("hh:mm aa");
 
@@ -70,43 +75,17 @@ public class pnlProveedores extends JPanel {
         return instancia;
     }
 
-    public void checkAdmin() {
-        lblEditProveedor.setVisible(Constante.getAdmin());
-        lblEditTipoProveedor.setVisible(Constante.getAdmin());
-
-    }
-
-    private void init() {
-        m = (DefaultTableModel) tblProveedor.getModel();
-        m.addTableModelListener(new TableModelListener() { // PARA RECALCULAR EL PRESUPUESTO
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                Constante.actualizarPresupuesto(eventoActual);
-            }
-        });
-        cargarNombreEvento();
-        cargarTipoProveedor();
-        cargarProveedores();
-        try {
-            tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
-            tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
-//            tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(4));
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("xd");
-        }
-
-    }
-
-    public void recargar() {
-        cargarNombreEvento();
-        cargarTipoProveedor();
-        cargarProveedores();
-    }
-
     private pnlProveedores() {
         initComponents();
+        m = (DefaultTableModel) tblProveedor.getModel();
         init();
         timePicker2.addEventTimePicker(new EventTimePicker() {
+            @Override
+            public void timeSelected(String string) {
+                restar(null);
+            }
+        });
+        timePicker1.addEventTimePicker(new EventTimePicker() {
             @Override
             public void timeSelected(String string) {
                 restar(null);
@@ -115,71 +94,24 @@ public class pnlProveedores extends JPanel {
 
     }
 
-    private int restar(ProveedorEvento provEve) {
-        if (provEve != null) {
-            DateTimeFormatter formateador = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm");
-            LocalDateTime fechaYHoraLocal1 = LocalDateTime.parse(provEve.getHoraInicio().toString().substring(0, provEve.getHoraInicio().toString().length() - 5), formateador);
-            LocalDateTime fechaYHoraLocal2 = LocalDateTime.parse(provEve.getHoraFinal().toString().substring(0, provEve.getHoraFinal().toString().length() - 5), formateador);
-            long minutos = ChronoUnit.MINUTES.between(fechaYHoraLocal1, fechaYHoraLocal2);
-            Proveedor pro = ControladorProveedor.getInstancia().obtenerByID(provEve.getIdProveedor());
-            int precio = new Double(((double) pro.getPrecioAprox() / 60) * minutos).intValue();
-            return precio;
-        }
-        if (eventoActual == null || proveedorActual == null) {
-            return -1;
-        }
-        if (eventoActual.getFechaInicio() == null) {
-            Constante.mensaje("Termina de registrar este evento", Message.Tipo.ADVERTENCIA);
-            return -1;
-        }
-        SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
-        String fech = "";
-        String fech2 = "";
-        if (!form.format(eventoActual.getFechaInicio()).equals(form.format(eventoActual.getFechaFinal()))) {
-            fech = rbFechaIni.isSelected() ? rbFechaIni.getText() : rbFechaFin.getText();
-            fech2 = rbFechaIni1.isSelected() ? rbFechaIni1.getText() : rbFechaFin1.getText();
-        } else {
-            fech = form.format(eventoActual.getFechaInicio());
-            fech2 = form.format(eventoActual.getFechaInicio());
-        }
-        DateTimeFormatter formateador = DateTimeFormatter.ofPattern("uuuu-MM-dd hh:mm a");
-        LocalDateTime fechaYHoraLocal1 = LocalDateTime.parse(fech + " " + timePicker1.getSelectedTime(), formateador);
-        LocalDateTime fechaYHoraLocal2 = LocalDateTime.parse(fech2 + " " + timePicker2.getSelectedTime(), formateador);
-        long minutos = ChronoUnit.MINUTES.between(fechaYHoraLocal1, fechaYHoraLocal2);
-        if (minutos < 0) {
-            lblInfoProv.setText("Aprox x Hora: $" + proveedorActual.getPrecioAprox());
-            return -1;
-        }
-        int precio = new Double(((double) proveedorActual.getPrecioAprox() / 60) * minutos).intValue();
-        lblInfoProv.setText("Aprox x Hora: $" + proveedorActual.getPrecioAprox() + " -- Precio Calculado: $" + precio);
-        return precio;
-    }
+    private void init() {
 
-    private void cargarTipoProveedor() {
-        cmbTipoProveedor.removeAllItems();
-        for (TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")) {
-            cmbTipoProveedor.addItem(tipo.getTipoProveedor());
-        }
-    }
-
-    private void cargarProveedores() {
-        if (eventoActual == null || ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()) == null) {
-            return;
-        }
-        cmbProveedor.removeAllItems();
-        //Cargar proveedores dependiendo del area donde trabajan los proveedores
-        int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
-        for (ProveedorArea prov : ControladorProveedorArea.getInstancia().obtenerListaByIdCiudad(idCiudad)) {
-            for (Proveedor pro : ControladorProveedor.getInstancia().obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())) {
-                if (!pro.isDisponible()) {
-                    continue;
-                }
-                if (prov.getIdProveedor() == pro.getIdProveedor()) {
-                    cmbProveedor.addItem(pro.getNombreEmpresa());
-                }
+        m.addTableModelListener(new TableModelListener() { // PARA RECALCULAR EL PRESUPUESTO
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                Constante.actualizarPresupuesto(eventoActual);
             }
-        }
+        });
 
+        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
+        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
+
+    }
+
+    public void recargar() {
+        cargarNombreEvento();
+        cargarTipoProveedor();
+        cargarNegocios();
     }
 
     private void cargarNombreEvento() {
@@ -187,109 +119,178 @@ public class pnlProveedores extends JPanel {
             return;
         }
         cmbNombreEvento.removeAllItems();
-        for (Evento e : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
-            cmbNombreEvento.addItem(e.getNombreEvento());
+        for (Evento e : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.getClienteActivo().getIdCliente())) {
+            cmbNombreEvento.addItem(e);
         }
+        cmbNombreEvento.setRenderer(new MyObjectListCellRenderer());
+    }
+
+    private void cargarTipoProveedor() {
+        cmbTipoProveedor.removeAllItems();
+        for (TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")) {
+            if (tipo.getTipoProveedor().equalsIgnoreCase("local")) {
+                continue;
+            }
+            cmbTipoProveedor.addItem(tipo);
+        }
+        cmbTipoProveedor.setRenderer(new MyObjectListCellRenderer());
+    }
+
+    private void cargarNegocios() {
+        if (tipoProveedorActual == null) {
+            return;
+        }
+        cmbNegocio.removeAllItems();
+        //Cargar proveedores dependiendo del area donde trabajan los proveedores
+        int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
+        for (ProveedorArea prov : ControladorProveedorArea.getInstancia().obtenerListaByIdCiudad(idCiudad)) {
+            if (!ControladorProveedor.getInstancia().obtenerByID(prov.getIdProveedor()).isDisponible()) { // si el proveedor no se encuentra disponible
+                continue;
+            }
+            for (Negocio negocio : ControladorNegocio.getInstancia().obtenerListaByIdProveedor(prov.getIdProveedor())) {
+                if (!negocio.isDisponible()) { // puede ser que algunos de los negocios del proveedor no lo tenga disponible en ese momento
+                    continue;
+                }
+                cmbNegocio.addItem(negocio);
+            }
+        }
+        cmbNegocio.setRenderer(new MyObjectListCellRenderer());
 
     }
 
+    public void checkAdmin() {
+        lblEditProveedor.setVisible(Constante.getAdmin());
+        lblEditTipoProveedor.setVisible(Constante.getAdmin());
+
+    }
+
+    private int restar(ProveedorEvento provEve) {
+//        if (provEve != null) {
+//            DateTimeFormatter formateador = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm");
+//            LocalDateTime fechaYHoraLocal1 = LocalDateTime.parse(provEve.getFechaInicio().toString().substring(0, provEve.getFechaInicio().toString().length() - 5), formateador);
+//            LocalDateTime fechaYHoraLocal2 = LocalDateTime.parse(provEve.getFechaFinal().toString().substring(0, provEve.getFechaFinal().toString().length() - 5), formateador);
+//            long minutos = ChronoUnit.MINUTES.between(fechaYHoraLocal1, fechaYHoraLocal2);
+//            Proveedor pro = ControladorProveedor.getInstancia().obtenerByID(provEve.getIdProveedor());
+//            Negocio negocio = ControladorNegocio.getInstancia().obtenerByID(pro.getIdProveedor());
+//            int precio = new Double(((double) negocio.getPrecioAprox() / 60) * minutos).intValue();
+//            return precio;
+//        }
+//        if (eventoActual == null || proveedorActual == null) {
+//            return -1;
+//        }
+//        if (eventoActual.getFechaInicio() == null) {
+//            Constante.mensaje("Termina de registrar este evento", Message.Tipo.ADVERTENCIA);
+//            return -1;
+//        }
+//        SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
+//        String fech = "";
+//        String fech2 = "";
+//        if (!form.format(eventoActual.getFechaInicio()).equals(form.format(eventoActual.getFechaFinal()))) {
+//            fech = rbFechaIni.isSelected() ? rbFechaIni.getText() : rbFechaFin.getText();
+//            fech2 = rbFechaIni1.isSelected() ? rbFechaIni1.getText() : rbFechaFin1.getText();
+//        } else {
+//            fech = form.format(eventoActual.getFechaInicio());
+//            fech2 = form.format(eventoActual.getFechaInicio());
+//        }
+//        DateTimeFormatter formateador = DateTimeFormatter.ofPattern("uuuu-MM-dd hh:mm a");
+//        LocalDateTime fechaYHoraLocal1 = LocalDateTime.parse(fech + " " + timePicker1.getSelectedTime(), formateador);
+//        LocalDateTime fechaYHoraLocal2 = LocalDateTime.parse(fech2 + " " + timePicker2.getSelectedTime(), formateador);
+//        long minutos = ChronoUnit.MINUTES.between(fechaYHoraLocal1, fechaYHoraLocal2);
+//        if (minutos < 0) {
+//            lblInfoProv.setText("Aprox x Hora: $" + proveedorActual.getPrecioAprox());
+//            return -1;
+//        }
+//        int precio = new Double(((double) proveedorActual.getPrecioAprox() / 60) * minutos).intValue();
+//        lblInfoProv.setText("Aprox x Hora: $" + proveedorActual.getPrecioAprox() + " -- Precio Calculado: $" + precio);
+//        return precio;
+        return -1;
+    }
+
     private void cmbTipoProveedorItemStateChanged(ItemEvent e) {
-        if (cmbTipoProveedor.getSelectedIndex() == -1 || eventoActual == null || ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()) == null) {
+        if (cmbTipoProveedor.getSelectedIndex() == -1 || eventoActual == null) {
             return;
         }
-        for (TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")) {
-            if (tipo.getTipoProveedor().equals(cmbTipoProveedor.getSelectedItem().toString())) {
-                tipoProveedorActual = tipo;
-                cargarProveedores();
-                int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
-                i.proveedorImagenesByCiudadAndTipoProveedor(idCiudad, tipo.getIdTipoProveedor());
-            }
-        }
+        tipoProveedorActual = (TipoProveedor) cmbTipoProveedor.getSelectedItem();
+        int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
+        i.negocioImagenesByCiudadAndTipoProveedor(idCiudad, tipoProveedorActual.getIdTipoProveedor());
+        cargarNegocios();
     }
 
     private void cmbNombreEventoItemStateChanged(ItemEvent e) {
         if (cmbNombreEvento.getSelectedIndex() == -1 || Constante.getClienteActivo() == null) {
             return;
         }
-        for (Evento eve : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
-            if (eve.getNombreEvento().equals(cmbNombreEvento.getSelectedItem().toString())) {
-                eventoActual = eve;
-
-                Lugar lugar = ControladorLugar.getInstancia().obtenerByID(eve.getIdLugar());
-                if (lugar == null) {
-                    continue;
-                }
-                Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lugar.getIdCiudad());
-                Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdEstado());
-                lblInfo.setText(estado.getEstado() + ", " + ciudad.getCiudad());
-                SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
-                if (!form.format(eventoActual.getFechaInicio()).equals(form.format(eventoActual.getFechaFinal()))) {
-                    lblFechaIni.setVisible(true);
-                    lblFechaFin.setVisible(true);
-                    rbFechaIni.setVisible(true);
-                    rbFechaFin.setVisible(true);
-                    rbFechaIni1.setVisible(true);
-                    rbFechaFin1.setVisible(true);
-                    rbFechaIni.setText(form.format(eventoActual.getFechaInicio()));
-                    rbFechaFin.setText(form.format(eventoActual.getFechaFinal()));
-                    rbFechaIni1.setText(form.format(eventoActual.getFechaInicio()));
-                    rbFechaFin1.setText(form.format(eventoActual.getFechaFinal()));
-                } else {
-                    lblFechaIni.setVisible(false);
-                    lblFechaFin.setVisible(false);
-                    rbFechaIni.setVisible(false);
-                    rbFechaFin.setVisible(false);
-                    rbFechaIni1.setVisible(false);
-                    rbFechaFin1.setVisible(false);
-                }
-            }
+        eventoActual = (Evento) cmbNombreEvento.getSelectedItem();
+        Lugar lugar = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar());
+        Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lugar.getIdCiudad());
+        Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdEstado());
+        lblInfo.setText(estado.getEstado() + ", " + ciudad.getCiudad());
+        if (!soloFecha.format(eventoActual.getFechaInicio()).equals(soloFecha.format(eventoActual.getFechaFinal()))) {
+            lblFechaIni.setVisible(true);
+            lblFechaFin.setVisible(true);
+            rbFechaIni.setVisible(true);
+            rbFechaFin.setVisible(true);
+            rbFechaIni1.setVisible(true);
+            rbFechaFin1.setVisible(true);
+            rbFechaIni.setText(soloFecha.format(eventoActual.getFechaInicio()));
+            rbFechaFin.setText(soloFecha.format(eventoActual.getFechaFinal()));
+            rbFechaIni1.setText(soloFecha.format(eventoActual.getFechaInicio()));
+            rbFechaFin1.setText(soloFecha.format(eventoActual.getFechaFinal()));
+        } else {
+            lblFechaIni.setVisible(false);
+            lblFechaFin.setVisible(false);
+            rbFechaIni.setVisible(false);
+            rbFechaFin.setVisible(false);
+            rbFechaIni1.setVisible(false);
+            rbFechaFin1.setVisible(false);
         }
-        cargarProveedorEvento();
 
     }
 
-    private void cargarProveedorEvento() {
-
-        if (eventoActual == null || ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento()) == null) {
-            return;
-        }
-        m.setRowCount(0);
-        for (ProveedorEvento pro : ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento())) {
-            Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(pro.getIdProveedor());
-            TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID(proveedor.getIdtipoProveedor());
-            ProveedorEvento provE = ControladorProveedorEvento.getInstancia().obtenerByIdEventoAndIdProveedor(eventoActual.getIdEvento(), proveedor.getIdProveedor());
-            if (provE.getHoraInicio().before(eventoActual.getFechaInicio())) {
-                ControladorProveedorEvento.getInstancia().eliminar(provE);
-                return;
-            }else if (provE.getHoraFinal().after(eventoActual.getFechaFinal())) {
-                 ControladorProveedorEvento.getInstancia().eliminar(provE);
-                 return;
-            }
-            String timeInicio = localDateFormat.format(provE.getHoraInicio());
-            String timeFinal = localDateFormat.format(provE.getHoraFinal());
-            //Verificar si actualizó la fecha del evento, eliminar los que no coincidan con la fecha
-            m.addRow(new Object[]{tipo.getIdTipoProveedor(), proveedor.getIdProveedor(),
-                tipo.getTipoProveedor(), proveedor.getNombreEmpresa(), timeInicio, timeFinal, restar(provE)});
-        }
+    private void cargarProveedorEvento() { //Cargar tabla
+//        ArrayList<ProveedorEvento> proveedores = ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento());
+//        if (eventoActual == null || proveedores == null) {
+//            return;
+//        }
+//        m.setRowCount(0);
+//        for (ProveedorEvento pro : proveedores) {
+//            Negocio negocio = ControladorNegocio.getInstancia().obtenerByID(pro.getIdNegocio());
+//            TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID(negocio.getIdTipoProveedor());
+//            String timeInicio = todoFechaAMPM.format(pro.getFechaInicio());
+//            String timeFinal = todoFechaAMPM.format(pro.getFechaFinal());
+//            m.addRow(new Object[]{tipo.getIdTipoProveedor(), negocio.getIdProveedor(),
+//                tipo.getTipoProveedor(), negocio.getNombreNegocio(), timeInicio, timeFinal, restar(pro)});
+//        }
     }
 
-    private void cmbProveedorItemStateChanged(ItemEvent e) {
-        if (cmbProveedor.getSelectedIndex() == -1 || tipoProveedorActual == null) {
-            return;
-        }
-        for (Proveedor pro : ControladorProveedor.getInstancia().obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())) {
-            if (pro.getNombreEmpresa().equals(cmbProveedor.getSelectedItem().toString())) {
-                proveedorActual = pro;
-                if (pro.getDescripcion() == null) {
-                    scrollPane3.setVisible(false);
-                } else {
-                    scrollPane3.setVisible(true);
-                    txtDescripcion.setText(pro.getDescripcion());
-                }
-
-                lblInfoProv.setText("Precio Aprox (Hora): " + pro.getPrecioAprox());
-            }
-        }
+    private void cmbNegocioItemStateChanged(ItemEvent e) {
+//        if (cmbProveedor.getSelectedIndex() == -1 || tipoProveedorActual == null) {
+//            return;
+//        }
+//        for (Proveedor pro : ControladorProveedor.getInstancia().obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())) {
+//            for (Negocio negocio : ControladorNegocio.getInstancia().obtenerLista()) {
+//                if (negocio.isDisponible() && negocio.getIdProveedor() == pro.getIdProveedor() && negocio.getNombreNegocio().equals(cmbProveedor.getSelectedItem().toString())) {
+//                    negocioActual = negocio;
+//
+//                    break;
+//                }
+//            }
+//
+//            if (negocio == null) {
+//                continue;
+//            }
+//            if (pro.getNombreEmpresa().equals(cmbProveedor.getSelectedItem().toString())) {
+//                proveedorActual = pro;
+//                if (pro.getDescripcion() == null) {
+//                    scrollPane3.setVisible(false);
+//                } else {
+//                    scrollPane3.setVisible(true);
+//                    txtDescripcion.setText(pro.getDescripcion());
+//                }
+//
+//                lblInfoProv.setText("Precio Aprox (Hora): " + pro.getPrecioAprox());
+//            }
+//        }
     }
 
     private void lblEditTipoProveedorMouseClicked(MouseEvent e) {
@@ -328,48 +329,48 @@ public class pnlProveedores extends JPanel {
     }
 
     private void btnAgregarProveedor(ActionEvent e) {
-        if (proveedorActual == null || txtHoraEntrada.getText().isEmpty() || txtHoraSalida.getText().isEmpty()) {
-            return;
-        }
-        if (cbOtro.isSelected()) {
-            for (int j = 0; j < m.getRowCount(); j++) {
-                if (m.getValueAt(j, 3).toString().equals(cmbProveedor.getEditor().getItem().toString())) {
-                    Constante.mensaje("Este ya existe", Message.Tipo.ERROR);
-                    return;
-                }
-            }
-            m.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), null,
-                tipoProveedorActual.getTipoProveedor(), cmbProveedor.getEditor().getItem().toString(), getFecha()[0], getFecha()[1], null});
-        } else {
-            int precio = restar(null);
-            if (precio == -1) {
-                Constante.mensaje("Introduzca una fecha/hora correcta", Message.Tipo.ADVERTENCIA);
-                return;
-            }
-            try {
-                Date dateInicio = localDateFormat.parse(getFecha()[0]);
-                Date dateFinal = localDateFormat.parse(getFecha()[1]);
-                if (dateInicio.before(eventoActual.getFechaInicio())) {
-                    Constante.mensaje("Su evento inicia a las " + soloHora.format(eventoActual.getFechaInicio()) + "\nModifique la fecha de inicio del proveedor", Message.Tipo.ADVERTENCIA);
-                    return;
-                } else if (dateFinal.after(eventoActual.getFechaFinal())) {
-                    Constante.mensaje("Su evento termina a las " + soloHora.format(eventoActual.getFechaFinal()) + "\nModifique la fecha final del proveedor", Message.Tipo.ADVERTENCIA);
-                    return;
-                }
-            } catch (ParseException ex) {
-                Logger.getLogger(pnlProveedores.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            for (int j = 0; j < m.getRowCount(); j++) {
-                if ((int) m.getValueAt(j, 1) == proveedorActual.getIdProveedor()) {
-                    Constante.mensaje("Este ya existe", Message.Tipo.ERROR);
-                    return;
-                }
-            }
-            m.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), proveedorActual.getIdProveedor(),
-                tipoProveedorActual.getTipoProveedor(), proveedorActual.getNombreEmpresa(), getFecha()[0], getFecha()[1], restar(null)});
-            Constante.actualizarPresupuesto(eventoActual);
-
-        }
+//        if (proveedorActual == null || txtHoraEntrada.getText().isEmpty() || txtHoraSalida.getText().isEmpty()) {
+//            return;
+//        }
+//        if (cbOtro.isSelected()) {
+//            for (int j = 0; j < m.getRowCount(); j++) {
+//                if (m.getValueAt(j, 3).toString().equals(cmbProveedor.getEditor().getItem().toString())) {
+//                    Constante.mensaje("Este ya existe", Message.Tipo.ERROR);
+//                    return;
+//                }
+//            }
+//            m.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), null,
+//                tipoProveedorActual.getTipoProveedor(), cmbProveedor.getEditor().getItem().toString(), getFecha()[0], getFecha()[1], null});
+//        } else {
+//            int precio = restar(null);
+//            if (precio == -1) {
+//                Constante.mensaje("Introduzca una fecha/hora correcta", Message.Tipo.ADVERTENCIA);
+//                return;
+//            }
+//            try {
+//                Date dateInicio = localDateFormat.parse(getFecha()[0]);
+//                Date dateFinal = localDateFormat.parse(getFecha()[1]);
+//                if (dateInicio.before(eventoActual.getFechaInicio())) {
+//                    Constante.mensaje("Su evento inicia a las " + soloHora.format(eventoActual.getFechaInicio()) + "\nModifique la fecha de inicio del proveedor", Message.Tipo.ADVERTENCIA);
+//                    return;
+//                } else if (dateFinal.after(eventoActual.getFechaFinal())) {
+//                    Constante.mensaje("Su evento termina a las " + soloHora.format(eventoActual.getFechaFinal()) + "\nModifique la fecha final del proveedor", Message.Tipo.ADVERTENCIA);
+//                    return;
+//                }
+//            } catch (ParseException ex) {
+//                Logger.getLogger(pnlProveedores.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            for (int j = 0; j < m.getRowCount(); j++) {
+//                if ((int) m.getValueAt(j, 1) == proveedorActual.getIdProveedor()) {
+//                    Constante.mensaje("Este ya existe", Message.Tipo.ERROR);
+//                    return;
+//                }
+//            }
+//            m.addRow(new Object[]{tipoProveedorActual.getIdTipoProveedor(), proveedorActual.getIdProveedor(),
+//                tipoProveedorActual.getTipoProveedor(), proveedorActual.getNombreEmpresa(), getFecha()[0], getFecha()[1], restar(null)});
+//            Constante.actualizarPresupuesto(eventoActual);
+//
+//        }
     }
 
     private void btnEliminar(ActionEvent e) {
@@ -382,34 +383,48 @@ public class pnlProveedores extends JPanel {
 
     private void cbOtro(ActionEvent e) {
         if (cbOtro.isSelected()) {
-            cmbProveedor.setEditable(true);
+            cmbNegocio.setEditable(true);
         } else {
-            cmbProveedor.setEditable(false);
+            cmbNegocio.setEditable(false);
         }
 
     }
 
     private void btnFinalizarProveedor(ActionEvent e) {
-        if (eventoActual == null || m.getRowCount() == 0) {
-            return;
-        }
-        ArrayList<ProveedorEvento> proE = new ArrayList<>();
-        for (int j = 0; j < m.getRowCount(); j++) {
-            try {
-                // comprobrar que existen proveedores nuevo a registrar
-                if (m.getValueAt(j, 1) == null) {
-                    Proveedor pro = new Proveedor();
-                    pro.setNombreEmpresa(m.getValueAt(j, 3).toString());
-                    ControladorProveedor.getInstancia().registrar(pro);
-                    m.setValueAt(ControladorProveedor.getInstancia().obtenerByLast().getIdProveedor(), j, 1);
-                }
-                proE.add(new ProveedorEvento(eventoActual.getIdEvento(), (int) m.getValueAt(j, 1), localDateFormat.parse(m.getValueAt(j, 4).toString()), localDateFormat.parse(m.getValueAt(j, 5).toString()), txtComentario.getText()));
-                Mensaje m = ControladorProveedorEvento.getInstancia().registrarLote(proE);
-                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-            } catch (ParseException ex) {
-                Logger.getLogger(pnlProveedores.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+//        if (eventoActual == null) {
+//            return;
+//        }
+//        if (m.getRowCount() == 0) {
+//            if (!ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento()).isEmpty()) {
+//                Mensaje m = null;
+//                for (ProveedorEvento pro : ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento())) {
+//                    m = ControladorProveedorEvento.getInstancia().eliminar(pro);
+//                }
+//                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+//                cargarProveedorEvento();
+//                return;
+//            } else {
+//                return;
+//            }
+//
+//        }
+//        ArrayList<ProveedorEvento> proE = new ArrayList<>();
+//        for (int j = 0; j < m.getRowCount(); j++) {
+//            try {
+//                // comprobrar que existen proveedores nuevo a registrar
+//                if (m.getValueAt(j, 1) == null) {
+//                    Proveedor pro = new Proveedor();
+//                    pro.setNombreEmpresa(m.getValueAt(j, 3).toString());
+//                    ControladorProveedor.getInstancia().registrar(pro);
+//                    m.setValueAt(ControladorProveedor.getInstancia().obtenerByLast().getIdProveedor(), j, 1);
+//                }
+//                proE.add(new ProveedorEvento(eventoActual.getIdEvento(), (int) m.getValueAt(j, 1), localDateFormat.parse(m.getValueAt(j, 4).toString()), localDateFormat.parse(m.getValueAt(j, 5).toString()), txtComentario.getText()));
+//            } catch (ParseException ex) {
+//                Logger.getLogger(pnlProveedores.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+//        Mensaje m = ControladorProveedorEvento.getInstancia().registrarLote(proE);
+//        Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
 
     }
 
@@ -453,27 +468,27 @@ public class pnlProveedores extends JPanel {
     }
 
     private void tblProveedorMouseClicked(MouseEvent e) {
-        int x = tblProveedor.getSelectedRow();
-        if (x == -1) {
-            return;
-        }
-
-        TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID((int) m.getValueAt(x, 0));
-        Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID((int) m.getValueAt(x, 1));
-        ProveedorEvento pro = ControladorProveedorEvento.getInstancia().obtenerByIdEventoAndIdProveedor(eventoActual.getIdEvento(), proveedor.getIdProveedor());
-
-        if (rbFechaFin.isVisible()) {
-            rbFechaIni.setText(soloFecha.format(pro.getHoraInicio()));
-            rbFechaFin.setText(soloFecha.format(pro.getHoraFinal()));
-            rbFechaIni1.setText(soloFecha.format(pro.getHoraInicio()));
-            rbFechaFin1.setText(soloFecha.format(pro.getHoraFinal()));
-        } else {
-            timePicker1.setSelectedTime(pro.getHoraInicio());
-            timePicker2.setSelectedTime(pro.getHoraFinal());
-        }
-        cmbTipoProveedor.setSelectedItem(tipo.getTipoProveedor());
-        cmbProveedor.setSelectedItem(proveedor.getNombreEmpresa());
-        txtDescripcion.setText(proveedor.getDescripcion());
+//        int x = tblProveedor.getSelectedRow();
+//        if (x == -1) {
+//            return;
+//        }
+//
+//        TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID((int) m.getValueAt(x, 0));
+//        Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID((int) m.getValueAt(x, 1));
+//        ProveedorEvento pro = ControladorProveedorEvento.getInstancia().obtenerByIdEventoAndIdProveedor(eventoActual.getIdEvento(), proveedor.getIdProveedor());
+//
+//        if (rbFechaFin.isVisible()) {
+//            rbFechaIni.setText(soloFecha.format(pro.getFechaInicio()));
+//            rbFechaFin.setText(soloFecha.format(pro.getFechaFinal()));
+//            rbFechaIni1.setText(soloFecha.format(pro.getFechaInicio()));
+//            rbFechaFin1.setText(soloFecha.format(pro.getFechaFinal()));
+//        } else {
+//            timePicker1.setSelectedTime(pro.getFechaInicio());
+//            timePicker2.setSelectedTime(pro.getFechaFinal());
+//        }
+//        cmbTipoProveedor.setSelectedItem(tipo.getTipoProveedor());
+//        cmbProveedor.setSelectedItem(proveedor.getNombreEmpresa());
+//        txtDescripcion.setText(proveedor.getDescripcion());
     }
 
     private void initComponents() {
@@ -490,7 +505,7 @@ public class pnlProveedores extends JPanel {
         cmbTipoProveedor = new JComboBox();
         lblEditTipoProveedor = new JLabel();
         lblProveedor = new JLabel();
-        cmbProveedor = new JComboBox();
+        cmbNegocio = new JComboBox();
         cbOtro = new JCheckBox();
         lblEditProveedor = new JLabel();
         scrollPane3 = new JScrollPane();
@@ -621,9 +636,9 @@ public class pnlProveedores extends JPanel {
         lblProveedor.setText("Proveedor");
         add(lblProveedor, "cell 0 4");
 
-        //---- cmbProveedor ----
-        cmbProveedor.addItemListener(e -> cmbProveedorItemStateChanged(e));
-        add(cmbProveedor, "split 2,cell 1 4,hmax 6%");
+        //---- cmbNegocio ----
+        cmbNegocio.addItemListener(e -> cmbNegocioItemStateChanged(e));
+        add(cmbNegocio, "split 2,cell 1 4,hmax 6%");
 
         //---- cbOtro ----
         cbOtro.setText("Otro");
@@ -798,7 +813,7 @@ public class pnlProveedores extends JPanel {
     private JComboBox cmbTipoProveedor;
     private JLabel lblEditTipoProveedor;
     private JLabel lblProveedor;
-    private JComboBox cmbProveedor;
+    private JComboBox cmbNegocio;
     private JCheckBox cbOtro;
     private JLabel lblEditProveedor;
     private JScrollPane scrollPane3;

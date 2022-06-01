@@ -242,7 +242,7 @@ new FormModel {
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
-				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cmbCiudad", false ) )
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbCiudadItemStateChanged", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 1 9"
 			} )
@@ -264,7 +264,7 @@ new FormModel {
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
-				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cmbLugar", true ) )
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbLugarItemStateChanged", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 1 10"
 			} )

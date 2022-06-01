@@ -1,6 +1,7 @@
 package vista.paneles.edit;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 import Componentes.TextField;
 import Componentes.Sweet_Alert.Message;
@@ -9,6 +10,7 @@ import controlador.ControladorCiudad;
 import controlador.ControladorEstado;
 import independientes.Constante;
 import independientes.Mensaje;
+import independientes.MyObjectListCellRenderer;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -25,47 +27,41 @@ import vista.paneles.*;
  */
 public class DialogCiudad extends JDialog {
 
-
-   
     private Estado estadoActual = null;
-    
-    
-    private boolean validaDatos(){
-         if (txtCiudad.getText().isEmpty()) {
-                Constante.mensaje("Campo vacio", Message.Tipo.ADVERTENCIA);
-                txtCiudad.requestFocus();
-                return false;
-            }
-            if (estadoActual == null) {
-                Constante.mensaje("Seleeciona un estado", Tipo.ADVERTENCIA);
-                cmbEstado.requestFocus();
-                return false;
-            }
-            return true;
+
+    private boolean validaDatos() {
+        if (txtCiudad.getText().isEmpty()) {
+            Constante.mensaje("Campo vacio", Message.Tipo.ADVERTENCIA);
+            txtCiudad.requestFocus();
+            return false;
+        }
+        if (estadoActual == null) {
+            Constante.mensaje("Seleeciona un estado", Tipo.ADVERTENCIA);
+            cmbEstado.requestFocus();
+            return false;
+        }
+        return true;
     }
+
     public DialogCiudad(JFrame owner) {
         super(owner);
         initComponents();
-        getContentPane().setBackground(Color.white);
+        super.getContentPane().setBackground(Color.white);
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.5).intValue()));
-        setLocationRelativeTo(null);
-        p.init(new String[]{"idCiudad","idEstado", "Tipo Evento"}, 2, true);
-        init();
-    }
-
-    public void init() {
-        
-        for(Estado e :  ControladorEstado.getInstancia().obtenerListaByCadena("")){
-            cmbEstado.addItem(e.getEstado());
+        super.setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.5).intValue()));
+        super.setLocationRelativeTo(null);
+        p.init(new String[]{"idCiudad", "idEstado", "Ciudad"}, 2, true);
+        for (Estado e : ControladorEstado.getInstancia().obtenerListaByCadena("")) {
+            cmbEstado.addItem(e);
         }
+        cmbEstado.setRenderer(new MyObjectListCellRenderer());
         llenarTabla();
         //AGREGAR
         p.btnAgregar.addActionListener((ActionEvent e) -> {
             if (!validaDatos()) {
                 return;
             }
-            
+
             Ciudad ciudad = new Ciudad();
             ciudad.setIdEstado(estadoActual.getIdEstado());
             ciudad.setCiudad(txtCiudad.getText());
@@ -101,10 +97,11 @@ public class DialogCiudad extends JDialog {
             if (!Constante.filaSeleccionada(p.tblBuscar)) {
                 return;
             }
-            if (JOptionPane.showConfirmDialog(this, " Seguro que desea eliminar?") != 0) {
+
+            int x = p.tblBuscar.getSelectedRow();
+            if (JOptionPane.showConfirmDialog(this, " Seguro que desea eliminar " + p.tblModel.getValueAt(x, 2) + " ?") != 0) {
                 return;
             }
-            int x = p.tblBuscar.getSelectedRow();
             Ciudad ciudad = new Ciudad();
             ciudad.setIdCiudad((int) p.tblModel.getValueAt(x, 0));
             Mensaje m = ControladorCiudad.getInstancia().eliminar(ciudad);
@@ -123,6 +120,8 @@ public class DialogCiudad extends JDialog {
                 }
                 int x = p.tblBuscar.getSelectedRow();
                 txtCiudad.setText(p.tblModel.getValueAt(x, 2).toString());
+                Estado estado = ControladorEstado.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 1));
+                cmbEstado.getModel().setSelectedItem(estado);
             }
         });
 
@@ -138,18 +137,15 @@ public class DialogCiudad extends JDialog {
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
         for (Ciudad e : ControladorCiudad.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
-            p.tblModel.addRow(new Object[]{e.getIdCiudad(),e.getIdEstado(), e.getCiudad()});
+            p.tblModel.addRow(new Object[]{e.getIdCiudad(), e.getIdEstado(), e.getCiudad()});
         }
     }
 
-    private void cmbEstado(ActionEvent e) {
-        if (cmbEstado.getSelectedIndex() != -1) {
-            for(Estado estado :  ControladorEstado.getInstancia().obtenerListaByCadena("")){
-                if (estado.getEstado().equals(cmbEstado.getSelectedItem().toString())) {
-                    estadoActual = estado;
-                }
-            }
+    private void cmbEstadoItemStateChanged(ItemEvent e) {
+        if (cmbEstado.getSelectedIndex() == -1) {
+            return;
         }
+        estadoActual = (Estado) cmbEstado.getSelectedItem();
     }
 
     private void initComponents() {
@@ -173,7 +169,7 @@ public class DialogCiudad extends JDialog {
         contentPane.add(p, "cell 0 0");
 
         //---- cmbEstado ----
-        cmbEstado.addActionListener(e -> cmbEstado(e));
+        cmbEstado.addItemListener(e -> cmbEstadoItemStateChanged(e));
         contentPane.add(cmbEstado, "cell 0 1, grow,hmax 10%");
 
         //---- txtCiudad ----

@@ -118,6 +118,7 @@ public class pnlCRUD extends JPanel {
                         return columnEditable[columnIndex];
                     }
                 });
+                tblBuscar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 jScrollPane1.setViewportView(tblBuscar);
             }
             pnlTabla.add(jScrollPane1, BorderLayout.CENTER);

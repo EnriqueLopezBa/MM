@@ -31,6 +31,7 @@ public class DialogLugarImagenes extends JDialog {
 
     private byte[] imagen = null;
     private File abre = null;
+    private Lugar lugar;
 
     public byte[] getImagen() {
         return imagen;
@@ -50,28 +51,29 @@ public class DialogLugarImagenes extends JDialog {
     public DialogLugarImagenes(Principal owner, Lugar lugar) {
         super(owner);
         initComponents();
+        this.lugar = lugar;
         super.getContentPane().setBackground(Color.white);
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         if (!Constante.getAdmin()) {
-           
+
             remove(p);
             remove(panel1);
-             int y = screensize.getSize().height / 2;
+            int y = screensize.getSize().height / 2;
             int x = screensize.getSize().width / 2;
             super.setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 2).intValue()));
             i.setMinimumSize(new Dimension(x, y));
 
         } else {
-           
+//            System.out.println(i.getPreferredSize());
             super.setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.2).intValue()));
         }
 
         super.setLocationRelativeTo(null);
         p.init(new String[]{"idLugar", "id2", "Descripcion"}, 2, true);
-        llenarTabla(lugar.getIdLugar());
-        Lugar temp = ControladorLugar.getInstancia().obtenerByID(lugar.getIdLugar());
+        llenarTabla();
+
         i.init(ScrollBar.HORIZONTAL);
-        i.lugarImagenes(temp);
+        i.lugarImagenes(lugar);
 
         p.btnAgregar.addActionListener(new ActionListener() {
             @Override
@@ -85,7 +87,7 @@ public class DialogLugarImagenes extends JDialog {
                     temp.setPredeterminada(cbPredeterminada.isSelected());
                     Mensaje m = ControladorLugarImagenes.getInstancia().registrar(temp);
                     Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-                    llenarTabla(temp.getIdLugar());
+                    llenarTabla();
                     i.lugarImagenes(lugar);
                 } catch (MMException ee) {
                     Constante.mensaje(ee.getMessage(), Tipo.ADVERTENCIA);
@@ -108,7 +110,7 @@ public class DialogLugarImagenes extends JDialog {
                         temp.setPredeterminada(cbPredeterminada.isSelected());
                         Mensaje m = ControladorLugarImagenes.getInstancia().actualizar(temp);
                         if (m.getTipoMensaje() == Tipo.OK) {
-                            llenarTabla(lugar.getIdLugar());
+                            llenarTabla();
                             i.lugarImagenes(lugar);
                         }
                         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
@@ -121,10 +123,32 @@ public class DialogLugarImagenes extends JDialog {
                 }
             }
         });
+        p.btnEliminar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (p.tblBuscar.getSelectedRow() == -1) {
+                    return;
+                }
+                int x = p.tblBuscar.getSelectedRow();
+                if (JOptionPane.showConfirmDialog(null, "Seguro que sea eliminar " + p.tblModel.getValueAt(x, 2) + "?") != 0) {
+                    return;
+                }
+                LugarImagenes lu = new LugarImagenes();
+                lu.setIdLugar((int) p.tblModel.getValueAt(x, 0));
+                lu.setId2(p.tblModel.getValueAt(x, 1).toString());
+                Mensaje m = ControladorLugarImagenes.getInstancia().eliminar(lu);
+                if (m.getTipoMensaje() == Tipo.OK) {
+                      i.lugarImagenes(lugar);
+                      llenarTabla();
+                }
+                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+            }
+        });
 
         p.tblBuscar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+
                 int x = p.tblBuscar.getSelectedRow();
                 if (x != -1) {
                     LugarImagenes temp = ControladorLugarImagenes.getInstancia().obtenerById2(p.tblModel.getValueAt(x, 1).toString());
@@ -138,9 +162,9 @@ public class DialogLugarImagenes extends JDialog {
         });
     }
 
-    private void llenarTabla(int id) {
+    private void llenarTabla() {
         p.tblModel.setRowCount(0);
-        for (LugarImagenes lu : ControladorLugarImagenes.getInstancia().obtenerListaByIDLugar(id)) {
+        for (LugarImagenes lu : ControladorLugarImagenes.getInstancia().obtenerListaByIDLugar(lugar.getIdLugar())) {
             p.tblModel.addRow(new Object[]{lu.getIdLugar(), lu.getId2(), lu.getDescripcion()});
         }
     }

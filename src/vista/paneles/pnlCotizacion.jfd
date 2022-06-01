@@ -19,14 +19,26 @@ new FormModel {
 				name: "scrollPane1"
 				add( new FormComponent( "Componentes.tableC.Table" ) {
 					name: "tblCotizacion"
-					"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector, new java.util.Vector {
+					"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector {
+						add( new java.util.Vector {
+							add( null )
+							add( null )
+							add( null )
+							add( null )
+							add( null )
+							add( null )
+							add( null )
+						} )
+					}, new java.util.Vector {
 						add( "idEvento" )
 						add( "idProveedor" )
 						add( "Proveedor" )
 						add( "Inicio" )
 						add( "Fin" )
-						add( "Cotizacion" )
+						add( "Cotizacion del sistema" )
+						add( "Cotizacion Final" )
 					}, new java.util.Vector {
+						add( null )
 						add( null )
 						add( null )
 						add( null )
@@ -39,8 +51,10 @@ new FormModel {
 						add( false )
 						add( false )
 						add( false )
+						add( false )
 						add( true )
 					}, new java.util.Vector {
+						add( null )
 						add( null )
 						add( null )
 						add( null )

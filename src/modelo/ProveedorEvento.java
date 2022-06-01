@@ -1,4 +1,3 @@
-
 package modelo;
 
 import java.util.Date;
@@ -8,21 +7,32 @@ import java.util.Date;
  * @author Enrique
  */
 public class ProveedorEvento {
-    private int idEvento;
-    private int idProveedor;
-    private Date horaInicio, horaFinal;
+
+    private int idEvento, idProveedor, idNegocio;
+    private Date fechaInicio, fechaFinal;
     private String comentario;
 
     public ProveedorEvento() {
     }
 
-    public ProveedorEvento(int idEvento, int idProveedor, Date horaInicio, Date horaFinal, String comentario) {
+    public ProveedorEvento(int idEvento, int idProveedor, int idNegocio, Date fechaInicio, Date fechaFinal, String comentario) {
         this.idEvento = idEvento;
         this.idProveedor = idProveedor;
-        this.horaInicio = horaInicio;
-        this.horaFinal = horaFinal;
+        this.idNegocio = idNegocio;
+        this.fechaInicio = fechaInicio;
+        this.fechaFinal = fechaFinal;
         this.comentario = comentario;
     }
+
+    public int getIdNegocio() {
+        return idNegocio;
+    }
+
+    public void setIdNegocio(int idNegocio) {
+        this.idNegocio = idNegocio;
+    }
+
+  
 
     public String getComentario() {
         return comentario;
@@ -32,10 +42,6 @@ public class ProveedorEvento {
         this.comentario = comentario;
     }
 
-
-
-   
-
     public int getIdProveedor() {
         return idProveedor;
     }
@@ -43,7 +49,6 @@ public class ProveedorEvento {
     public void setIdProveedor(int idProveedor) {
         this.idProveedor = idProveedor;
     }
-
 
     public int getIdEvento() {
         return idEvento;
@@ -53,19 +58,20 @@ public class ProveedorEvento {
         this.idEvento = idEvento;
     }
 
-    public Date getHoraInicio() {
-        return horaInicio;
+    public Date getFechaInicio() {
+        return fechaInicio;
     }
 
-    public void setHoraInicio(Date horaInicio) {
-        this.horaInicio = horaInicio;
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
 
-    public Date getHoraFinal() {
-        return horaFinal;
+    public Date getFechaFinal() {
+        return fechaFinal;
     }
 
-    public void setHoraFinal(Date horaFinal) {
-        this.horaFinal = horaFinal;
-    }    
+    public void setFechaFinal(Date fechaFinal) {
+        this.fechaFinal = fechaFinal;
+    }
+
 }

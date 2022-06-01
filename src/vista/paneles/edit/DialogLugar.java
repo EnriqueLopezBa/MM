@@ -9,8 +9,10 @@ import controlador.ControladorEstado;
 import controlador.ControladorEtiqueta;
 import controlador.ControladorLugar;
 import controlador.ControladorLugarEtiquetas;
+import controlador.ControladorProveedor;
 import independientes.Constante;
 import independientes.Mensaje;
+import independientes.MyObjectListCellRenderer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -27,6 +29,7 @@ import modelo.Estado;
 import modelo.Etiqueta;
 import modelo.Lugar;
 import modelo.LugarEtiquetas;
+import modelo.Proveedor;
 
 import net.miginfocom.swing.*;
 import vista.paneles.*;
@@ -39,49 +42,16 @@ public class DialogLugar extends JDialog {
 
     private Estado estadoActual = null;
     private Ciudad ciudadActual = null;
+    private Proveedor proveedorActual = null;
 
     public DialogLugar(JFrame owner) {
         super(owner);
         initComponents();
-        getContentPane().setBackground(Color.white);
+        super.getContentPane().setBackground(Color.white);
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.5).intValue()));
-        setLocationRelativeTo(null);
-        p.init(new String[]{"idLugar", "idCiudad", "Nombre Local", "Domicilio", "Capacidad", "Precio"}, 2, true);
-        init();
-    }
-
-    private void cargarCiduades() {
-        if (estadoActual == null) {
-            return;
-        }
-        f.cmbCiudad.removeAllItems();
-        for (Ciudad ciudad : ControladorCiudad.getInstancia().obtenerListaByIDEstado(estadoActual.getIdEstado())) {
-            f.cmbCiudad.addItem(ciudad.getCiudad());
-        }
-    }
-
-    private boolean validaDatos() {
-        if (f.txtLugar.getText().isEmpty()) {
-            Constante.mensaje("Campo vacio", Message.Tipo.ADVERTENCIA);
-            f.txtLugar.requestFocus();
-            return false;
-        }
-        if (estadoActual == null) {
-            Constante.mensaje("Seleeciona un estado", Tipo.ADVERTENCIA);
-            f.cmbEstado.requestFocus();
-            return false;
-        }
-        if (ciudadActual == null) {
-            Constante.mensaje("Seleeciona una ciudad", Tipo.ADVERTENCIA);
-            f.cmbCiudad.requestFocus();
-            return false;
-        }
-        return true;
-    }
-
-    public void init() {
-
+        super.setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.5).intValue()));
+        super.setLocationRelativeTo(null);
+        p.init(new String[]{"idLugar", "idCiudad","idProveedor", "Nombre Local", "Domicilio", "Capacidad", "Precio"}, 3, true);
         llenarTabla();
         f.init(); // Iniciar Etiquetas
         //AGREGAR
@@ -93,6 +63,7 @@ public class DialogLugar extends JDialog {
             //Lugar
             Lugar lugar = new Lugar();
             lugar.setIdCiudad(ciudadActual.getIdCiudad());
+            lugar.setIdProveedor(proveedorActual.getIdProveedor());
             lugar.setNombreLocal(f.txtLugar.getText());
             lugar.setDomicilio(f.txtDomicilio.getText());
             lugar.setCapacidad(Integer.parseInt(f.txtCapacidad.getText()));
@@ -111,7 +82,7 @@ public class DialogLugar extends JDialog {
                     }
                 }
                 Mensaje mm = ControladorLugarEtiquetas.getInstancia().registrarLote(loteEtiquetas);
-                Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
+//                Constante.mensaje(mm.getMensaje(), mm.getTipoMensaje());
                 //Fin registro de etiquetas
             }
             Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
@@ -129,6 +100,7 @@ public class DialogLugar extends JDialog {
             Lugar lugar = new Lugar();
             lugar.setIdLugar((int) p.tblModel.getValueAt(x, 0));
             lugar.setIdCiudad(ciudadActual.getIdCiudad());
+            lugar.setIdProveedor(proveedorActual.getIdProveedor());
             lugar.setNombreLocal(f.txtLugar.getText());
             lugar.setDomicilio(f.txtDomicilio.getText());
             lugar.setCapacidad(Integer.parseInt(f.txtCapacidad.getText()));
@@ -177,14 +149,14 @@ public class DialogLugar extends JDialog {
                     return;
                 }
                 int x = p.tblBuscar.getSelectedRow();
-                f.txtLugar.setText(p.tblModel.getValueAt(x, 2).toString());
-                f.txtDomicilio.setText(p.tblModel.getValueAt(x, 3).toString());
-                f.txtCapacidad.setText(p.tblModel.getValueAt(x, 4).toString());
-                f.txtPrecioAprox.setText(p.tblModel.getValueAt(x, 5).toString());
+                f.txtLugar.setText(p.tblModel.getValueAt(x, 3).toString());
+                f.txtDomicilio.setText(p.tblModel.getValueAt(x, 4).toString());
+                f.txtCapacidad.setText(p.tblModel.getValueAt(x, 5).toString());
+                f.txtPrecioAprox.setText(p.tblModel.getValueAt(x, 6).toString());
                 Ciudad city = ControladorCiudad.getInstancia().obtenerById((int) p.tblModel.getValueAt(x, 1));
-                f.cmbEstado.setSelectedItem(ControladorEstado.getInstancia().obtenerByID(city.getIdEstado()).getEstado());
-                refreshEstado();
-                f.cmbCiudad.setSelectedItem(city.getCiudad());
+                f.cmbEstado.getModel().setSelectedItem(ControladorEstado.getInstancia().obtenerByID(city.getIdEstado()).getEstado());
+                f.cmbCiudad.getModel().setSelectedItem(city);
+                f.cmbProveedor.getModel().setSelectedItem(ControladorProveedor.getInstancia().obtenerByID((int)p.tblModel.getValueAt(x, 2)));
                 ArrayList<LugarEtiquetas> temp = ControladorLugarEtiquetas.getInstancia().obtenerEtiquetasByIDLugar((int) p.tblModel.getValueAt(x, 0));
                 f.frmEtiquetas1.listModel.clear();
                 for (LugarEtiquetas as : temp) {
@@ -221,49 +193,88 @@ public class DialogLugar extends JDialog {
         f.cmbCiudad.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (f.cmbCiudad.getSelectedIndex() != -1 && estadoActual != null) {
-                    for (Ciudad ciudad : ControladorCiudad.getInstancia().obtenerListaByIDEstado(estadoActual.getIdEstado())) {
-                        if (ciudad.getCiudad().equals(f.cmbCiudad.getSelectedItem().toString())) {
-                            ciudadActual = ciudad;
-                            break;
-                        }
-                    }
+                if (f.cmbCiudad.getSelectedIndex() == -1 || estadoActual == null) {
+                    return;
                 }
+                ciudadActual = (Ciudad) f.cmbCiudad.getSelectedItem();
             }
         });
 
         f.cmbEstado.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-
-                refreshEstado();
+                if (f.cmbEstado.getSelectedIndex() == -1) {
+                    return;
+                }
+                estadoActual = (Estado) f.cmbEstado.getSelectedItem();
+                cargarCiudades();
             }
         });
-
-        for (Estado e : ControladorEstado.getInstancia().obtenerListaByCadena("")) {
-            f.cmbEstado.addItem(e.getEstado());
-        }
-        cargarCiduades();
-
+        f.cmbProveedor.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (f.cmbProveedor.getSelectedIndex() == -1) {
+                    return;
+                }
+                proveedorActual = (Proveedor) f.cmbProveedor.getSelectedItem();
+                f.lblProveedor.setText("Telefono proveedor: " + proveedorActual.getTelefono());
+            }
+        });
+        cargarEstados();
+        cargarProveedores();
     }
 
-    private void refreshEstado() {
-
-        if (f.cmbEstado.getSelectedIndex() != -1) {
-            for (Estado estado : ControladorEstado.getInstancia().obtenerListaByCadena("")) {
-                if (estado.getEstado().equals(f.cmbEstado.getSelectedItem().toString())) {
-                    estadoActual = estado;
-                    cargarCiduades();
-                    break;
-                }
-            }
+    private void cargarProveedores(){
+        f.cmbProveedor.removeAllItems();
+        for(Proveedor prov : ControladorProveedor.getInstancia().obtenerListaByCadena("")){
+            f.cmbProveedor.addItem(prov);
         }
+        f.cmbProveedor.setRenderer(new MyObjectListCellRenderer());
+    }
+    private void cargarEstados() {
+        f.cmbEstado.removeAllItems();
+        for (Estado e : ControladorEstado.getInstancia().obtenerListaByCadena("")) {
+            f.cmbEstado.addItem(e);
+        }
+        f.cmbEstado.setRenderer(new MyObjectListCellRenderer());
+        cargarCiudades();
+    }
+
+    private void cargarCiudades() {
+        if (estadoActual == null) {
+            return;
+        }
+        f.cmbCiudad.removeAllItems();
+        for (Ciudad ciudad : ControladorCiudad.getInstancia().obtenerListaByIDEstado(estadoActual.getIdEstado())) {
+            f.cmbCiudad.addItem(ciudad);
+        }
+        f.cmbCiudad.setRenderer(new MyObjectListCellRenderer());
+    }
+
+    private boolean validaDatos() {
+        if (f.txtLugar.getText().isEmpty()) {
+            Constante.mensaje("Campo vacio", Message.Tipo.ADVERTENCIA);
+            f.txtLugar.requestFocus();
+            return false;
+        }
+        if (estadoActual == null) {
+            Constante.mensaje("Seleeciona un estado", Tipo.ADVERTENCIA);
+            f.cmbEstado.requestFocus();
+            return false;
+        }
+        if (ciudadActual == null) {
+            Constante.mensaje("Seleeciona una ciudad", Tipo.ADVERTENCIA);
+            f.cmbCiudad.requestFocus();
+            return false;
+        }
+        return true;
     }
 
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
         for (Lugar e : ControladorLugar.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
-            p.tblModel.addRow(new Object[]{e.getIdLugar(), e.getIdCiudad(), e.getNombreLocal(), e.getDomicilio(), e.getCapacidad(), e.getPrecio()});
+            Proveedor prov = ControladorProveedor.getInstancia().obtenerByID(e.getIdProveedor());
+            p.tblModel.addRow(new Object[]{e.getIdLugar(), e.getIdCiudad(),prov.getIdProveedor(), e.getNombreLocal(), e.getDomicilio(), e.getCapacidad(), e.getPrecio()});
         }
     }
 

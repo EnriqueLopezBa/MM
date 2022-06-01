@@ -3,13 +3,19 @@ package dao;
 import Componentes.Sweet_Alert.Message;
 import idao.IEventoDAO;
 import independientes.Conexion;
+import independientes.Constante;
 import independientes.Mensaje;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import modelo.Evento;
 
 /**
@@ -115,7 +121,11 @@ public class EventoDAOImp implements IEventoDAO {
             ps.setTimestamp(5, new java.sql.Timestamp(t.getFechaFinal().getTime()));
             ps.setInt(6, t.getNoInvitados());
             ps.setInt(7, t.getPresupuesto());
-            ps.setString(8, t.getEstilo());
+            if (t.getEstilo().isEmpty()) {
+                ps.setNull(8, Types.NULL);
+            } else {
+                ps.setString(8, t.getEstilo());
+            }
             ps.setString(9, t.getNombreEvento());
             ps.setInt(10, t.getPrecioFinal());
             ps.setInt(11, t.getIdEvento());
@@ -151,7 +161,9 @@ public class EventoDAOImp implements IEventoDAO {
 
     @Override
     public ArrayList<Evento> obtenerEventoByIDCliente(int idCliente) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO WHERE IDCLIENTE = " + idCliente)) {
+        String consulta = (Constante.getAdmin()) ? "SELECT * FROM EVENTO WHERE IDCLIENTE = " + idCliente
+                : "SELECT * FROM evento WHERE idCliente = " + idCliente + " AND fechaInicio >= GETDATE()";
+        try (ResultSet rs = Conexion.getInstancia().Consulta(consulta)) {
             ArrayList<Evento> temp = new ArrayList<>();
             while (rs.next()) {
                 Evento evento = new Evento();

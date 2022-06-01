@@ -15,6 +15,7 @@ import controlador.ControladorUsuario;
 import independientes.Constante;
 import independientes.MMException;
 import independientes.Mensaje;
+import independientes.MyObjectListCellRenderer;
 import static javax.swing.JOptionPane.showMessageDialog;
 import modelo.TipoUsuario;
 import modelo.Usuario;
@@ -33,10 +34,10 @@ public class DialogUsuario extends JDialog {
     public DialogUsuario() {
         super(Principal.getInstancia());
         initComponents();
-        getContentPane().setBackground(Color.white);
+        super.getContentPane().setBackground(Color.white);
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize(new Dimension(new Double(screensize.getSize().width / 3.5).intValue(), new Double(screensize.getSize().height / 2.5).intValue()));
-        setLocationRelativeTo(null);
+        super.setSize(new Dimension(new Double(screensize.getSize().width / 3.5).intValue(), new Double(screensize.getSize().height / 2.5).intValue()));
+        super.setLocationRelativeTo(null);
         p.init(new String[]{"idUsuario", "idTipoUsuario", "Tipo Usuario", "Nombre", "Email"}, 2, true);
         cargarTipoUsuario();
         llenarTabla();
@@ -153,8 +154,9 @@ public class DialogUsuario extends JDialog {
     private void cargarTipoUsuario() {
         cbTipoUsario.removeAllItems();
         for (TipoUsuario ti : ControladorTipoUsuario.getInstancia().obtenerListaByCadena("")) {
-            cbTipoUsario.addItem(ti.getTipoUsuario());
+            cbTipoUsario.addItem(ti);
         }
+        cbTipoUsario.setRenderer(new MyObjectListCellRenderer());
     }
 
     private void lblEditTipoUsuarioMouseClicked(MouseEvent e) {
@@ -174,12 +176,16 @@ public class DialogUsuario extends JDialog {
         if (cbTipoUsario.getSelectedIndex() == -1) {
             return;
         }
-        for (TipoUsuario ti : ControladorTipoUsuario.getInstancia().obtenerListaByCadena("")) {
-            if (ti.getTipoUsuario().equals(cbTipoUsario.getSelectedItem())) {
-                tipoUsuarioActual = ti;
-
-            }
+        if (tipoUsuarioActual != null && tipoUsuarioActual == cbTipoUsario.getSelectedItem()) {
+            return;
         }
+        tipoUsuarioActual = (TipoUsuario)cbTipoUsario.getSelectedItem();
+//        for (TipoUsuario ti : ControladorTipoUsuario.getInstancia().obtenerListaByCadena("")) {
+//            if (ti.getTipoUsuario().equals(cbTipoUsario.getSelectedItem())) {
+//                tipoUsuarioActual = ti;
+//
+//            }
+//        }
     }
 
     private void initComponents() {

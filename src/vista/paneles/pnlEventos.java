@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import com.jidesoft.swing.*;
 import com.raven.datechooser.*;
 import com.raven.swing.*;
 import controlador.ControladorCiudad;
@@ -31,10 +32,12 @@ import controlador.ControladorCliente;
 import controlador.ControladorEstado;
 import controlador.ControladorEvento;
 import controlador.ControladorLugar;
+import controlador.ControladorProveedorEvento;
 import controlador.ControladorTipoEvento;
 import independientes.Constante;
 import independientes.MMException;
 import independientes.Mensaje;
+import independientes.MyObjectListCellRenderer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -55,6 +58,7 @@ import modelo.Estado;
 import modelo.Etiqueta;
 import modelo.Evento;
 import modelo.Lugar;
+import modelo.ProveedorEvento;
 import modelo.TipoEvento;
 import net.miginfocom.swing.MigLayout;
 import vista.paneles.edit.DialogCiudad;
@@ -122,19 +126,22 @@ public class pnlEventos extends JPanel {
             return;
         }
         cmbEventos.removeAllItems();
-        if (!Constante.getAdmin()) {
+        if (!Constante.getAdmin()) {// si es cliente, solo apareceran eventos vigentes
             for (Evento eve : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.getClienteActivo().getIdCliente())) {
-                if (eve.getIdTipoEvento() == 0) {
-                    if (eve.getFechaInicio() != null && eve.getFechaInicio().before(new Date())) {
-                        cmbEventos.addItem(eve.getNombreEvento());
-                    }
+                if (eve.getFechaInicio() == null) {
+                    cmbEventos.addItem(eve);
+                    continue;
+                }
+                if (eve.getFechaInicio() != null && eve.getFechaInicio().after(new Date())) {
+                    cmbEventos.addItem(eve);
                 }
             }
-        } else {
+        } else {//si eres adm apareceran todos
             for (Evento eve : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.getClienteActivo().getIdCliente())) {
-                cmbEventos.addItem(eve.getNombreEvento());
+                cmbEventos.addItem(eve);
             }
         }
+        cmbEventos.setRenderer(new MyObjectListCellRenderer());
 
     }
 
@@ -151,25 +158,26 @@ public class pnlEventos extends JPanel {
     public void cargarTipoEvento() {
         cmbTipoEvento.removeAllItems();
         for (TipoEvento e : ControladorTipoEvento.getInstancia().obtenerListaByCadena("")) {
-            cmbTipoEvento.addItem(e.getTematica());
+            cmbTipoEvento.addItem(e);
         }
+        cmbTipoEvento.setRenderer(new MyObjectListCellRenderer());
     }
 
     public void cargarEstado() {
         cmbEstado.removeAllItems();
         for (Estado e : ControladorEstado.getInstancia().obtenerListaByCadena("")) {
-            cmbEstado.addItem(e.getEstado());
+            cmbEstado.addItem(e);
         }
+        cmbEstado.setRenderer(new MyObjectListCellRenderer());
     }
 
     public void cargarCiudad() {
-        if (estadoActual == null) {
-            return;
-        }
         cmbCiudad.removeAllItems();
         for (Ciudad c : ControladorCiudad.getInstancia().obtenerListaByIDEstado(estadoActual.getIdEstado())) {
-            cmbCiudad.addItem(c.getCiudad());
+            cmbCiudad.addItem(c);
         }
+        cmbCiudad.setRenderer(new MyObjectListCellRenderer());
+        cargarLugares();
     }
 
     public void cargarLugares() {
@@ -178,8 +186,9 @@ public class pnlEventos extends JPanel {
         }
         cmbLugar.removeAllItems();
         for (Lugar c : ControladorLugar.getInstancia().obtenerListaByIDCIudad(ciudadActual.getIdCiudad())) {
-            cmbLugar.addItem(c.getNombreLocal());
+            cmbLugar.addItem(c);
         }
+        cmbLugar.setRenderer(new MyObjectListCellRenderer());
     }
     DialogEvento dialogEvento = null;
 
@@ -189,25 +198,18 @@ public class pnlEventos extends JPanel {
     }
 
     private void cmbTipoEvento(ActionEvent e) {
-        if (cmbTipoEvento.getSelectedIndex() != -1) {
-            for (TipoEvento evento : ControladorTipoEvento.getInstancia().obtenerListaByCadena("")) {
-                if (evento.getTematica().equals(cmbTipoEvento.getSelectedItem().toString())) {
-                    tipoEventoActual = evento;
-                }
-            }
+        if (cmbTipoEvento.getSelectedIndex() == -1) {
+            return;
         }
+        tipoEventoActual = (TipoEvento) cmbTipoEvento.getSelectedItem();
     }
 
     private void cmbEstado(ActionEvent e) {
-        if (cmbEstado.getSelectedIndex() != -1) {
-            for (Estado estado : ControladorEstado.getInstancia().obtenerListaByCadena("")) {
-                if (estado.getEstado().equals(cmbEstado.getSelectedItem().toString())) {
-                    estadoActual = estado;
-                }
-            }//
-
-            cargarCiudad();
+        if (cmbEstado.getSelectedIndex() == -1) {
+            return;
         }
+        estadoActual = (Estado) cmbEstado.getSelectedItem();
+        cargarCiudad();
     }
 
     private void lblEditEstadoMouseClicked() {
@@ -264,19 +266,6 @@ public class pnlEventos extends JPanel {
         }
     }
 
-    private void cmbCiudad() {
-        if (cmbCiudad.getSelectedItem() != null && estadoActual != null) {
-            for (Ciudad ciudad : ControladorCiudad.getInstancia().obtenerListaByIDEstado(estadoActual.getIdEstado())) {
-                if (ciudad.getCiudad().equals(cmbCiudad.getSelectedItem().toString())) {
-                    ciudadActual = ciudad;
-                    cargarLugarImagenes();
-                    cargarLugares();
-                    break;
-                }
-            }
-        }
-    }
-
     private void cargarLugarImagenes() {
         i.lugarImagenesByIDCiudad(ciudadActual.getIdCiudad(), frm.listModel);
     }
@@ -296,18 +285,6 @@ public class pnlEventos extends JPanel {
 
     private void cmbLugar(ActionEvent e) {
 
-        if (cbOtro.isSelected() || Constante.getPresupuesto() == 0) {
-            return;
-        }
-        if (cmbLugar.getSelectedIndex() != -1) {
-            for (Lugar lu : ControladorLugar.getInstancia().obtenerListaByIDCIudad(ciudadActual.getIdCiudad())) {
-                if (lu.getNombreLocal().equals(cmbLugar.getSelectedItem().toString())) {
-                    lugarActual = lu;
-                    Constante.actualizarPresupuesto(null);
-                    break;
-                }
-            }
-        }
     }
 
     private void lblEditLugarMouseClicked(MouseEvent e) {
@@ -334,7 +311,7 @@ public class pnlEventos extends JPanel {
             validarDatos(txtPresupuesto, txtCantInvitados, cmbLugar);
 
             eventoActual.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
-            eventoActual.setIdTipoEvento(ControladorTipoEvento.getInstancia().obtenerListaByCadena(cmbTipoEvento.getSelectedItem().toString()).get(0).getIdTipoEvento());
+            eventoActual.setIdTipoEvento(tipoEventoActual.getIdTipoEvento());
             eventoActual.setFechaInicio(obtenerFecha(txtFechaInicio, txtHorarioInicio));
             eventoActual.setFechaFinal(obtenerFecha(txtFechaFinal, txtHorarioFinal));
             eventoActual.setNoInvitados(Integer.parseInt(txtCantInvitados.getText().replaceAll(",", "")));
@@ -344,15 +321,34 @@ public class pnlEventos extends JPanel {
             Lugar lu = new Lugar();
             lu.setIdCiudad(ciudadActual.getIdCiudad());
             if (cbOtro.isSelected()) {
+                if (cmbLugar.getEditor().getItem().toString().isEmpty()) {
+                    Constante.mensaje("Inserte el nombre del lugar donde quiere que sea su evento", Tipo.ADVERTENCIA);
+                    cmbLugar.requestFocus();
+                    return;
+                }
                 lu.setNombreLocal(cmbLugar.getEditor().getItem().toString());
                 ControladorLugar.getInstancia().registrar(lu);
                 eventoActual.setIdLugar(ControladorLugar.getInstancia().obtenerLugarByLast().getIdLugar());
             } else {
                 lu.setNombreLocal(cmbLugar.getSelectedItem().toString());
-                eventoActual.setIdLugar(ControladorLugar.getInstancia().obtenerLugarByCadena(lu).getIdLugar());
+                eventoActual.setIdLugar(lugarActual.getIdLugar());
             }
             Mensaje m = ControladorEvento.getInstancia().actualizar(eventoActual);
             if (m.getTipoMensaje() == Tipo.OK) {
+                if (!ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento()).isEmpty()) {
+                    Constante.mensaje("verifica las fechas de los proveedores", Tipo.ADVERTENCIA);
+                }
+                //Actualizo las fechas de los proveedores del evento forzosamente
+                for (ProveedorEvento pro : ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento())) {
+                    if (pro.getFechaInicio().before(eventoActual.getFechaInicio())) {
+                        pro.setFechaInicio(eventoActual.getFechaInicio());
+                        ControladorProveedorEvento.getInstancia().actualizar(pro);
+                    }
+                    if (pro.getFechaFinal().after(eventoActual.getFechaFinal())) {
+                        pro.setFechaFinal(eventoActual.getFechaInicio());
+                        ControladorProveedorEvento.getInstancia().actualizar(pro);
+                    }
+                }
                 if (dialogEvento != null) {
                     dialogEvento.llenarTabla();
                 }
@@ -395,22 +391,11 @@ public class pnlEventos extends JPanel {
             txtFechaInicio.requestFocus();
             throw new MMException("Minimo 1 semana de anticipacion");
         }
-//        Date fechaPC = new Date();
-//        Date fechaSleccionada = obtenerFecha(txtFechaInicio, txtHorarioInicio);
-//
-//        LocalDate d1 = LocalDate.parse(sdf.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
-//        LocalDate d2 = LocalDate.parse(txtFechaInicio.getText(), DateTimeFormatter.ISO_LOCAL_DATE);
-//        Duration diff = Duration.between(d1.atStartOfDay(), d2.atStartOfDay());
-//        long diffDays = diff.toDays();
-//        if (diffDays < 7) {
-//            txtFechaInicio.requestFocus();
-//            throw new MMException("Minimo 1 semana de anticipacion");
-//        }
 
         Date fechaInicioo = obtenerFecha(txtFechaInicio, txtHorarioInicio);
         Date fechaFinall = obtenerFecha(txtFechaFinal, txtHorarioFinal);
         if (fechaFinall.before(fechaInicioo) || fechaFinall.equals(fechaInicioo)) {
-            throw new MMException("Fecha final incorrecta!");
+            throw new MMException("Cambie la fecha final!");
         }
         if (ControladorCliente.getInstancia().obtenerClienteActivo() == null) {
             throw new MMException("Sin cliente activo");
@@ -427,13 +412,6 @@ public class pnlEventos extends JPanel {
             Logger.getLogger(pnlEventos.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
-    }
-
-    private void setMinDate() {
-        LocalDate d11 = LocalDate.parse(sdf.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
-        d11 = d11.plusDays(7);
-
-        fechaInicio.setSelectedDate(new SelectedDate(d11.getDayOfMonth(), d11.getMonthValue(), d11.getYear()));
     }
 
     private void lblEditEtiquetaMousePressed(MouseEvent e) {
@@ -468,11 +446,27 @@ public class pnlEventos extends JPanel {
         if (cmbEventos.getSelectedIndex() == -1) {
             return;
         }
-        for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.getClienteActivo().getIdCliente())) {
-            if (ev.getNombreEvento().equals(cmbEventos.getSelectedItem())) {
-                eventoActual = ev;
-            }
+        eventoActual = (Evento) cmbEventos.getSelectedItem();
+    }
+
+    private void cmbLugarItemStateChanged(ItemEvent e) {
+        if (cbOtro.isSelected() || cmbLugar.getSelectedIndex() == -1) {
+            return;
         }
+        lugarActual = (Lugar) cmbLugar.getSelectedItem();
+        Constante.actualizarPresupuesto(null);
+    }
+
+    private void cmbCiudadItemStateChanged(ItemEvent e) {
+        if (cmbCiudad.getSelectedIndex() == -1) {
+            if (cmbLugar.getSelectedIndex() != -1) {
+                cmbLugar.removeAllItems();
+            }
+            return;
+        }
+        ciudadActual = (Ciudad) cmbCiudad.getSelectedItem();
+        cargarLugarImagenes();
+        cargarLugares();
     }
 
     private void initComponents() {
@@ -724,7 +718,7 @@ public class pnlEventos extends JPanel {
         //---- cmbCiudad ----
         cmbCiudad.setNextFocusableComponent(cmbLugar);
         cmbCiudad.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        cmbCiudad.addActionListener(e -> cmbCiudad());
+        cmbCiudad.addItemListener(e -> cmbCiudadItemStateChanged(e));
         add(cmbCiudad, "cell 1 9");
 
         //---- cmbTipoEvento ----
@@ -736,7 +730,7 @@ public class pnlEventos extends JPanel {
         //---- cmbLugar ----
         cmbLugar.setNextFocusableComponent(btnAceptar);
         cmbLugar.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        cmbLugar.addActionListener(e -> cmbLugar(e));
+        cmbLugar.addItemListener(e -> cmbLugarItemStateChanged(e));
         add(cmbLugar, "cell 1 10");
 
         //---- lblEditEstado ----

@@ -61,6 +61,7 @@ new FormModel {
 							add( null )
 							add( null )
 						} )
+						"selectionMode": 0
 						auxiliary() {
 							"JavaCodeGenerator.variableModifiers": 1
 						}

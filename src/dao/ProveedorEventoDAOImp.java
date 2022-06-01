@@ -1,7 +1,6 @@
 package dao;
 
 import Componentes.Sweet_Alert.Message;
-import com.sun.org.apache.bcel.internal.generic.Type;
 import idao.IProveedorEventoDAO;
 import independientes.Conexion;
 import independientes.Mensaje;
@@ -9,9 +8,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
-import modelo.Proveedor;
 import modelo.ProveedorEvento;
 
 /**
@@ -50,11 +49,13 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
 
     @Override
     public Mensaje registrar(ProveedorEvento t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDORESEVENTO VALUES(?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDORESEVENTO VALUES(?,?,?,?,?,?)")) {
             ps.setInt(1, t.getIdEvento());
             ps.setInt(2, t.getIdProveedor());
-            ps.setDate(3, new java.sql.Date(t.getHoraInicio().getTime()));
-            ps.setDate(4, new java.sql.Date(t.getHoraFinal().getTime()));
+            ps.setInt(3, t.getIdNegocio());
+            ps.setTimestamp(4, new java.sql.Timestamp(t.getFechaInicio().getTime()));
+            ps.setTimestamp(5, new java.sql.Timestamp(t.getFechaFinal().getTime()));
+            ps.setString(6, t.getComentario());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
 
         } catch (SQLException e) {
@@ -65,21 +66,33 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
 
     @Override
     public Mensaje actualizar(ProveedorEvento t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE PROVEEDOREVENTO SET fechaINICIO = ?, fechaFINAL = ?, COMENTARIO = ? "
+                + "WHERE IDEVENTO = ? AND IDPROVEEDOR = ? AND IDNEGOCIO = ?")) {
+            ps.setTimestamp(1, new Timestamp(t.getFechaInicio().getTime()));
+            ps.setTimestamp(2, new Timestamp(t.getFechaFinal().getTime()));
+            ps.setString(3, t.getComentario());
+            ps.setInt(4, t.getIdEvento());
+            ps.setInt(5, t.getIdProveedor());
+            ps.setInt(6, t.getIdNegocio());
+            return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
+        } catch (SQLException e) {
+            System.err.println("Error actualizar ProveedorEventoo," + e.getMessage());
+        }
+          return new Mensaje(Message.Tipo.ERROR, "ERROR, intentelo mas tarde.");
     }
 
     @Override
     public Mensaje eliminar(ProveedorEvento t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM PROVEEDOREVENTO WHERE IDPROVEEDOR = ? AND IDEVENTO = ?" + t.getIdEvento())) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM PROVEEDOREVENTO WHERE IDPROVEEDOR = ? AND IDEVENTO = ?")) {
             ps.setInt(1, t.getIdProveedor());
             ps.setInt(2, t.getIdEvento());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
             System.err.println("Error eliminar ProveedorEvento, " + e.getMessage());
         }
-        
+
         return new Mensaje(Message.Tipo.ERROR, "Error");
-        
+
     }
 
     @Override
@@ -101,23 +114,22 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
             if (!yaExiste(pro).isEmpty()) {
                 continue;
             }
-            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOREVENTO VALUES(?,?,?,?,?)")) {
+            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOREVENTO VALUES(?,?,?,?,?,?)")) {
                 ps.setInt(1, pro.getIdEvento());
                 ps.setInt(2, pro.getIdProveedor());
-                ps.setTimestamp(3, new java.sql.Timestamp(pro.getHoraInicio().getTime()));
-                ps.setTimestamp(4, new java.sql.Timestamp(pro.getHoraFinal().getTime()));
+                ps.setInt(3, pro.getIdNegocio());
+                ps.setTimestamp(4, new java.sql.Timestamp(pro.getFechaInicio().getTime()));
+                ps.setTimestamp(5, new java.sql.Timestamp(pro.getFechaFinal().getTime()));
                 if (pro.getComentario().isEmpty() || pro.getComentario().equals("Si deseas algo en especifico de este proveedoor, puedes escribirlo aqui")) {
-                    ps.setNull(5, Types.NULL);
+                    ps.setNull(6, Types.NULL);
                 } else {
-                    ps.setString(5, pro.getComentario());
+                    ps.setString(6, pro.getComentario());
                 }
-
                 ps.execute();
             } catch (SQLException e) {
                 System.err.println("Error registrarLote ProveedorEvento, " + e.getMessage());
             }
         }
-
         return new Mensaje(Message.Tipo.OK, "Registrado correctamete");
     }
 
@@ -151,7 +163,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = " + idEvento)) {
             ArrayList<ProveedorEvento> temp = new ArrayList<>();
             while (rs.next()) {
-                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getTimestamp(3), rs.getTimestamp(4), rs.getString(5)));
+                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2),rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6)));
             }
             return temp;
         } catch (SQLException e) {
@@ -165,7 +177,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE idProveedor = " + idProveedor)) {
             ArrayList<ProveedorEvento> temp = new ArrayList<>();
             while (rs.next()) {
-                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getTimestamp(3), rs.getTimestamp(4), rs.getString(5)));
+                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2),rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6)));
             }
             return temp;
         } catch (SQLException e) {
@@ -179,7 +191,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = " + idEvento
                 + " AND IDPROVEEDOR = " + idProveedor)) {
             if (rs.next()) {
-                return new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getTimestamp(3), rs.getTimestamp(4), rs.getString(5));
+                return new ProveedorEvento(rs.getInt(1), rs.getInt(2),rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());

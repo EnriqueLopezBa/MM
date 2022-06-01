@@ -26,10 +26,6 @@ public class ControladorProveedor {
         return ProveedorDAOImp.getInstancia().obtenerListaByCadena(cadena);
     }
 
-    public ArrayList<Proveedor> obtenerListaByIdTipoProveedor(int idTipoProveedor) {
-        return ProveedorDAOImp.getInstancia().obtenerListaByIdTipoProveedor(idTipoProveedor);
-    }
-
     public Proveedor obtenerByLast() {
         return ProveedorDAOImp.getInstancia().obtenerByLast();
     }

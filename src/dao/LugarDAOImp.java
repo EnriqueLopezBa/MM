@@ -37,14 +37,21 @@ public class LugarDAOImp implements ILugarDAO {
 
     @Override
     public ArrayList<Lugar> obtenerListaByCadena(String cadena) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT L.idLugar, L.idCiudad, L.nombreLocal, L.domicilio, L.capacidad, L.precio FROM lugar L\n"
-                + "JOIN ciudad c on\n"
-                + "    c.idCiudad = L.idCiudad\n"
-                + "WHERE C.ciudad LIKE '%"+cadena+"%' OR L.nombreLocal LIKE '%"+cadena+"%' OR domicilio LIKE '%"+cadena+"%' OR precio LIKE '%"+cadena+"%'")) {
-
+        try (PreparedStatement ps = cn.prepareStatement(" SELECT L.* FROM lugar L \n"
+                + "  JOIN ciudad c on \n"
+                + "  c.idCiudad = L.idCiudad\n"
+                + "  JOIN proveedor P ON\n"
+                + "  P.idProveedor = L.idProveedor\n"
+                + " WHERE C.ciudad LIKE ? OR L.nombreLocal LIKE ? OR domicilio LIKE ? OR precioAprox LIKE ? OR P.nombre LIKE ? ORDER BY L.NOMBRELOCAL")) {
+            ps.setString(1, "%"+cadena+"%");
+            ps.setString(2, "%"+cadena+"%");
+            ps.setString(3, "%"+cadena+"%");
+            ps.setString(4, "%"+cadena+"%");
+            ps.setString(5, "%"+cadena+"%");
+            ResultSet rs = ps.executeQuery();
             ArrayList<Lugar> temp = new ArrayList<>();
-            while(rs.next()){
-                temp.add(new Lugar(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6)));
+            while (rs.next()) {
+                temp.add(new Lugar(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7)));
             }
             return temp;
         } catch (SQLException e) {
@@ -55,13 +62,13 @@ public class LugarDAOImp implements ILugarDAO {
 
     @Override
     public Lugar obtenerByID(int id) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR WHERE IDLUGAR = "+id)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR WHERE IDLUGAR = " + id)) {
             if (rs.next()) {
-                return new Lugar(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
+                return new Lugar(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7));
             }
         } catch (SQLException e) {
             System.err.println("Error obtenerByID Lugar, " + e.getMessage());
-        }   
+        }
         return null;
     }
 
@@ -71,12 +78,13 @@ public class LugarDAOImp implements ILugarDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO lugar VALUES (?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO lugar VALUES (?,?,?,?,?,?)")) {
             ps.setInt(1, t.getIdCiudad());
-            ps.setString(2, t.getNombreLocal());
-            ps.setString(3, t.getDomicilio());
-            ps.setInt(4, t.getCapacidad());
-            ps.setInt(5, t.getPrecio());
+            ps.setInt(2, t.getIdProveedor());
+            ps.setString(3, t.getNombreLocal());
+            ps.setString(4, t.getDomicilio());
+            ps.setInt(5, t.getCapacidad());
+            ps.setInt(6, t.getPrecio());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
         } catch (SQLException e) {
             System.err.println("Error Registrar Lugar, " + e.getMessage());
@@ -90,13 +98,14 @@ public class LugarDAOImp implements ILugarDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE lugar SET idCiudad = ? , nombreLocal = ?, domicilio = ?, capacidad = ?, precio = ? WHERE idLugar = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE lugar SET idCiudad = ?, idProveedor = ?, nombreLocal = ?, domicilio = ?, capacidad = ?, precioAprox = ? WHERE idLugar = ?")) {
             ps.setInt(1, t.getIdCiudad());
-            ps.setString(2, t.getNombreLocal());
-            ps.setString(3, t.getDomicilio());
-            ps.setInt(4, t.getCapacidad());
-            ps.setInt(5, t.getPrecio());
-            ps.setInt(6, t.getIdLugar());
+            ps.setInt(2, t.getIdProveedor());
+            ps.setString(3, t.getNombreLocal());
+            ps.setString(4, t.getDomicilio());
+            ps.setInt(5, t.getCapacidad());
+            ps.setInt(6, t.getPrecio());
+            ps.setInt(7, t.getIdLugar());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
         } catch (SQLException e) {
             System.err.println("Error actualizar Lugar, " + e.getMessage());
@@ -117,7 +126,7 @@ public class LugarDAOImp implements ILugarDAO {
 
     @Override
     public String yaExiste(Lugar t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM lugar WHERE idLugar != "+t.getIdLugar()+" and idCiudad = '" + t.getIdCiudad()
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM lugar WHERE idLugar != " + t.getIdLugar() + " and idCiudad = '" + t.getIdCiudad()
                 + "' AND nombreLocal = '" + t.getNombreLocal() + "'")) {
             if (rs.next()) {
                 return t.getNombreLocal();
@@ -130,46 +139,47 @@ public class LugarDAOImp implements ILugarDAO {
 
     @Override
     public ArrayList<Lugar> obtenerListaByIDCiudad(int idCiudad) {
-       try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR WHERE IDCIUDAD = " + idCiudad)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR WHERE IDCIUDAD = " + idCiudad)) {
             ArrayList<Lugar> temp = new ArrayList<>();
-            while(rs.next()){
+            while (rs.next()) {
                 Lugar lugar = new Lugar();
-                lugar.setIdLugar(rs.getInt(1));
+                lugar.setIdLugar(rs.getInt("idLugar"));
                 lugar.setIdCiudad(idCiudad);
-                lugar.setNombreLocal(rs.getString(3));
-                lugar.setDomicilio(rs.getString(4));
-                lugar.setCapacidad(rs.getInt(5));
-                lugar.setPrecio(rs.getInt(6));
-               temp.add(lugar);
+                lugar.setIdProveedor(rs.getInt("idProveedor"));
+                lugar.setNombreLocal(rs.getString("nombreLocal"));
+                lugar.setDomicilio(rs.getString("domicilio"));
+                lugar.setCapacidad(rs.getInt("capacidad"));
+                lugar.setPrecio(rs.getInt("precioAprox"));
+                temp.add(lugar);
             }
             return temp;
         } catch (SQLException e) {
             System.err.println("Error obtenerByIDCiudad Lugar, " + e.getMessage());
-        }    
+        }
         return null;
     }
 
     @Override
     public Lugar obtenerLugarByLast() {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM lugar ORDER BY idLugar DESC")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT TOP 1 * FROM lugar ORDER BY idLugar DESC")) {
             if (rs.next()) {
-                return new Lugar(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
+                return new Lugar(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7));
             }
         } catch (SQLException e) {
-            System.err.println("Error ObtenerLugarByLast Lugar, "  + e.getMessage());
-        }      
+            System.err.println("Error ObtenerLugarByLast Lugar, " + e.getMessage());
+        }
         return null;
     }
 
     @Override
     public Lugar obtenerLugarByCadena(Lugar lug) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR WHERE idCiudad = "+lug.getIdCiudad()+" and NOMBRELOCAL = '"+lug.getNombreLocal()+"'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR WHERE idCiudad = " + lug.getIdCiudad() + " and NOMBRELOCAL = '" + lug.getNombreLocal() + "'")) {
             if (rs.next()) {
-                return new Lugar(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
+                return new Lugar(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7));
             }
         } catch (SQLException e) {
             System.err.println("Error obtenerLugarByCadena Lugar," + e.getMessage());
-        }        
+        }
         return null;
     }
 

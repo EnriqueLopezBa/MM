@@ -13,6 +13,7 @@ import controlador.ControladorPregunta;
 import controlador.ControladorQuiz;
 import independientes.Constante;
 import independientes.Mensaje;
+import independientes.MyObjectListCellRenderer;
 import java.util.ArrayList;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.event.ChangeEvent;
@@ -27,11 +28,13 @@ import vista.principales.Principal;
 
 public class pnlQuiz extends JPanel {
 
-    ArrayList<Pregunta> lista;
+    private ArrayList<Pregunta> lista;
+    private Evento eventoActual = null;
+
     private int contador = -1;
     private int constante = -1;
     private MigLayout mig;
-    JPanel panelOpciones = null;
+    private JPanel panelOpciones = null;
 
     private static pnlQuiz instancia;
 
@@ -45,7 +48,7 @@ public class pnlQuiz extends JPanel {
     public void checkAdmin() {
         lblEliminar.setVisible(Constante.getAdmin());
         lblModificar.setVisible(Constante.getAdmin());
-        init();
+        cargarEventos();
     }
 
     private void init() {
@@ -60,24 +63,28 @@ public class pnlQuiz extends JPanel {
 
     private pnlQuiz() {
         initComponents();
+        init();
     }
 
     public void cargarEventos() {
+        ArrayList<Evento> eventos = null;
         if (Constante.getClienteActivo() == null) {
             btnAtras.setEnabled(false);
             btnSiguiente.setEnabled(false);
+            cmbEvento.removeAllItems();
+            eventoActual = null;
             return;
         }
         btnAtras.setEnabled(true);
         btnSiguiente.setEnabled(true);
         cmbEvento.removeAllItems();
-        ArrayList<Evento> eventos = null;
         eventoActual = null;
         eventos = ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.getClienteActivo().getIdCliente());
 
         for (Evento e : eventos) {
-            cmbEvento.addItem(e.getNombreEvento());
+            cmbEvento.addItem(e);
         }
+        cmbEvento.setRenderer(new MyObjectListCellRenderer());
 
     }
 
@@ -163,14 +170,17 @@ public class pnlQuiz extends JPanel {
         }
         if (!respuesta.isEmpty() || !opciones.isEmpty()) {
             Mensaje m = ControladorQuiz.getInstancia().registrar(q);
-    
+
         }
 
         if (contador == 0) {
             return;
         }
         contador--;
-        circleProgressBar1.setValor(constante * -1);
+         if (constante > 0) {
+            circleProgressBar1.setValor(constante * -1);
+        }
+        
         checkOpciones();
         lblPregunta.setText("<html><p style=\"text-align:center\">" + lista.get(contador).getPregunta() + "</p></html>");
         Quiz quiz = ControladorQuiz.getInstancia().obtenerByIdPreguntaAndIdEvento(lista.get(contador).getIdPregunta(), eventoActual.getIdEvento());
@@ -226,10 +236,17 @@ public class pnlQuiz extends JPanel {
         }
         txtRespuesta.setText("Escribenos tu respuesta");
         contador++;
-        circleProgressBar1.setValor(constante);
+        if (constante < 100) {
+            circleProgressBar1.setValor(constante);
+        }
+
         checkOpciones();
 
         lblPregunta.setText("<html><p style=\"text-align:center\">" + lista.get(contador).getPregunta() + "</p></html>");
+        checarRespuestaGuardada();
+    }
+
+    private void checarRespuestaGuardada() {
         Quiz quiz = ControladorQuiz.getInstancia().obtenerByIdPreguntaAndIdEvento(lista.get(contador).getIdPregunta(), eventoActual.getIdEvento());
         if (quiz != null) {
             txtRespuesta.setText(quiz.getRespuesta());
@@ -242,6 +259,8 @@ public class pnlQuiz extends JPanel {
                     }
                 }
             }
+        } else {
+            txtRespuesta.setText("Escribenos tu respuesta");
         }
     }
 
@@ -277,31 +296,30 @@ public class pnlQuiz extends JPanel {
         Mensaje m = ControladorPregunta.getInstancia().eliminar(t);
         if (m.getTipoMensaje() == Tipo.OK) {
             lista = ControladorPregunta.getInstancia().obtenerListaByCadenaAndIsEncuesta("", false);
+            constante = 100 / lista.size();
+            contador = 0;
+            circleProgressBar1.setValor(0);
+            checkOpciones();
+            lblPregunta.setText("<html><p style=\"text-align:center\">" + lista.get(contador).getPregunta() + "</p></html>");
+            checarRespuestaGuardada();
         }
         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
     }
-    private Evento eventoActual = null;
 
     private void cmbEventoItemStateChanged(ItemEvent e) {
         if (cmbEvento.getSelectedIndex() == -1) {
             return;
         }
-        Cliente clienteTemp = Constante.getClienteTemporal();
+        if ((Evento) cmbEvento.getSelectedItem() != eventoActual) {
+            lista = ControladorPregunta.getInstancia().obtenerListaByCadenaAndIsEncuesta("", false);
+            constante = 100 / lista.size();
+            contador = 0;
+            checkOpciones();
+            lblPregunta.setText("<html><p style=\"text-align:center\">" + lista.get(contador).getPregunta() + "</p></html>");
 
-        if (clienteTemp != null) {
-            for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(clienteTemp.getIdCliente())) {
-                if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
-                    eventoActual = ev;
-                }
-            }
-        } else {
-            for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
-                if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
-                    eventoActual = ev;
-                }
-            }
         }
-
+        eventoActual = (Evento) cmbEvento.getSelectedItem();
+        checarRespuestaGuardada();
     }
 
     private void initComponents() {

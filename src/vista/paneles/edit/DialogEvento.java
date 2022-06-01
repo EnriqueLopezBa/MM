@@ -51,7 +51,7 @@ public class DialogEvento extends JDialog {
         super.setLocationRelativeTo(pun.i);
         super.getContentPane().setBackground(Color.white);
 
-        p.init(new String[]{"idEvento", "idCliente", "idTipoEvento", "idLugar", "Fecha Inicio", "Fecha Final", "Nombre de Evento", "Num. Invitados", "Presupuesto", "Estilo", "Precio Total"}, 0, false);
+        p.init(new String[]{"idEvento", "idCliente", "idTipoEvento", "idLugar", "Fecha Inicio", "Fecha Final", "Nombre de Evento", "Num. Invitados", "Presupuesto", "Estilo", "Precio Total"}, 4, false);
         llenarTabla();
         p.txtBusqueda.addKeyListener(new KeyAdapter() {
             @Override

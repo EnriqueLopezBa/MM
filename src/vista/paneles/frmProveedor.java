@@ -1,26 +1,39 @@
 package vista.paneles;
 
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import Componentes.Sweet_Alert.Button;
 import Componentes.TextField;
-import controlador.ControladorTipoProveedor;
-import modelo.TipoProveedor;
 import net.miginfocom.swing.*;
 
-public class frmProveedor extends JPanel{
+public class frmProveedor extends JPanel {
+
     
     public frmProveedor() {
         initComponents();
+
+    }
+  
+
+    public void init() {
+//        for (TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")) {
+//            cmbTipoProveedor.addItem(tipo);
+//        }
+//        cmbTipoProveedor.setRenderer(new MyObjectListCellRenderer());
     }
     
-    public void init(){
-        for(TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")){
-            cmbTipoProveedor.addItem(tipo.getTipoProveedor());
-        }
-    }
+//    private void cargarNegocios(){
+//        if (tipoProveedorActual == null) {
+//            return;
+//        }
+//        cmbNegocio.removeAllItems();
+//        for(Negocio negocio : ControladorNegocio.getInstancia().obtenerListaByIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor())){
+//            cmbNegocio.addItem(negocio);
+//            
+//        }
+//        cmbNegocio.setRenderer(new MyObjectListCellRenderer());
+//        
+//    }
 
     private void btnEliminarIMG(ActionEvent e) {
 //        lblIMG.setIcon(null);
@@ -44,78 +57,71 @@ public class frmProveedor extends JPanel{
     }
 
     private void txtTelefonoKeyTyped(KeyEvent e) {
-         if (!Character.isDigit(e.getKeyChar()) || txtTelefono.getText().length() >= 10) {
-            e.consume();
-        }
-    }
-
-    private void txtTelefono2KeyTyped(KeyEvent e) {
-        if (!Character.isDigit(e.getKeyChar()) || txtTelefono2.getText().length() >= 10) {
-            e.consume();
-        }
-    }
-
-    private void txtPrecioAproxKeyTyped(KeyEvent e) {
-       if (!Character.isDigit(e.getKeyChar())) {
+        if (!Character.isDigit(e.getKeyChar()) || txtTelefono.getText().length() > 10) {
             e.consume();
         }
     }
 
     private void btnGaleria(ActionEvent e) {
-   
-      
+
     }
+
+    private void txtTelefono2KeyTyped(KeyEvent e) {
+          if (!Character.isDigit(e.getKeyChar()) || txtTelefono2.getText().length() > 10) {
+            e.consume();
+        }
+    }
+
+//    private void cmbTipoProveedorItemStateChanged(ItemEvent e) {
+//        if (cmbTipoProveedor.getSelectedIndex() == -1) {
+//
+//            return;
+//        }
+//        if (tipoProveedorActual != null && cmbTipoProveedor.getSelectedItem() == tipoProveedorActual.getTipoProveedor()) {
+//            return;
+//        }
+//        for (TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")) {
+//            if (tipo.getTipoProveedor() == cmbTipoProveedor.getSelectedItem()) {
+//                tipoProveedorActual = tipo;
+////                cargarNegocios();
+//                break;
+//            }
+//        }
+//    }
+
+//    private void cmbNegocioItemStateChanged(ItemEvent e) {
+//        if (cmbNegocio.getSelectedIndex() == -1) {
+//            return;
+//        }
+//       
+//    }
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        cmbTipoProveedor = new JComboBox();
-        txtNombre = new TextField();
-        txtNombreEmpresa = new TextField();
         cbDisponible = new JCheckBox();
-        txtPrecioAprox = new TextField();
+        txtNombreCompleto = new TextField();
         txtTelefono = new TextField();
         txtTelefono2 = new TextField();
-        scrollPane1 = new JScrollPane();
-        txtDescripcion = new JTextPane();
-        btnGaleria = new Button();
 
         //======== this ========
         setBackground(Color.white);
         setLayout(new MigLayout(
-            "fill",
+            null,
             // columns
-            "rel[grow 40,shrink 0,sizegroup 1,fill]unrel" +
-            "[grow 30,shrink 0,sizegroup 1,fill]unrel" +
-            "[grow 30,shrink 0,sizegroup 1,fill]10",
+            "[grow]" +
+            "[grow]" +
+            "[grow]",
             // rows
-            "[fill]para" +
-            "[]" +
-            "[grow,fill]" +
+            "[]para" +
             "[]"));
-        add(cmbTipoProveedor, "cell 0 0");
-
-        //---- txtNombre ----
-        txtNombre.setLabelText("Nombre");
-        txtNombre.setMargin(new Insets(6, 6, 8, 6));
-        add(txtNombre, "cell 1 0");
-
-        //---- txtNombreEmpresa ----
-        txtNombreEmpresa.setLabelText("Nombre Empresa");
-        add(txtNombreEmpresa, "cell 2 0");
 
         //---- cbDisponible ----
         cbDisponible.setText("Disponible");
-        add(cbDisponible, "cell 0 1");
+        add(cbDisponible, "cell 1 0, grow");
 
-        //---- txtPrecioAprox ----
-        txtPrecioAprox.setLabelText("Precio Aprox (Hora)");
-        txtPrecioAprox.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                txtPrecioAproxKeyTyped(e);
-            }
-        });
-        add(txtPrecioAprox, "cell 0 1");
+        //---- txtNombreCompleto ----
+        txtNombreCompleto.setLabelText("Nombre Completo");
+        add(txtNombreCompleto, "cell 0 1, growx");
 
         //---- txtTelefono ----
         txtTelefono.setLabelText("Telefono");
@@ -125,7 +131,7 @@ public class frmProveedor extends JPanel{
                 txtTelefonoKeyTyped(e);
             }
         });
-        add(txtTelefono, "cell 1 1,aligny top");
+        add(txtTelefono, "cell 1 1, growx");
 
         //---- txtTelefono2 ----
         txtTelefono2.setLabelText("Telefono 2");
@@ -135,37 +141,15 @@ public class frmProveedor extends JPanel{
                 txtTelefono2KeyTyped(e);
             }
         });
-        add(txtTelefono2, "cell 2 1,aligny top,growx");
-
-        //======== scrollPane1 ========
-        {
-
-            //---- txtDescripcion ----
-            txtDescripcion.setFont(txtDescripcion.getFont().deriveFont(txtDescripcion.getFont().getStyle() & ~Font.BOLD, txtDescripcion.getFont().getSize() + 2f));
-            scrollPane1.setViewportView(txtDescripcion);
-        }
-        add(scrollPane1, "cell 0 2, spanx");
-
-        //---- btnGaleria ----
-        btnGaleria.setText("Galeria");
-        btnGaleria.addActionListener(e -> btnGaleria(e));
-        add(btnGaleria, "cell 0 3 3 1,aligny top,grow");
+        add(txtTelefono2, "cell 2 1, growx");
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    public JComboBox cmbTipoProveedor;
-    public TextField txtNombre;
-    public TextField txtNombreEmpresa;
     public JCheckBox cbDisponible;
-    public TextField txtPrecioAprox;
+    public TextField txtNombreCompleto;
     public TextField txtTelefono;
     public TextField txtTelefono2;
-    private JScrollPane scrollPane1;
-    public JTextPane txtDescripcion;
-    public Button btnGaleria;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
-    
-   
 }

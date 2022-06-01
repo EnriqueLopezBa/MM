@@ -23,8 +23,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import modelo.Lugar;
 import modelo.LugarImagenes;
+import modelo.Negocio;
 import modelo.Proveedor;
-import modelo.ProveedorImagenes;
+import modelo.NegocioImagenes;
 import net.miginfocom.swing.MigLayout;
 import vista.paneles.edit.DialogLugarImagenes;
 import vista.principales.Principal;
@@ -39,20 +40,20 @@ public class ImageItem extends JComponent {
     private Lugar lugar;
     private LugarImagenes lugarIMG;
 
-    private Proveedor proveedor;
-    private ProveedorImagenes proveedorIMG;
+    private Negocio negocio;
+    private NegocioImagenes negocioIMG;
 
     public ImageItem(Icon image, MigLayout mig, Object clase, Object claseIMG, ImageSlider puntero) {
         this.image = image;
         if (clase instanceof Lugar) {
             this.lugar = (Lugar) clase;
-        } else if (clase instanceof Proveedor) {
-            this.proveedor = (Proveedor) clase;
+        } else if (clase instanceof Negocio) {
+            this.negocio = (Negocio) clase;
         }
         if (claseIMG instanceof LugarImagenes) {
             this.lugarIMG = (LugarImagenes) claseIMG;
-        } else if (claseIMG instanceof ProveedorImagenes) {
-            this.proveedorIMG = (ProveedorImagenes) claseIMG;
+        } else if (claseIMG instanceof NegocioImagenes) {
+            this.negocioIMG = (NegocioImagenes) claseIMG;
         }
         setBackground(Color.BLACK);
         setToolTipText("Click derecho para ver galeria");
@@ -66,7 +67,9 @@ public class ImageItem extends JComponent {
                 if (show) {
                     int width = getWidth();
                     int height = getHeight();
-
+                    if (getParent() == null) {
+                        return;
+                    }
                     if (height < getParent().getHeight() * porcentaje) {
                         mig.setComponentConstraints(ImageItem.this, "w " + (width + 1) + ", h " + (height + 1));
                         getParent().revalidate();
@@ -138,12 +141,12 @@ public class ImageItem extends JComponent {
             } else if (lugarIMG != null) {
                 g2.drawString(lugarIMG.getDescripcion(), 15, height - shadowSize + 15);
             }
-            if (proveedor != null && proveedorIMG != null) {
+            if (negocio != null && negocioIMG != null) {
                 g2.setFont(new Font("Times Roman", Font.PLAIN, 14));
-                g2.drawString("Nombre: " + proveedor.getNombreEmpresa(), 15, height - shadowSize + 15);
-                g2.drawString("Precio Aprox.: " + proveedor.getPrecioAprox() + "", 15, height - shadowSize + 35);
-            } else if (proveedorIMG != null) {
-                g2.drawString(proveedorIMG.getDescripcion(), 15, height - shadowSize + 15);
+                g2.drawString("Nombre: " + negocio.getNombreNegocio(), 15, height - shadowSize + 15);
+                g2.drawString("Precio Aprox.: " + negocio.getPrecioAprox() + "", 15, height - shadowSize + 35);
+            } else if (negocioIMG != null) {
+                g2.drawString(negocioIMG.getDescripcion(), 15, height - shadowSize + 15);
             }
             g2.dispose();
         }

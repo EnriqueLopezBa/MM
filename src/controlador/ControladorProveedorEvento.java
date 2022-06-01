@@ -27,6 +27,10 @@ public class ControladorProveedorEvento {
         return ProveedorEventoDAOImp.getInstancia().obtenerByIdEventoAndIdProveedor(idEvento, idProveedor);
     }
 
+    public Mensaje actualizar(ProveedorEvento t) {
+        return ProveedorEventoDAOImp.getInstancia().actualizar(t);
+    }
+
     public Mensaje eliminar(ProveedorEvento t) {
         return ProveedorEventoDAOImp.getInstancia().eliminar(t);
     }

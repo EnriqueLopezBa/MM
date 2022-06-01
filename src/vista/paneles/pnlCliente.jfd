@@ -102,7 +102,6 @@ new FormModel {
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "pnlEdicion"
 				"background": new java.awt.Color( 255, 255, 255, 255 )
-				"border": new javax.swing.border.TitledBorder( null, "Editar", 2, 2 )
 				"preferredSize": new java.awt.Dimension( 772, 349 )
 				add( new FormComponent( "vista.paneles.pnlCRUD" ) {
 					name: "p"

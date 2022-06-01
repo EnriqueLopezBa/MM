@@ -1,0 +1,100 @@
+JFDML JFormDesigner: "7.0.5.0.404" Java: "1.8.0_261" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$columnConstraints": "rel[grow 40,shrink 0,sizegroup 1,fill]unrel[grow 30,shrink 0,sizegroup 1,fill]unrel[grow 30,shrink 0,sizegroup 1,fill]10"
+			"$rowConstraints": "[fill]para[][grow,fill][][fill][fill]"
+			"$layoutConstraints": "fill"
+		} ) {
+			name: "this"
+			"background": new java.awt.Color( 255, 255, 255, 255 )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbProveedor"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbProveedorItemStateChanged", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0"
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbTipoProveedor"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbTipoProveedorItemStateChanged", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 0"
+			} )
+			add( new FormComponent( "Componentes.TextField" ) {
+				name: "txtNombreNegocio"
+				"labelText": "Nombre Negocio"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1"
+			} )
+			add( new FormComponent( "Componentes.TextField" ) {
+				name: "txtPrecioAprox"
+				"labelText": "Precio Aprox (Hora)"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+				addEvent( new FormEvent( "java.awt.event.KeyListener", "keyTyped", "txtPrecioAproxKeyTyped", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 1"
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "cbDisponible"
+				"text": "Disponible"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 1"
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane1"
+				add( new FormComponent( "javax.swing.JTextPane" ) {
+					name: "txtDescripcion"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 65536, 2, false )
+					"text": "Puedes añadir una descripcion del negocio"
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+					addEvent( new FormEvent( "java.awt.event.FocusListener", "focusGained", "txtDescripcionFocusGained", true ) )
+					addEvent( new FormEvent( "java.awt.event.FocusListener", "focusLost", "txtDescripcionFocusLost", true ) )
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 2, spanx"
+			} )
+			add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
+				name: "btnGaleria"
+				"text": "Galeria"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnGaleria", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 3 3 1,aligny top,grow"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblProveedor"
+				"text": "Telefono Proveedor:"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 4"
+			} )
+			add( new FormComponent( "vista.paneles.frmEtiquetas" ) {
+				name: "fProveedorArea"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 5, spanx"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 506, 255 )
+		} )
+	}
+}

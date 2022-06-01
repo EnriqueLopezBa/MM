@@ -10,11 +10,13 @@ import javax.swing.table.*;
 import Componentes.tableC.*;
 import controlador.ControladorCotizacion;
 import controlador.ControladorEvento;
+import controlador.ControladorNegocio;
 import controlador.ControladorProveedor;
 import controlador.ControladorProveedorEvento;
 import independientes.Constante;
 import modelo.Cotizacion;
 import modelo.Evento;
+import modelo.Negocio;
 import modelo.Proveedor;
 import modelo.ProveedorEvento;
 import net.miginfocom.swing.*;
@@ -70,18 +72,24 @@ public class pnlCotizacion extends JPanel {
                 break;
             }
         }
+        llenarTabla();
+    }
+
+    private void llenarTabla() {
         m.setRowCount(0);
         for (Cotizacion cot : ControladorCotizacion.getInstancia().obtenerListaByIDEvento(eventoActual.getIdEvento())) {
             ProveedorEvento pro = ControladorProveedorEvento.getInstancia().obtenerByIdEventoAndIdProveedor(cot.getIdEvento(), cot.getIdProveedor());
             Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(cot.getIdProveedor());
-            m.addRow(new Object[]{cot.getIdEvento(), cot.getIdProveedor(), proveedor.getNombreEmpresa(), pro.getHoraInicio(), pro.getHoraFinal(), cot.getCotizacion()});
+            Negocio negocio = ControladorNegocio.getInstancia().obtenerByID(proveedor.getIdProveedor());
+            m.addRow(new Object[]{cot.getIdEvento(), cot.getIdProveedor(), negocio.getNombreNegocio(), pro.getFechaInicio(), pro.getFechaFinal(), cot.getCotizacion()});
         }
         for (ProveedorEvento pro : ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento())) {
             if (yaExiste(pro.getIdProveedor())) {
                 continue;
             }
             Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(pro.getIdProveedor());
-            m.addRow(new Object[]{pro.getIdEvento(), pro.getIdProveedor(), proveedor.getNombreEmpresa(), pro.getHoraInicio(), pro.getHoraFinal(), null});
+            Negocio negocio = ControladorNegocio.getInstancia().obtenerByID(proveedor.getIdProveedor());
+            m.addRow(new Object[]{pro.getIdEvento(), pro.getIdProveedor(), negocio.getNombreNegocio(), pro.getFechaInicio(), pro.getFechaFinal(), null});
         }
     }
 
@@ -122,16 +130,17 @@ public class pnlCotizacion extends JPanel {
             //---- tblCotizacion ----
             tblCotizacion.setModel(new DefaultTableModel(
                 new Object[][] {
+                    {null, null, null, null, null, null, null},
                 },
                 new String[] {
-                    "idEvento", "idProveedor", "Proveedor", "Inicio", "Fin", "Cotizacion"
+                    "idEvento", "idProveedor", "Proveedor", "Inicio", "Fin", "Cotizacion del sistema", "Cotizacion Final"
                 }
             ) {
                 Class<?>[] columnTypes = new Class<?>[] {
-                    Object.class, Object.class, Object.class, Object.class, Object.class, Integer.class
+                    Object.class, Object.class, Object.class, Object.class, Object.class, Object.class, Integer.class
                 };
                 boolean[] columnEditable = new boolean[] {
-                    false, false, false, false, false, true
+                    false, false, false, false, false, false, true
                 };
                 @Override
                 public Class<?> getColumnClass(int columnIndex) {

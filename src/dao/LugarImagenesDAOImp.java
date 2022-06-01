@@ -74,23 +74,16 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
     @Override
     public Mensaje actualizar(LugarImagenes t) {
 
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE LUGARIMAGENES SET IMAGEN = ?, DESCRIPCION = ?, PREDETERMINADA = ? WHERE ID2 = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE LUGARIMAGENES SET IMAGEN = ?, DESCRIPCION = ?, PREDETERMINADA = ?, ID2 = ? WHERE ID2 = ?")) {
             String id2 = UUID.nameUUIDFromBytes(t.getImagen()).toString().toUpperCase();
-            t.setId2(id2);
-            //Quitar la predeterminada anteror
-            if (t.isPredeterminada()) {
-                try (PreparedStatement pss = cn.prepareStatement("update lugarImagenes set predeterminada = 0 where idLugar = ?")) {
-                    pss.setInt(1, t.getIdLugar());
-                    pss.execute();
-                } catch (SQLException e) {
-                    System.err.println(e.getMessage());
-                }
-            }
+//            t.setId2(id2);
+
             ByteArrayInputStream forindex = new ByteArrayInputStream(t.getImagen());
             ps.setBinaryStream(1, forindex, t.getImagen().length);
             ps.setString(2, t.getDescripcion());
-            ps.setInt(3, (t.isPredeterminada()) ? 1 : 0);
+            ps.setBoolean(3, t.isPredeterminada());
             ps.setString(4, id2);
+            ps.setString(5, t.getId2());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
         } catch (SQLException e) {
             System.err.println("Error actualizar LugarImagenes, " + e.getMessage());
@@ -100,8 +93,9 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
 
     @Override
     public Mensaje eliminar(LugarImagenes t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM LUGARIMAGENES WHERE ID2 = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM LUGARIMAGENES WHERE ID2 = ? AND IDLUGAR = ?")) {
             ps.setString(1, t.getId2());
+            ps.setInt(2, t.getIdLugar());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
             System.err.println("Error eliminar LugarImagenes, " + e.getMessage());
@@ -153,12 +147,12 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
                 + "  (\n"
                 + "  SELECT COUNT(*) \n"
                 + "  FROM LugarEtiquetas LUE\n"
-                + "  WHERE LUE.idLugar = LUI.idLugar AND LUE.idEtiqueta IN ("+etiquetas+")\n"
+                + "  WHERE LUE.idLugar = LUI.idLugar AND LUE.idEtiqueta IN (" + etiquetas + ")\n"
                 + "  ) AS CDDV\n"
                 + "  FROM lugarImagenes LUI\n"
                 + "  JOIN lugar L ON\n"
                 + "  L.idLugar = LUI.idLugar\n"
-                + "  WHERE L.idCiudad = "+idCiudad+" AND LUI.predeterminada = 1 \n"
+                + "  WHERE L.idCiudad = " + idCiudad + " AND LUI.predeterminada = 1 \n"
                 + "  ORDER BY CDDV DESC")) {
             ArrayList<LugarImagenes> temp = new ArrayList<>();
             while (rs.next()) {

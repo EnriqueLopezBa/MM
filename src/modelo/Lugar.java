@@ -6,8 +6,7 @@ package modelo;
  */
 public class Lugar {
 
-    private int idLugar;
-    private int idCiudad;
+    private int idLugar, idCiudad, idProveedor;
     private String nombreLocal, domicilio;
     private int capacidad;
     private int precio;
@@ -16,14 +15,24 @@ public class Lugar {
     public Lugar() {
     }
 
-    public Lugar(int idLugar, int idCiudad, String nombreLocal, String domicilio, int capacidad, int precio) {
+    public Lugar(int idLugar, int idCiudad, int idProveedor, String nombreLocal, String domicilio, int capacidad, int precio) {
         this.idLugar = idLugar;
         this.idCiudad = idCiudad;
+        this.idProveedor = idProveedor;
         this.nombreLocal = nombreLocal;
         this.domicilio = domicilio;
         this.capacidad = capacidad;
         this.precio = precio;
     }
+
+    public int getIdProveedor() {
+        return idProveedor;
+    }
+
+    public void setIdProveedor(int idProveedor) {
+        this.idProveedor = idProveedor;
+    }
+
 
     public int getIdLugar() {
         return idLugar;

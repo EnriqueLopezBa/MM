@@ -78,7 +78,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
         } catch (SQLException e) {
             System.err.println("Error actualizar ProveedorEventoo," + e.getMessage());
         }
-          return new Mensaje(Message.Tipo.ERROR, "ERROR, intentelo mas tarde.");
+        return new Mensaje(Message.Tipo.ERROR, "ERROR, intentelo mas tarde.");
     }
 
     @Override
@@ -116,7 +116,11 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
             }
             try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOREVENTO VALUES(?,?,?,?,?,?)")) {
                 ps.setInt(1, pro.getIdEvento());
-                ps.setInt(2, pro.getIdProveedor());
+                if (pro.getIdProveedor() == 0) {
+                    ps.setNull(2, Types.NULL);
+                } else {
+                    ps.setInt(2, pro.getIdProveedor());
+                }
                 ps.setInt(3, pro.getIdNegocio());
                 ps.setTimestamp(4, new java.sql.Timestamp(pro.getFechaInicio().getTime()));
                 ps.setTimestamp(5, new java.sql.Timestamp(pro.getFechaFinal().getTime()));
@@ -163,7 +167,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = " + idEvento)) {
             ArrayList<ProveedorEvento> temp = new ArrayList<>();
             while (rs.next()) {
-                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2),rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6)));
+                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6)));
             }
             return temp;
         } catch (SQLException e) {
@@ -177,7 +181,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE idProveedor = " + idProveedor)) {
             ArrayList<ProveedorEvento> temp = new ArrayList<>();
             while (rs.next()) {
-                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2),rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6)));
+                temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6)));
             }
             return temp;
         } catch (SQLException e) {
@@ -191,7 +195,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = " + idEvento
                 + " AND IDPROVEEDOR = " + idProveedor)) {
             if (rs.next()) {
-                return new ProveedorEvento(rs.getInt(1), rs.getInt(2),rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6));
+                return new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());

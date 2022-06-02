@@ -95,7 +95,7 @@ public class NegocioDAOImp implements INegocioDAO {
                 ps.setNull(1, Types.NULL);
                 ps.setInt(2, t.getIdTipoProveedor());
                 ps.setString(3, t.getNombreNegocio());
-                ps.setNull(4, Types.NULL);
+                ps.setInt(4, 0);
                 ps.setBoolean(5, true);
                 ps.setNull(6, Types.NULL);
                 return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");

@@ -103,9 +103,8 @@ public class pnlProveedores extends JPanel {
             }
         });
 
-        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
-        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
-
+//        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
+//        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
     }
 
     public void recargar() {
@@ -144,7 +143,7 @@ public class pnlProveedores extends JPanel {
         if (tipoProveedorActual == null) {
             return;
         }
-  
+
         cmbNegocio.removeAllItems();
         //Cargar proveedores dependiendo del area donde trabajan los proveedores
         int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
@@ -155,7 +154,7 @@ public class pnlProveedores extends JPanel {
                 continue;
             }
             cmbNegocio.addItem(nec);
-            
+
         }
         cmbNegocio.setRenderer(new MyObjectListCellRenderer());
 
@@ -374,8 +373,10 @@ public class pnlProveedores extends JPanel {
     private void cbOtro(ActionEvent e) {
         if (cbOtro.isSelected()) {
             cmbNegocio.setEditable(true);
+            cmbNegocio.getEditor().setItem("");
         } else {
             cmbNegocio.setEditable(false);
+            cargarNegocios();
         }
 
     }
@@ -403,19 +404,24 @@ public class pnlProveedores extends JPanel {
             try {
                 // comprobrar que existen proveedores nuevo a registrar
                 if (m.getValueAt(j, 1) == null) {
-                    //se añade un nuevo negocio por parte del empresa
-                  
+                    //se añade un nuevo negocio
                     Negocio negocio = new Negocio();
                     negocio.setIdTipoProveedor(tipoProveedorActual.getIdTipoProveedor());
                     negocio.setNombreNegocio(m.getValueAt(j, 3).toString());
                     ControladorNegocio.getInstancia().registrar(negocio);
-                    m.setValueAt(ControladorNegocio.getInstancia().obtenerNegocioByLast().getIdProveedor(), j, 1);
+                    m.setValueAt(ControladorNegocio.getInstancia().obtenerNegocioByLast().getIdNegocio(), j, 1);
                 }
+                Negocio negocio = ControladorNegocio.getInstancia().obtenerByID((int) m.getValueAt(j, 1));
+                Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(negocio.getIdProveedor());
                 ProveedorEvento pro = new ProveedorEvento();
+                if (proveedor != null) {
+                    pro.setIdProveedor(proveedor.getIdProveedor());
+                }// si es == null significa que este es un nuevo negocio agregado por el cliente
+
                 pro.setIdEvento(eventoActual.getIdEvento());
                 pro.setIdNegocio((int) m.getValueAt(j, 1));
-                pro.setFechaInicio( todoFecha.parse(m.getValueAt(j, 4).toString()));
-                pro.setFechaFinal( todoFecha.parse(m.getValueAt(j, 5).toString()));
+                pro.setFechaInicio(todoFechaAMPM.parse(m.getValueAt(j, 4).toString()));
+                pro.setFechaFinal(todoFechaAMPM.parse(m.getValueAt(j, 5).toString()));
                 pro.setComentario(txtComentario.getText());
                 proE.add(pro);
             } catch (ParseException ex) {

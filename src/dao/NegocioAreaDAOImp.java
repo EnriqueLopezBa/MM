@@ -89,8 +89,11 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
     }
 
     @Override
-    public ArrayList<NegocioArea> obtenerListaByIdCiudad(int idCiudad) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIOAREA WHERE IDCIUDAD =" + idCiudad)) {
+    public ArrayList<NegocioArea> obtenerListaByIdCiudadAndTipoProveedor(int idCiudad, int idTipoProveedor) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIOAREA N\n"
+                + "  JOIN negocio NE ON\n"
+                + "  N.idNegocio = NE.idNegocio\n"
+                + "  WHERE IDCIUDAD = "+idCiudad+" AND  NE.idTipoProveedor = "+idTipoProveedor)) {
             ArrayList<NegocioArea> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new NegocioArea(rs.getInt(1), rs.getInt(2)));
@@ -145,8 +148,9 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
     }
 
     @Override
-    public Mensaje actualizarLote(ArrayList<NegocioArea> lote, int idProveedor) {
+    public Mensaje actualizarLote(ArrayList<NegocioArea> lote) {
         String ar = "";
+        int idNegocio = 0;
         for (NegocioArea et : lote) {
             NegocioArea temp = obtenerByIdCiudadAndIdNegocio(et.getIdCiudad(), et.getIdNegocio());
             ar += et.getIdCiudad() + ",";
@@ -154,13 +158,14 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
                 System.out.println("registrar");
                 registrar(et);
             }
+            idNegocio = et.getIdNegocio();
         }
         if (!ar.isEmpty()) {
             ar = ar.substring(0, ar.length() - 1);
         } else {
             ar = "0";
         }
-        try (PreparedStatement ps = cn.prepareStatement(" DELETE FROM NEGOCIOAREA WHERE idProveedor = " + idProveedor
+        try (PreparedStatement ps = cn.prepareStatement(" DELETE FROM NEGOCIOAREA WHERE idNegocio = " + idNegocio
                 + "AND idCiudad NOT IN(" + ar + ")")) {
             ps.execute();
         } catch (SQLException e) {
@@ -179,6 +184,33 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
             }
         } catch (SQLException e) {
             System.err.println("Error obtenerByIdCiudadAndIdProveedor ProveedoorArea, " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public NegocioArea obtenerNegocioByNombre(String nombre) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta(" select n.* from negocioArea n\n"
+                + "  join ciudad c on\n"
+                + "  n.idCiudad = c.idCiudad\n"
+                + "  where ciudad = '" + nombre + "'")) {
+            if (rs.next()) {
+                return new NegocioArea(rs.getInt(1), rs.getInt(2));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerNegocioByNombre NegocioArea, " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public NegocioArea obtenerNegocioByLast() {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT TOP 1* FROM NEGOCIOAREA ORDER BY IDNEGOCIO DESC")) {
+            if (rs.next()) {
+                return new NegocioArea(rs.getInt(1), rs.getInt(2));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerNegocioByLast NegocioArea," + e.getMessage());
         }
         return null;
     }

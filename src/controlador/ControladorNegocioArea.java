@@ -17,16 +17,17 @@ import modelo.NegocioArea;
 public class ControladorNegocioArea {
 
     private static ControladorNegocioArea instancia;
+
     private ControladorNegocioArea() {
     }
-    public static ControladorNegocioArea getInstancia(){
+
+    public static ControladorNegocioArea getInstancia() {
         if (instancia == null) {
             instancia = new ControladorNegocioArea();
         }
         return instancia;
     }
 
-    
     public Mensaje eliminar(NegocioArea t) {
         return NegocioAreaDAOImp.getInstancia().eliminar(t);
     }
@@ -43,12 +44,12 @@ public class ControladorNegocioArea {
         return NegocioAreaDAOImp.getInstancia().registrarLote(t);
     }
 
-    public Mensaje actualizarLote(ArrayList<NegocioArea> t, int idProveedor) {
-        return NegocioAreaDAOImp.getInstancia().actualizarLote(t, idProveedor);
+    public Mensaje actualizarLote(ArrayList<NegocioArea> t) {
+        return NegocioAreaDAOImp.getInstancia().actualizarLote(t);
     }
 
-    public ArrayList<NegocioArea> obtenerListaByIdCiudad(int idCiudad) {
-        return NegocioAreaDAOImp.getInstancia().obtenerListaByIdCiudad(idCiudad);
+    public ArrayList<NegocioArea> obtenerListaByIdCiudadAndTipoProveedor(int idCiudad, int idTipoProveedor) {
+        return NegocioAreaDAOImp.getInstancia().obtenerListaByIdCiudadAndTipoProveedor(idCiudad, idTipoProveedor);
     }
 
     public ArrayList<NegocioArea> obtenerListaByIdNegocio(int idProveedor) {
@@ -57,5 +58,13 @@ public class ControladorNegocioArea {
 
     public NegocioArea obtenerByIdCiudadAndIdNegocioArea(int idCiudad, int idProveedor) {
         return NegocioAreaDAOImp.getInstancia().obtenerByIdCiudadAndIdNegocio(idCiudad, idProveedor);
+    }
+
+    public NegocioArea obtenerNegocioByNombre(String nombre) {
+        return NegocioAreaDAOImp.getInstancia().obtenerNegocioByNombre(nombre);
+    }
+
+    public NegocioArea obtenerNegocioByLast() {
+        return NegocioAreaDAOImp.getInstancia().obtenerNegocioByLast();
     }
 }

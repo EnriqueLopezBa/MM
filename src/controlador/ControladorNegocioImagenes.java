@@ -22,8 +22,8 @@ public class ControladorNegocioImagenes {
     }
 
     
-    public ArrayList<NegocioImagenes> obtenerListabyIdProveedor(int idProveedor) {
-        return NegocioImagenesDAOImp.getInstancia().obtenerListabyIdProveedor(idProveedor);
+    public ArrayList<NegocioImagenes> obtenerListabyIdNegocio(int idProveedor) {
+        return NegocioImagenesDAOImp.getInstancia().obtenerListabyIdNegocio(idProveedor);
     }
 
     public NegocioImagenes obtenerByID2(String id2) {

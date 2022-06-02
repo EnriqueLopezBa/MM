@@ -51,22 +51,23 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
                 return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
             }
         } catch (SQLException e) {
-            System.err.println("Error registrar proveedorImagenes, " + e.getMessage());
+            System.err.println("Error registrar NegocioImagenes, " + e.getMessage());
         }
         return new Mensaje(Message.Tipo.ERROR, "Error");
     }
 
     @Override
     public Mensaje actualizar(NegocioImagenes t) {
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE negocioIMAGENES SET IMAGEN = ?, DESCRIPCION = ?, PREDETERMINADA = ? WHERE ID2 = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE negocioIMAGENES SET IMAGEN = ?, DESCRIPCION = ?, PREDETERMINADA = ?, ID2 = ? WHERE ID2 = ?")) {
             String id2 = UUID.nameUUIDFromBytes(t.getImagen()).toString().toUpperCase();
-            t.setId2(id2);
+//            t.setId2(id2);
             //A traves de un dispaarador se quitan la predeterminada anterior     
             ByteArrayInputStream forindex = new ByteArrayInputStream(t.getImagen());
             ps.setBinaryStream(1, forindex, t.getImagen().length);
             ps.setString(2, t.getDescripcion());
             ps.setBoolean(3, t.isPredeterminada());
             ps.setString(4, id2);
+            ps.setString(5, t.getId2());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
         } catch (SQLException e) {
             System.err.println("Error actualizar proveedorImagenes, " + e.getMessage());
@@ -87,7 +88,7 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
 
     @Override
     public String yaExiste(NegocioImagenes t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocioRIMAGENES WHERE"
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocioIMAGENES WHERE"
                 + " idNegocio = " + t.getIdNegocio() + "  and ID2 = '" + t.getId2() + "'")) {
             if (rs.next()) {
                 return "Esta imagen ya existe";
@@ -114,8 +115,8 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
     }
 
     @Override
-    public ArrayList<NegocioImagenes> obtenerListabyIdProveedor(int idProveedor) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocioIMAGENES WHERE IDNegocio = " + idProveedor)) {
+    public ArrayList<NegocioImagenes> obtenerListabyIdNegocio(int idNegocio) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocioIMAGENES WHERE IDNegocio = " + idNegocio)) {
             ArrayList<NegocioImagenes> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new NegocioImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), rs.getBoolean(5)));
@@ -134,7 +135,7 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
                 + "N.idNegocio = NE.idNegocio\n"
                 + "JOIN negocioArea P ON\n"
                 + "P.idNegocio = NE.idNegocio\n"
-                + "WHERE P.idCiudad = ? AND  NE.idTipoProveedor = ?;")) {
+                + "WHERE P.idCiudad = ? AND  NE.idTipoProveedor = ? AND PREDETERMINADA = 1;")) {
             ps.setInt(1, idCiudad);
             ps.setInt(2, idTipoProveedor);
             ResultSet rs = ps.executeQuery();
@@ -151,7 +152,7 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
 
     @Override
     public NegocioImagenes obtenerByID2(String id2) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDORIMAGENES WHERE ID2 = '" + id2 + "'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocioIMAGENES WHERE ID2 = '" + id2 + "'")) {
             if (rs.next()) {
                 return new NegocioImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), rs.getBoolean(5));
             }

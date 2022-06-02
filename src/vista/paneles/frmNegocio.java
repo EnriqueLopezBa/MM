@@ -8,7 +8,9 @@ import Componentes.TextField;
 import controlador.ControladorProveedor;
 import controlador.ControladorTipoProveedor;
 import independientes.MyObjectListCellRenderer;
+import modelo.Etiqueta;
 import modelo.Negocio;
+import modelo.NegocioArea;
 import modelo.Proveedor;
 import modelo.TipoProveedor;
 import net.miginfocom.swing.*;
@@ -18,6 +20,7 @@ public class frmNegocio extends JPanel {
     public TipoProveedor tipoProveedorActual = null;
     public Negocio negocioActual = null;
     public Proveedor proveedorActual = null;
+    public frmEtiquetas frm;
     public frmNegocio() {
         initComponents();
 
@@ -26,8 +29,12 @@ public class frmNegocio extends JPanel {
     public void init() {
         cargarProveedores();
         cargarTipoProveedor();
+        cargarEtiquetas();
     }
     
+   public void cargarEtiquetas() {
+        pnlListEtiquetas.init(new NegocioArea());
+    }
 
     private void cargarProveedores(){
         cmbProveedor.removeAllItems();
@@ -100,7 +107,7 @@ public class frmNegocio extends JPanel {
         txtDescripcion = new JTextPane();
         btnGaleria = new Button();
         lblProveedor = new JLabel();
-        fProveedorArea = new frmEtiquetas();
+        pnlListEtiquetas = new frmEtiquetas();
 
         //======== this ========
         setBackground(Color.white);
@@ -116,7 +123,7 @@ public class frmNegocio extends JPanel {
             "[grow,fill]" +
             "[]" +
             "[fill]" +
-            "[fill]"));
+            "[grow,fill]"));
 
         //---- cmbProveedor ----
         cmbProveedor.addItemListener(e -> cmbProveedorItemStateChanged(e));
@@ -172,7 +179,7 @@ public class frmNegocio extends JPanel {
         //---- lblProveedor ----
         lblProveedor.setText("Telefono Proveedor:");
         add(lblProveedor, "cell 0 4");
-        add(fProveedorArea, "cell 0 5, spanx");
+        add(pnlListEtiquetas, "cell 0 5, spanx, grow");
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -186,7 +193,7 @@ public class frmNegocio extends JPanel {
     public JTextPane txtDescripcion;
     public Button btnGaleria;
     private JLabel lblProveedor;
-    private frmEtiquetas fProveedorArea;
+    public frmEtiquetas pnlListEtiquetas;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
 }

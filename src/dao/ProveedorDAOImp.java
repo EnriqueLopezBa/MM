@@ -73,16 +73,15 @@ public class ProveedorDAOImp implements IProveedorDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR VALUES (?,?,?,?,?)")) {
-            ps.setInt(1, t.getIdProveedor());
-            ps.setString(2, t.getNombre());
-            ps.setString(3, t.getTelefono());
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR VALUES (?,?,?,?)")) {
+            ps.setString(1, t.getNombre());
+            ps.setString(2, t.getTelefono());
             if (t.getTelefono2().isEmpty()) {
-                ps.setNull(4, Types.NULL);
+                ps.setNull(3, Types.NULL);
             } else {
-                ps.setString(4, t.getTelefono2());
+                ps.setString(3, t.getTelefono2());
             }
-            ps.setBoolean(5, t.isDisponible());
+            ps.setBoolean(4, t.isDisponible());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
         } catch (SQLException e) {
             System.err.println("Error registrar Proveedor, " + e.getMessage());
@@ -154,7 +153,5 @@ public class ProveedorDAOImp implements IProveedorDAO {
         }
         return null;
     }
-
-
 
 }

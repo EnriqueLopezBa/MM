@@ -56,9 +56,9 @@ public class DialogNegocioImagenes extends JDialog {
         final Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         super.setMinimumSize(new Dimension(screensize.getSize().width / 2, new Double(screensize.getSize().height / 1.2).intValue()));
         super.setLocationRelativeTo(null);
-        p.init(new String[]{"idNegocio", "id2", "Descripcion"}, 0, true);
-        llenarTabla(negocio.getIdProveedor());
-        
+        p.init(new String[]{"idNegocio", "id2", "Descripcion"}, 2, true);
+        llenarTabla(negocio.getIdNegocio());
+
         i.init(ScrollBar.HORIZONTAL);
         i.negocioImagenes(negocio);
 
@@ -68,14 +68,16 @@ public class DialogNegocioImagenes extends JDialog {
                 try {
                     validaDatos();
                     NegocioImagenes temp = new NegocioImagenes();
-                    temp.setIdNegocio(negocio.getIdProveedor());
+                    temp.setIdNegocio(negocio.getIdNegocio());
                     temp.setImagen(getImagen());
                     temp.setDescripcion(txtDescripcion.getText());
                     temp.setPredeterminada(cbPredeterminada.isSelected());
                     Mensaje m = ControladorNegocioImagenes.getInstancia().registrar(temp);
+                    if (m.getTipoMensaje() == Tipo.OK) {
+                        llenarTabla(negocio.getIdNegocio());
+                        i.negocioImagenes(negocio);
+                    }
                     Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-                    llenarTabla(negocio.getIdProveedor());
-                    i.negocioImagenes(negocio);
                 } catch (MMException ee) {
                     Constante.mensaje(ee.getMessage(), Tipo.ADVERTENCIA);
                 }
@@ -90,14 +92,14 @@ public class DialogNegocioImagenes extends JDialog {
                     if (x != -1) {
                         validaDatos();
                         NegocioImagenes temp = new NegocioImagenes();
-                        temp.setIdNegocio((int)p.tblModel.getValueAt(x, 0));
+                        temp.setIdNegocio((int) p.tblModel.getValueAt(x, 0));
                         temp.setId2(p.tblModel.getValueAt(x, 1).toString());
                         temp.setImagen(getImagen());
                         temp.setDescripcion(txtDescripcion.getText());
                         temp.setPredeterminada(cbPredeterminada.isSelected());
                         Mensaje m = ControladorNegocioImagenes.getInstancia().actualizar(temp);
                         if (m.getTipoMensaje() == Tipo.OK) {
-                            llenarTabla(negocio.getIdProveedor());
+                            llenarTabla(negocio.getIdNegocio());
                             i.negocioImagenes(negocio);
                         }
                         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
@@ -129,7 +131,7 @@ public class DialogNegocioImagenes extends JDialog {
 
     private void llenarTabla(int id) {
         p.tblModel.setRowCount(0);
-        for (NegocioImagenes lu : ControladorNegocioImagenes.getInstancia().obtenerListabyIdProveedor(id)) {
+        for (NegocioImagenes lu : ControladorNegocioImagenes.getInstancia().obtenerListabyIdNegocio(id)) {
             p.tblModel.addRow(new Object[]{lu.getIdNegocio(), lu.getId2(), lu.getDescripcion()});
         }
     }

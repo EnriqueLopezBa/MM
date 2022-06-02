@@ -54,4 +54,12 @@ public class ControladorNegocio {
     public Mensaje registrar(Negocio t) {
         return NegocioDAOImp.getInstancia().registrar(t);
     }
+
+    public Negocio obtenerNegocioByLast() {
+        return NegocioDAOImp.getInstancia().obtenerNegocioByLast();
+    }
+
+    public ArrayList<Negocio> obtenerListaByCadena(String cadena) {
+        return NegocioDAOImp.getInstancia().obtenerListaByCadena(cadena);
+    }
 }

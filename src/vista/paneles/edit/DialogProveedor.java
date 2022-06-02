@@ -77,6 +77,11 @@ public class DialogProveedor extends JDialog {
                     } else {
                         frmNeg.txtDescripcion.setText(ne.getDescripcion());
                     }
+                    frmNeg.pnlListEtiquetas.listModel.clear();
+                    for (NegocioArea area : ControladorNegocioArea.getInstancia().obtenerListaByIdNegocio((int) p.tblModel.getValueAt(x, 0))) {
+                        Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(area.getIdCiudad());
+                        frmNeg.pnlListEtiquetas.listModel.addElement(ciudad.getCiudad());
+                    }
 
                 }
 
@@ -117,6 +122,21 @@ public class DialogProveedor extends JDialog {
                             llenarTabla();
                         }
                         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+
+                        Negocio neg = ControladorNegocio.getInstancia().obtenerNegocioByLast();
+                        ArrayList<NegocioArea> area = new ArrayList<>();
+
+                        for (Object ob : frmNeg.pnlListEtiquetas.listModel.toArray()) {
+                            Ciudad ciudad = ControladorCiudad.getInstancia().obtenerByNombre((String) ob);
+                            if (ciudad == null) {
+                                continue;
+                            }
+                       
+                            System.out.println(ciudad.getCiudad());
+                            area.add(new NegocioArea(neg.getIdNegocio(), ciudad.getIdCiudad()));
+                        }
+                        ControladorNegocioArea.getInstancia().registrarLote(area);
+
                     } catch (MMException ex) {
                         Constante.mensaje(ex.getMessage(), Tipo.ADVERTENCIA);
                     }
@@ -167,6 +187,17 @@ public class DialogProveedor extends JDialog {
                             llenarTabla();
                         }
                         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+
+                        ArrayList<NegocioArea> area = new ArrayList<>();
+
+                        for (Object ob : frmNeg.pnlListEtiquetas.listModel.toArray()) {
+                            Ciudad ciudad = ControladorCiudad.getInstancia().obtenerByNombre((String) ob);
+                            if (ciudad == null) {
+                                continue;
+                            }
+                            area.add(new NegocioArea(negocio.getIdNegocio(), ciudad.getIdCiudad()));
+                        }
+                        ControladorNegocioArea.getInstancia().actualizarLote(area);
                     } catch (MMException ex) {
                         Constante.mensaje(ex.getMessage(), Tipo.ADVERTENCIA);
                     }
@@ -208,19 +239,6 @@ public class DialogProveedor extends JDialog {
             }
         });
 
-//                            ArrayList<ProveedorArea> lote = new ArrayList<>();
-//                    Ciudad ciudad = null;
-//                    for (Object objeto : fProveedorArea.listModel.toArray()) {
-//                        ciudad = ControladorCiudad.getInstancia().obtenerByNombre((String) objeto);
-//                        if (ciudad != null) {
-//                            lote.add(new ProveedorArea(proveedor.getIdProveedor(), ciudad.getIdCiudad()));
-//                        }
-//                    }
-//
-//                    Mensaje mm = ControladorProveedorArea.getInstancia().actualizarLote(lote, proveedor.getIdProveedor());
-//        fProveedorArea.init(new ProveedorArea());
-//        llenarTabla();
-//
         p.txtBusqueda.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -280,26 +298,20 @@ public class DialogProveedor extends JDialog {
 
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
+   
         if (rbAgregarProveedor.isSelected()) {
             for (Proveedor pro : ControladorProveedor.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
                 p.tblModel.addRow(new Object[]{pro.getIdProveedor(), pro.getNombre(), pro.getTelefono(), pro.getTelefono2(), (pro.isDisponible()) ? "Si" : "No"});
             }
         } else {
-            for (Negocio neg : ControladorNegocio.getInstancia().obtenerLista()) {
+            for (Negocio neg : ControladorNegocio.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
                 p.tblModel.addRow(new Object[]{neg.getIdNegocio(), neg.getIdProveedor(), neg.getIdTipoProveedor(), neg.getNombreNegocio(), neg.getPrecioAprox(), (neg.isDisponible()) ? "Si" : "No"});
             }
         }
 
     }
 
-    private void llenarAreaDeProveedor(int idProveedor) {
-//        fProveedorArea.listModel.clear();
-//     
-//        for (ProveedorArea prov : ControladorProveedorArea.getInstancia().obtenerListaByIdProveedor(idProveedor)) {
-//            fProveedorArea.listModel.addElement(ControladorCiudad.getInstancia().obtenerById(prov.getIdCiudad()).getCiudad());
-//        }
 
-    }
 
     private void rbAgregarProveedor(ActionEvent e) {
         for (Component c : panel1.getComponents()) {
@@ -346,16 +358,14 @@ public class DialogProveedor extends JDialog {
         });
         mig.setRowConstraints("[40%,fill][][grow,fill]");
         frmNeg.init();
-        p.init(new String[]{"idNegocio", "idProveedor", "idTipoProveedor", "Nombre Negocio", "Precio Aprox", "Disponible"}, 0, true);
+        p.init(new String[]{"idNegocio", "idProveedor", "idTipoProveedor", "Nombre Negocio", "Precio Aprox", "Disponible"}, 3, true);
         llenarTabla();
         panel1.add(frmNeg, "cell 0 2");
         panel1.revalidate();
         panel1.repaint();
     }
 
-    private void rbAgregarProveedorStateChanged(ChangeEvent e) {
-        // TODO add your code here
-    }
+  
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents

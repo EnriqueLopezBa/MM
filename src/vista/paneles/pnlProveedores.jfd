@@ -36,9 +36,9 @@ new FormModel {
 					name: "tblProveedor"
 					"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector, new java.util.Vector {
 						add( "idTipoProveedor" )
-						add( "idProveedor" )
+						add( "idNegocio" )
 						add( "Tipo" )
-						add( "Proveedor" )
+						add( "Negocio" )
 						add( "Inicio" )
 						add( "Fin" )
 						add( "Precio Calculado" )

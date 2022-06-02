@@ -5,7 +5,7 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$columnConstraints": "rel[grow 40,shrink 0,sizegroup 1,fill]unrel[grow 30,shrink 0,sizegroup 1,fill]unrel[grow 30,shrink 0,sizegroup 1,fill]10"
-			"$rowConstraints": "[fill]para[][grow,fill][][fill][fill]"
+			"$rowConstraints": "[fill]para[][grow,fill][][fill][grow,fill]"
 			"$layoutConstraints": "fill"
 		} ) {
 			name: "this"
@@ -88,9 +88,12 @@ new FormModel {
 				"value": "cell 0 4"
 			} )
 			add( new FormComponent( "vista.paneles.frmEtiquetas" ) {
-				name: "fProveedorArea"
+				name: "pnlListEtiquetas"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 5, spanx"
+				"value": "cell 0 5, spanx, grow"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )

@@ -1,7 +1,6 @@
 package vista.paneles.edit;
 
 import java.awt.event.*;
-import Componentes.TextField;
 import Componentes.Sweet_Alert.Message.Tipo;
 import controlador.ControladorCiudad;
 import controlador.ControladorCliente;
@@ -20,7 +19,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,8 +61,8 @@ public class DialogEvento extends JDialog {
         });
         p.tblBuscar.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e); //To change body of generated methods, choose Tools | Templates.
                 if (!Constante.filaSeleccionada(p.tblBuscar)) {
                     return;
                 }
@@ -110,49 +108,6 @@ public class DialogEvento extends JDialog {
 
         });
         p.btnModificar.setVisible(false);
-//        p.btnModificar.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                if (!Constante.filaSeleccionada(p.tblBuscar)) {
-//                    return;
-//                }
-//                int x = p.tblBuscar.getSelectedRow();
-//                Evento evento = new Evento();
-//                evento.setIdEvento((int) p.tblModel.getValueAt(x, 0));
-//                evento.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
-//                evento.setIdTipoEvento(pun.tipoEventoActual.getIdTipoEvento());
-//                if (pun.lugarActual == null) {
-//                    Lugar lugar = new Lugar();
-//                    lugar.setIdCiudad(pun.ciudadActual.getIdCiudad());
-//                    lugar.setNombreLocal(pun.cmbLugar.getEditor().getItem().toString());
-//                    ControladorLugar.getInstancia().registrar(lugar);
-//                    evento.setIdLugar(ControladorLugar.getInstancia().obtenerLugarByLast().getIdLugar());
-//                } else {
-//                    evento.setIdLugar(pun.lugarActual.getIdLugar());
-//                }
-//
-//                evento.setFechaInicio(pun.obtenerFecha(pun.txtFechaInicio, pun.txtHorarioInicio));
-//                evento.setFechaFinal(pun.obtenerFecha(pun.txtFechaFinal, pun.txtHorarioFinal));
-//                if (evento.getFechaInicio().after(evento.getFechaFinal()) || evento.getFechaInicio().equals(evento.getFechaFinal())) {
-//                    Constante.mensaje("Fecha final incorrecta", Tipo.ADVERTENCIA);
-//                    return;
-//                }
-//                evento.setNoInvitados(Integer.parseInt(pun.txtCantInvitados.getText()));
-//                evento.setPresupuesto(Integer.parseInt(pun.txtPresupuesto.getText()));
-//                evento.setEstilo(pun.txtEstilo.getText());
-//                evento.setNombreEvento(pun.txtNombreEvento.getText());
-//                if (!txtPrecioTotal.getText().isEmpty()) {
-//                    evento.setPrecioFinal(Integer.parseInt(txtPrecioTotal.getText()));
-//                }
-//                Mensaje m = ControladorEvento.getInstancia().actualizar(evento);
-//                if (m.getTipoMensaje() == Tipo.OK) {
-//                    llenarTabla();
-//                }
-//                Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-//
-//            }
-//        });
-
         p.btnEliminar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -180,7 +135,7 @@ public class DialogEvento extends JDialog {
         p.tblModel.setRowCount(0);
         for (Evento e : ControladorEvento.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdEvento(), e.getIdCliente(), e.getIdTipoEvento(),
-                e.getIdLugar(), localDateFormat.format(e.getFechaInicio()), localDateFormat.format(e.getFechaFinal()), e.getNombreEvento(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo(), e.getPrecioFinal()});
+                e.getIdLugar(), localDateFormat.format(e.getFechaInicio()), localDateFormat.format(e.getFechaFinal()), e.getNombreEvento(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo()});
         }
     }
 
@@ -188,29 +143,15 @@ public class DialogEvento extends JDialog {
 
     }
 
-    private void txtPrecioTotalKeyReleased(KeyEvent e) {
-
-    }
-
-    private void txtPrecioTotalKeyPressed(KeyEvent e) {
-
-    }
-
-    private void txtPrecioTotalKeyTyped(KeyEvent e) {
-        if (!Character.isDigit(e.getKeyChar())) {
-            e.consume();
-        }
-    }
-
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         p = new pnlCRUD();
         lblCliente = new JLabel();
-        txtPrecioTotal = new TextField();
 
         //======== this ========
         setBackground(Color.white);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Edicion de Eventos");
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -225,32 +166,12 @@ public class DialogEvento extends JDialog {
             // rows
             "[]" +
             "[]" +
-            "[]" +
             "[]"));
         contentPane.add(p, "cell 0 0");
 
         //---- lblCliente ----
         lblCliente.setText("Cliente:");
         contentPane.add(lblCliente, "cell 0 1");
-
-        //---- txtPrecioTotal ----
-        txtPrecioTotal.setLabelText("Precio Total");
-        txtPrecioTotal.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        txtPrecioTotal.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                txtPrecioTotalKeyPressed(e);
-            }
-            @Override
-            public void keyReleased(KeyEvent e) {
-                txtPrecioTotalKeyReleased(e);
-            }
-            @Override
-            public void keyTyped(KeyEvent e) {
-                txtPrecioTotalKeyTyped(e);
-            }
-        });
-        contentPane.add(txtPrecioTotal, "cell 0 2");
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -259,6 +180,5 @@ public class DialogEvento extends JDialog {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private pnlCRUD p;
     public JLabel lblCliente;
-    private TextField txtPrecioTotal;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

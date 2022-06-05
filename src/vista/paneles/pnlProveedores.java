@@ -85,12 +85,12 @@ public class pnlProveedores extends JPanel {
                 restar(null);
             }
         });
-        timePicker1.addEventTimePicker(new EventTimePicker() {
-            @Override
-            public void timeSelected(String string) {
-                restar(null);
-            }
-        });
+//        timePicker1.addEventTimePicker(new EventTimePicker() {
+//            @Override
+//            public void timeSelected(String string) {
+//                restar(null);
+//            }
+//        });
 
     }
 
@@ -103,8 +103,8 @@ public class pnlProveedores extends JPanel {
             }
         });
 
-//        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
-//        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
+        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
+        tblProveedor.removeColumn(tblProveedor.getColumnModel().getColumn(0));
     }
 
     public void recargar() {
@@ -139,7 +139,7 @@ public class pnlProveedores extends JPanel {
         cmbTipoProveedor.setRenderer(new MyObjectListCellRenderer());
     }
 
-    private void cargarNegocios() {
+    public void cargarNegocios() {
         if (tipoProveedorActual == null) {
             return;
         }
@@ -166,17 +166,18 @@ public class pnlProveedores extends JPanel {
 
     }
 
-    private int restar(ProveedorEvento provEve) {
-        if (provEve != null) {
+    private int restar(Negocio negocio) {
+        if (negocio != null) {
+            ProveedorEvento provEve = ControladorProveedorEvento.getInstancia().obtenerByIdEventoAndIdNegocio(eventoActual.getIdEvento(), negocio.getIdNegocio());
             DateTimeFormatter formateador = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm");
             LocalDateTime fechaYHoraLocal1 = LocalDateTime.parse(provEve.getFechaInicio().toString().substring(0, provEve.getFechaInicio().toString().length() - 5), formateador);
             LocalDateTime fechaYHoraLocal2 = LocalDateTime.parse(provEve.getFechaFinal().toString().substring(0, provEve.getFechaFinal().toString().length() - 5), formateador);
             long minutos = ChronoUnit.MINUTES.between(fechaYHoraLocal1, fechaYHoraLocal2);
-            Proveedor pro = ControladorProveedor.getInstancia().obtenerByID(provEve.getIdProveedor());
-            Negocio negocio = ControladorNegocio.getInstancia().obtenerByID(pro.getIdProveedor());
-            int precio = new Double(((double) negocio.getPrecioAprox() / 60) * minutos).intValue();
-            return precio;
+
+            return new Double(((double) negocio.getPrecioAprox() / 60) * minutos).intValue();
+
         }
+
         if (eventoActual == null || negocioActual == null) {
             return -1;
         }
@@ -224,6 +225,7 @@ public class pnlProveedores extends JPanel {
             return;
         }
         eventoActual = (Evento) cmbNombreEvento.getSelectedItem();
+        cargarNegocioEvento();
         Lugar lugar = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar());
         Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lugar.getIdCiudad());
         Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdEstado());
@@ -250,20 +252,21 @@ public class pnlProveedores extends JPanel {
 
     }
 
-    private void cargarProveedorEvento() { //Cargar tabla
-//        ArrayList<ProveedorEvento> proveedores = ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento());
-//        if (eventoActual == null || proveedores == null) {
-//            return;
-//        }
-//        m.setRowCount(0);
-//        for (ProveedorEvento pro : proveedores) {
-//            Negocio negocio = ControladorNegocio.getInstancia().obtenerByID(pro.getIdNegocio());
-//            TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID(negocio.getIdTipoProveedor());
-//            String timeInicio = todoFechaAMPM.format(pro.getFechaInicio());
-//            String timeFinal = todoFechaAMPM.format(pro.getFechaFinal());
-//            m.addRow(new Object[]{tipo.getIdTipoProveedor(), negocio.getIdProveedor(),
-//                tipo.getTipoProveedor(), negocio.getNombreNegocio(), timeInicio, timeFinal, restar(pro)});
-//        }
+    private void cargarNegocioEvento() { //Cargar tabla
+        ArrayList<ProveedorEvento> proveedores = ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento());
+        if (eventoActual == null || proveedores == null) {
+            return;
+        }
+        m.setRowCount(0);
+        for (ProveedorEvento pro : proveedores) {
+            Negocio negocio = ControladorNegocio.getInstancia().obtenerByID(pro.getIdNegocio());
+            TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID(negocio.getIdTipoProveedor());
+            String timeInicio = todoFechaAMPM.format(pro.getFechaInicio());
+            String timeFinal = todoFechaAMPM.format(pro.getFechaFinal());
+
+            m.addRow(new Object[]{tipo.getIdTipoProveedor(), negocio.getIdNegocio(),
+                tipo.getTipoProveedor(), negocio.getNombreNegocio(), timeInicio, timeFinal, restar(negocio)});
+        }
     }
 
     private void cmbNegocioItemStateChanged(ItemEvent e) {
@@ -392,7 +395,7 @@ public class pnlProveedores extends JPanel {
                     m = ControladorProveedorEvento.getInstancia().eliminar(pro);
                 }
                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-                cargarProveedorEvento();
+
                 return;
             } else {
                 return;
@@ -410,7 +413,7 @@ public class pnlProveedores extends JPanel {
                     negocio.setNombreNegocio(m.getValueAt(j, 3).toString());
                     ControladorNegocio.getInstancia().registrar(negocio);
                     m.setValueAt(ControladorNegocio.getInstancia().obtenerNegocioByLast().getIdNegocio(), j, 1);
-                }
+                }// Fin agregar nuevo negocio
                 Negocio negocio = ControladorNegocio.getInstancia().obtenerByID((int) m.getValueAt(j, 1));
                 Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID(negocio.getIdProveedor());
                 ProveedorEvento pro = new ProveedorEvento();
@@ -473,27 +476,30 @@ public class pnlProveedores extends JPanel {
     }
 
     private void tblProveedorMouseClicked(MouseEvent e) {
-//        int x = tblProveedor.getSelectedRow();
-//        if (x == -1) {
-//            return;
-//        }
-//
-//        TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID((int) m.getValueAt(x, 0));
-//        Proveedor proveedor = ControladorProveedor.getInstancia().obtenerByID((int) m.getValueAt(x, 1));
-//        ProveedorEvento pro = ControladorProveedorEvento.getInstancia().obtenerByIdEventoAndIdProveedor(eventoActual.getIdEvento(), proveedor.getIdProveedor());
-//
-//        if (rbFechaFin.isVisible()) {
-//            rbFechaIni.setText(soloFecha.format(pro.getFechaInicio()));
-//            rbFechaFin.setText(soloFecha.format(pro.getFechaFinal()));
-//            rbFechaIni1.setText(soloFecha.format(pro.getFechaInicio()));
-//            rbFechaFin1.setText(soloFecha.format(pro.getFechaFinal()));
-//        } else {
-//            timePicker1.setSelectedTime(pro.getFechaInicio());
-//            timePicker2.setSelectedTime(pro.getFechaFinal());
-//        }
-//        cmbTipoProveedor.setSelectedItem(tipo.getTipoProveedor());
-//        cmbProveedor.setSelectedItem(proveedor.getNombreEmpresa());
-//        txtDescripcion.setText(proveedor.getDescripcion());
+        int x = tblProveedor.getSelectedRow();
+        if (x == -1) {
+            return;
+        }
+        
+        TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID((int) m.getValueAt(x, 0));
+        Negocio negocio = ControladorNegocio.getInstancia().obtenerByID((int) m.getValueAt(x, 1));
+        ProveedorEvento pro = ControladorProveedorEvento.getInstancia().obtenerByIdEventoAndIdNegocio(eventoActual.getIdEvento(), negocio.getIdNegocio());
+        cmbTipoProveedor.getModel().setSelectedItem(tipo);
+        cmbNegocio.getModel().setSelectedItem(negocio);
+        negocioActual = (Negocio) cmbNegocio.getModel().getSelectedItem();
+        txtComentario.setText(pro.getComentario());
+        if (rbFechaFin.isVisible()) {
+            rbFechaIni.setText(soloFecha.format(pro.getFechaInicio()));
+            rbFechaFin.setText(soloFecha.format(pro.getFechaFinal()));
+            rbFechaIni1.setText(soloFecha.format(pro.getFechaInicio()));
+            rbFechaFin1.setText(soloFecha.format(pro.getFechaFinal()));
+        } else {
+            timePicker1.setSelectedTime(pro.getFechaInicio());
+            timePicker1.setSelectedTime(pro.getFechaInicio());
+            timePicker2.setSelectedTime(pro.getFechaFinal());
+            timePicker2.setSelectedTime(pro.getFechaFinal());
+        }
+
     }
 
     private void initComponents() {
@@ -542,10 +548,10 @@ public class pnlProveedores extends JPanel {
         setLayout(new MigLayout(
             "fill",
             // columns
-            "[10%:10%,grow,fill]para" +
-            "[10%:12%,grow,fill]" +
-            "[20%:20%,grow,fill]" +
-            "[30%:30%,grow,fill]",
+            "[5%,grow,fill]para" +
+            "[15%,grow,fill]" +
+            "[40%,grow,fill]" +
+            "[40%,grow,fill]",
             // rows
             "[grow,fill]" +
             "[grow,fill]0" +

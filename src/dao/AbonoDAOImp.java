@@ -49,7 +49,7 @@ public class AbonoDAOImp implements IAbonoDAO {
 
     @Override
     public Mensaje registrar(Abono t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO ABONOS VALUES(?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO ABONOSCliente VALUES(?,?,?,?)")) {
             ps.setInt(1, t.getIdCliente());
             ps.setInt(2, t.getIdEvento());
             ps.setInt(3, t.getImporte());
@@ -73,7 +73,7 @@ public class AbonoDAOImp implements IAbonoDAO {
 
     @Override
     public Mensaje eliminar(Abono t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM ABONOS WHERE IDABONO = " + t.getIdAbono())) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM ABONOSCliente WHERE IDABONO = " + t.getIdAbono())) {
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -88,7 +88,7 @@ public class AbonoDAOImp implements IAbonoDAO {
 
     @Override
     public ArrayList<Abono> obtenerListaByIdEvento(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ABONOS WHERE IDEVENTO = " + idEvento + " ORDER BY FECHA")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ABONOSCliente WHERE IDEVENTO = " + idEvento + " ORDER BY FECHA")) {
             ArrayList<Abono> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new Abono(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getDate(5)));
@@ -102,17 +102,28 @@ public class AbonoDAOImp implements IAbonoDAO {
 
     @Override
     public int obtenerCantidadADeber(int idCliente, int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT (e.precioEvento - SUM(a.Importe)) FROM abonos a JOIN evento e ON a.idEvento = e.idEvento"
-                + " WHERE a.idCliente = " + idCliente + " AND a.idEvento = " + idEvento + " GROUP BY e.precioEvento")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT adeudo FROM VW_ADEUDOEVENTO WHERE IDCLIENTE = "+idCliente +" AND IDEVENTO = " + idEvento)) {
             if (rs.next()) {
                 return rs.getInt(1);
-            } else {
-                return ControladorEvento.getInstancia().obtenerByID(idEvento).getPrecioFinal();
             }
         } catch (SQLException e) {
             System.err.println("Error obtenerCantidadADeber AbonoCliente," + e.getMessage());
         }
         return -1;
+    }
+
+    @Override
+    public ArrayList<Integer> obtenerEventosConAdeudo(int idCliente) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM VW_ADEUDOEVENTO WHERE IDCLIENTE = "+idCliente+ " AND ADEUDO > 0")) {
+            ArrayList<Integer> idEventos = new ArrayList<>();
+            while (rs.next()) {
+                idEventos.add(rs.getInt(1));
+            }
+            return idEventos;
+        } catch (SQLException e) {
+            System.err.println("Error obtenerEventosConAdeudo AbonoCliente, " + e.getMessage());
+        }
+        return null;
     }
 
 }

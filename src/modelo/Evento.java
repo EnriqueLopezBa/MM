@@ -11,12 +11,11 @@ public class Evento {
     private Date fechaInicio, fechaFinal;
     private int noInvitados, presupuesto;
     private String estilo, nombreEvento;
-    private int precioFinal;
-    
+
     public Evento() {
     }
 
-    public Evento(int idEvento, int idCliente, int idTipoEvento, int idLugar, Date fechaInicio, Date fechaFinal, int noInvitados, int presupuesto, String estilo, String nombreEvento, int precioFinal) {
+    public Evento(int idEvento, int idCliente, int idTipoEvento, int idLugar, Date fechaInicio, Date fechaFinal, int noInvitados, int presupuesto, String estilo, String nombreEvento) {
         this.idEvento = idEvento;
         this.idCliente = idCliente;
         this.idTipoEvento = idTipoEvento;
@@ -27,7 +26,6 @@ public class Evento {
         this.presupuesto = presupuesto;
         this.estilo = estilo;
         this.nombreEvento = nombreEvento;
-        this.precioFinal = precioFinal;
     }
 
     public Date getFechaInicio() {
@@ -38,7 +36,6 @@ public class Evento {
         this.fechaInicio = fechaInicio;
     }
 
-
     public Date getFechaFinal() {
         return fechaFinal;
     }
@@ -47,9 +44,6 @@ public class Evento {
         this.fechaFinal = fechaFinal;
     }
 
-
-
-    
     public int getIdEvento() {
         return idEvento;
     }
@@ -82,7 +76,6 @@ public class Evento {
         this.idLugar = idLugar;
     }
 
-
     public int getNoInvitados() {
         return noInvitados;
     }
@@ -114,17 +107,5 @@ public class Evento {
     public void setNombreEvento(String nombreEvento) {
         this.nombreEvento = nombreEvento;
     }
-
-    public int getPrecioFinal() {
-        return precioFinal;
-    }
-
-    public void setPrecioFinal(int precioFinal) {
-        this.precioFinal = precioFinal;
-    }
-
- 
-    
-
 
 }

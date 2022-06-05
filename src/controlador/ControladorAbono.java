@@ -38,4 +38,8 @@ public class ControladorAbono {
     public Mensaje registrar(Abono t) {
         return AbonoDAOImp.getInstancia().registrar(t);
     }
+
+    public ArrayList<Integer> obtenerEventosConAdeudo(int idCliente) {
+        return AbonoDAOImp.getInstancia().obtenerEventosConAdeudo(idCliente);
+    }
 }

@@ -18,7 +18,7 @@ new FormModel {
 					"background": &Color0 new java.awt.Color( 255, 255, 255, 255 )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 						"$columnConstraints": "[fill]"
-						"$rowConstraints": "[][][]0[][][]"
+						"$rowConstraints": "[][][grow 0,center][]0[][][]"
 						"$layoutConstraints": "fill, insets 0"
 					} ) {
 						name: "panel3"
@@ -54,11 +54,20 @@ new FormModel {
 							"value": "cell 0 1, growy, hmax 10%"
 						} )
 						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "lbl"
+							"text": "<html><p style=\"text-align:center\"> (Primero selecciona la Cotizacion final)</p></html>"
+							"foreground": sfield java.awt.Color red
+							"horizontalAlignment": 0
+							"visible": false
+						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+							"value": "cell 0 2"
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
 							name: "label2"
 							"text": "Cantidad"
 							"font": new java.awt.Font( "Segoe UI", 1, 16 )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-							"value": "cell 0 2,aligny bottom,growy 0"
+							"value": "cell 0 3,aligny bottom,growy 0"
 						} )
 						add( new FormComponent( "javax.swing.JFormattedTextField" ) {
 							name: "txtImporte"
@@ -66,14 +75,14 @@ new FormModel {
 							"horizontalAlignment": 0
 							addEvent( new FormEvent( "java.awt.event.KeyListener", "keyReleased", "txtAbonoKeyReleased", true ) )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-							"value": "cell 0 3"
+							"value": "cell 0 4,alignx center,wmax 50%"
 						} )
 						add( new FormComponent( "javax.swing.JTextField" ) {
 							name: "txtFecha"
 							"horizontalAlignment": 0
 							"font": &Font2 new java.awt.Font( "Segoe UI", 1, 18 )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-							"value": "cell 0 4"
+							"value": "cell 0 5"
 						} )
 						add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
 							name: "btnRegistrar"
@@ -81,7 +90,7 @@ new FormModel {
 							"font": new java.awt.Font( "Segoe UI", 1, 16 )
 							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnRegistrar", true ) )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-							"value": "cell 0 5,grow"
+							"value": "cell 0 6,grow"
 						} )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 0, grow"

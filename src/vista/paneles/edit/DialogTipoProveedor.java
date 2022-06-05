@@ -19,7 +19,6 @@ import vista.paneles.*;
 
 public class DialogTipoProveedor extends JDialog {
 
-
     public DialogTipoProveedor(JFrame owner) {
         super(owner);
         initComponents();
@@ -51,7 +50,7 @@ public class DialogTipoProveedor extends JDialog {
 
         //ACTUALIZAR
         p.btnModificar.addActionListener((ActionEvent e) -> {
-           if (txtTipoProveedor.getText().isEmpty()) {
+            if (txtTipoProveedor.getText().isEmpty()) {
                 Constante.mensaje("Campo vacio", Message.Tipo.ADVERTENCIA);
                 txtTipoProveedor.requestFocus();
                 return;
@@ -76,7 +75,7 @@ public class DialogTipoProveedor extends JDialog {
                 return;
             }
             int x = p.tblBuscar.getSelectedRow();
-            if (JOptionPane.showConfirmDialog(null, "Seguro que desea eliminar "+ p.tblModel.getValueAt(x, 1).toString()+"?") != 0) {
+            if (JOptionPane.showConfirmDialog(null, "Seguro que desea eliminar " + p.tblModel.getValueAt(x, 1).toString() + "?") != 0) {
                 return;
             }
             TipoProveedor tipo = new TipoProveedor();
@@ -103,9 +102,9 @@ public class DialogTipoProveedor extends JDialog {
         p.txtBusqueda.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-           
+
                 llenarTabla();
-            }           
+            }
         });
 
     }
@@ -113,7 +112,11 @@ public class DialogTipoProveedor extends JDialog {
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
         for (TipoProveedor e : ControladorTipoProveedor.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
+            if (e.getTipoProveedor().equals("Local")) {
+                continue;
+            }
             p.tblModel.addRow(new Object[]{e.getIdTipoProveedor(), e.getTipoProveedor()});
+
         }
     }
 

@@ -41,6 +41,7 @@ public class pnlEventosDestacados extends JPanel {
             img.setBounds(0, 0, 300, 300);
             img.setIcon(new ImageIcon(new ImageIcon(e.getImagen()).getImage().getScaledInstance(img.getWidth() - 10, img.getHeight() - 10, Image.SCALE_DEFAULT)));
             i.init(ScrollBar.VERTICAL);
+            
         }
     }
 

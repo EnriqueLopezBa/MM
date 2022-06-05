@@ -18,6 +18,7 @@ import vista.paneles.pnlEventos;
 import vista.paneles.pnlEventosDestacados;
 import vista.paneles.pnlProveedores;
 import vista.paneles.pnlQuiz;
+
 public class Principal extends JFrame {
 
     private static Principal instancia;
@@ -43,6 +44,10 @@ public class Principal extends JFrame {
                 getClienteActivo();
             }
         }).start();
+        lblLogo.setMinimumSize(new Dimension(pnlBienvenida.getWidth(), pnlBienvenida.getHeight()/2));
+        Icon imgLogo = new ImageIcon(new ImageIcon(getClass().getResource("/img/logo.png")).getImage().getScaledInstance(lblLogo.getWidth(), lblLogo.getHeight(), Image.SCALE_SMOOTH));
+        lblLogo.setIcon(imgLogo);
+     
 
     }
 
@@ -110,9 +115,9 @@ public class Principal extends JFrame {
                 lblCliente.setText("Cliente (SOLO ADMIN): " + cliente.getNombre() + " " + cliente.getApellido() + " (" + cliente.getCorreo() + ") "
                         + " <<>> Cliente ACTIVO:" + cliente2.getNombre() + " " + cliente2.getApellido() + " (" + cliente2.getCorreo() + ")");
             } else if (Constante.getClienteTemporal() != null) {
-                lblCliente.setText("Cliente (SOLO ADMIN): " + cliente.getNombre() + " - " + cliente.getApellido() + " (" + cliente.getCorreo() + ")");
+                lblCliente.setText("Cliente (SOLO ADMIN): " + cliente.getNombre() + "  " + cliente.getApellido() + " (" + cliente.getCorreo() + ")");
             } else {
-                lblCliente.setText("Cliente ACTIVO: " + cliente.getNombre() + " - " + cliente.getApellido() + " (" + cliente.getCorreo() + ") ");
+                lblCliente.setText("Cliente ACTIVO: " + cliente.getNombre() + "  " + cliente.getApellido() + " (" + cliente.getCorreo() + ") ");
             }
             lblCliente.setEnabled(true);
             if (!admin) {
@@ -169,6 +174,7 @@ public class Principal extends JFrame {
 
     private void btnPago(ActionEvent e) {
         cambiarPanel(pnlAbono.getInstancia());
+        pnlAbono.getInstancia().cargarEventos();
     }
 
     private void pnlMenuMouseDragged(MouseEvent e) {
@@ -226,7 +232,6 @@ public class Principal extends JFrame {
 //            System.out.println("PDF creation completed");
 //        }
 //    }
-
     private void button1(ActionEvent e) {
 //        try {
 //            // HTML file - Input
@@ -323,6 +328,7 @@ public class Principal extends JFrame {
         separator1 = new JPopupMenu.Separator();
         pnlBienvenida = new JPanel();
         lblTitulo = new JLabel();
+        lblLogo = new JLabel();
         pnlOpcionesCliente = new JPanel();
         btnCliente = new Buttont();
         btnQuiz = new Buttont();
@@ -334,7 +340,6 @@ public class Principal extends JFrame {
         btnCotizacion = new Buttont();
         btnAgenda = new Buttont();
         btnUsuarios = new Buttont();
-        button1 = new JButton();
         pnlMenu = new JPanel();
         lblCliente = new JLabel();
         panel1 = new JPanel();
@@ -382,7 +387,12 @@ public class Principal extends JFrame {
                 lblTitulo.setPreferredSize(new Dimension(150, 170));
                 lblTitulo.setRequestFocusEnabled(false);
                 lblTitulo.setBackground(Color.pink);
-                pnlBienvenida.add(lblTitulo, BorderLayout.CENTER);
+                lblTitulo.setVerticalAlignment(SwingConstants.TOP);
+                pnlBienvenida.add(lblTitulo, BorderLayout.SOUTH);
+
+                //---- lblLogo ----
+                lblLogo.setPreferredSize(new Dimension(150, 0));
+                pnlBienvenida.add(lblLogo, BorderLayout.CENTER);
             }
             pnlOpciones.add(pnlBienvenida, "cell 0 0");
 
@@ -471,12 +481,6 @@ public class Principal extends JFrame {
                 btnUsuarios.setHoverColor(new Color(102, 153, 255));
                 btnUsuarios.addActionListener(e -> btnUsuarios(e));
                 pnlAdmin.add(btnUsuarios, "cell 0 3,grow");
-
-                //---- button1 ----
-                button1.setText("text");
-                button1.setHorizontalTextPosition(SwingConstants.CENTER);
-                button1.addActionListener(e -> button1(e));
-                pnlAdmin.add(button1, "cell 0 4");
             }
             pnlOpciones.add(pnlAdmin, "cell 0 3");
         }
@@ -503,6 +507,7 @@ public class Principal extends JFrame {
 
             //---- lblCliente ----
             lblCliente.setText("Cliente Activo: ");
+            lblCliente.setFont(new Font("Segoe UI", Font.BOLD, 14));
             lblCliente.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -598,6 +603,7 @@ public class Principal extends JFrame {
     private JPopupMenu.Separator separator1;
     private JPanel pnlBienvenida;
     protected JLabel lblTitulo;
+    private JLabel lblLogo;
     private JPanel pnlOpcionesCliente;
     public Buttont btnCliente;
     public Buttont btnQuiz;
@@ -609,7 +615,6 @@ public class Principal extends JFrame {
     private Buttont btnCotizacion;
     private Buttont btnAgenda;
     private Buttont btnUsuarios;
-    private JButton button1;
     public JPanel pnlMenu;
     public JLabel lblCliente;
     private JPanel panel1;

@@ -24,7 +24,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import com.jidesoft.swing.*;
 import com.raven.datechooser.*;
 import com.raven.swing.*;
 import controlador.ControladorCiudad;
@@ -50,7 +49,10 @@ import static java.awt.MouseInfo.getPointerInfo;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import modelo.Ciudad;
@@ -102,6 +104,7 @@ public class pnlEventos extends JPanel {
         lblEditciudad.setVisible(Constante.getAdmin());
         lblNombreEvento.setVisible(Constante.getAdmin());
 //        txtNombreEvento.setVisible(Constante.getAdmin());
+        setMinDate();
         init();
     }
 
@@ -119,6 +122,7 @@ public class pnlEventos extends JPanel {
         txtPresupuesto.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
         txtCantInvitados.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
         i.init(ScrollBar.VERTICAL);
+
     }
 
     public void cargarEventos() {
@@ -283,7 +287,42 @@ public class pnlEventos extends JPanel {
         });
     }
 
-    private void cmbLugar(ActionEvent e) {
+    private void setMinDate() {
+        String fechaString = fechaInicio.getSelectedDate().getYear() + "-" + fechaInicio.getSelectedDate().getMonth() + "-" + fechaInicio.getSelectedDate().getDay();
+        Date fechaa = null;
+        try {
+            fechaa = soloFecha.parse(fechaString);
+            LocalDate d11 = LocalDate.parse(soloFecha.format(fechaa), DateTimeFormatter.ISO_LOCAL_DATE);
+            LocalDate d1 = LocalDate.parse(soloFecha.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
+            d1 = d1.plusDays(7);
+
+            while (d11.isBefore(d1)) {
+                d11 = d11.plusDays(1);
+            }
+
+            Date date = Date.from(d11.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+            String dateFormat = soloFecha.format(date);
+            List<Date> diasNoDisponibles = new ArrayList<>();
+            for (Evento evento : ControladorEvento.getInstancia().obtenerEventoByAnio(fechaInicio.getSelectedDate().getYear())) {
+                String ff = soloFecha.format(evento.getFechaInicio());
+                diasNoDisponibles.add(soloFecha.parse(ff));
+            }
+            while (diasNoDisponibles.contains(soloFecha.parse(dateFormat))) {
+                for (Date dd : diasNoDisponibles) {
+                    if (soloFecha.format(dd).equals(dateFormat)) {
+                        d11 = d11.plusDays(1);
+                        date = Date.from(d11.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        dateFormat = soloFecha.format(date);
+                    }
+                }
+            }
+
+            pnlEventos.getInstancia().fechaInicio.setSelectedDate(new SelectedDate(d11.getDayOfMonth(), d11.getMonthValue(), d11.getYear()));
+            pnlEventos.getInstancia().fechaFinal.setSelectedDate(new SelectedDate(d11.getDayOfMonth(), d11.getMonthValue(), d11.getYear()));
+        } catch (ParseException ex) {
+            Logger.getLogger(Dates.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
@@ -387,9 +426,10 @@ public class pnlEventos extends JPanel {
 
         long dias = ChronoUnit.DAYS.between(fechaYHoraLocal2, fechaYHoraLocal1);
         if (dias < 7) {
-            System.out.println(dias);
             txtFechaInicio.requestFocus();
+            setMinDate();
             throw new MMException("Minimo 1 semana de anticipacion");
+
         }
 
         Date fechaInicioo = obtenerFecha(txtFechaInicio, txtHorarioInicio);
@@ -414,6 +454,11 @@ public class pnlEventos extends JPanel {
         return null;
     }
 
+//    private void setMinDate() {
+//        LocalDate d11 = LocalDate.parse(soloFecha.format(new Date()) + "", DateTimeFormatter.ISO_LOCAL_DATE);
+//        d11 = d11.plusDays(1);
+//        dateChooser.setSelectedDate(new SelectedDate(d11.getDayOfMonth(), d11.getMonthValue(), d11.getYear()));
+//    }
     private void lblEditEtiquetaMousePressed(MouseEvent e) {
         DialogEtiqueta temp = new DialogEtiqueta(Principal.getInstancia());
         temp.setVisible(true);

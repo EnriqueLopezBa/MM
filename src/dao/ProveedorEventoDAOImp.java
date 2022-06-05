@@ -98,12 +98,12 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
     @Override
     public String yaExiste(ProveedorEvento t) {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO =" + t.getIdEvento()
-                + " and idProveedor = " + t.getIdProveedor())) {
+                + " and idNegocio = " + t.getIdNegocio())) {
             if (rs.next()) {
-                return "Proveedor repetido";
+                return "Negocio repetido";
             }
         } catch (SQLException e) {
-            System.err.println("Error yaExiste ProveederEvennto, " + e.getMessage());
+            System.err.println("Error yaExiste ProveederEvento, " + e.getMessage());
         }
         return "";
     }
@@ -202,5 +202,19 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
         }
         return null;
     }
+
+    @Override
+    public ProveedorEvento obtenerByIdEventoAndIdNegocio(int idEvento, int idNegocio) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = " + idEvento
+                + " AND idNegocio = " + idNegocio)) {
+            if (rs.next()) {
+                return new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6));
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
 
 }

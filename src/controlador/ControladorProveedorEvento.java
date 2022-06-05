@@ -35,6 +35,10 @@ public class ControladorProveedorEvento {
         return ProveedorEventoDAOImp.getInstancia().eliminar(t);
     }
 
+    public ProveedorEvento obtenerByIdEventoAndIdNegocio(int idEvento, int idNegocio) {
+        return ProveedorEventoDAOImp.getInstancia().obtenerByIdEventoAndIdNegocio(idEvento, idNegocio);
+    }
+
     public ArrayList<ProveedorEvento> obtenerListaByIdProveedor(int idProveedor) {
         return ProveedorEventoDAOImp.getInstancia().obtenerListaByIdProveedor(idProveedor);
     }

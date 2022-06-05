@@ -7,9 +7,6 @@ import javax.swing.border.*;
 import Componentes.TextField;
 import Componentes.Sweet_Alert.Button;
 import Componentes.Sweet_Alert.Message;
-import com.jidesoft.plaf.UIDefaultsLookup;
-import com.jidesoft.swing.PartialGradientLineBorder;
-import com.jidesoft.swing.PartialSide;
 import controlador.ControladorCliente;
 import controlador.ControladorEvento;
 import independientes.Constante;
@@ -43,12 +40,6 @@ public class pnlCliente extends JPanel {
 
     private pnlCliente() {
         initComponents();
-         panel1.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(
-                new PartialGradientLineBorder(new Color[]{new Color(0, 0, 128), UIDefaultsLookup.getColor("control")}, 2, PartialSide.NORTH), "Datos de Cliente",
-                TitledBorder.CENTER, TitledBorder.ABOVE_TOP), BorderFactory.createEmptyBorder(6, 4, 4, 4)));
-    pnlEdicion.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(
-                new PartialGradientLineBorder(new Color[]{new Color(0, 0, 128), UIDefaultsLookup.getColor("control")}, 2, PartialSide.NORTH), "Edicion de Clientes",
-                TitledBorder.CENTER, TitledBorder.ABOVE_TOP), BorderFactory.createEmptyBorder(6, 4, 4, 4)));
 
         p.init(new String[]{"idCliente", "Nombre", "Apellido", "Email", "Telefono", "Telefono 2"}, 1, false);
 
@@ -96,7 +87,8 @@ public class pnlCliente extends JPanel {
         //Cargar los datos en los campos
         p.tblBuscar.addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e); //To change body of generated methods, choose Tools | Templates.
                 int x = p.tblBuscar.getSelectedRow();
 
                 if (x != -1) {
@@ -112,7 +104,6 @@ public class pnlCliente extends JPanel {
                 }
 
             }
-
         });
 
         //Boton eliminar

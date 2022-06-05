@@ -1,5 +1,6 @@
 package vista.paneles.edit;
 
+import java.awt.event.*;
 import javax.swing.event.*;
 import Componentes.Sweet_Alert.Message.Tipo;
 import controlador.ControladorCiudad;
@@ -50,6 +51,7 @@ public class DialogProveedor extends JDialog {
         p.init(new String[]{"idProveedor", "Nombre", "Telefono", "Telefono 2", "Disponible"}, 1, true);
         llenarTabla();
         frmProv.init();
+        
         p.tblBuscar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -165,6 +167,7 @@ public class DialogProveedor extends JDialog {
                         proveedor.setIdProveedor((int) p.tblModel.getValueAt(x, 0));
                         Mensaje m = ControladorProveedor.getInstancia().actualizar(proveedor);
                         if (m.getTipoMensaje() == Tipo.OK) {
+                         
                             llenarTabla();
                         }
                         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
@@ -187,9 +190,7 @@ public class DialogProveedor extends JDialog {
                             llenarTabla();
                         }
                         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-
                         ArrayList<NegocioArea> area = new ArrayList<>();
-
                         for (Object ob : frmNeg.pnlListEtiquetas.listModel.toArray()) {
                             Ciudad ciudad = ControladorCiudad.getInstancia().obtenerByNombre((String) ob);
                             if (ciudad == null) {
@@ -297,6 +298,8 @@ public class DialogProveedor extends JDialog {
     }
 
     private void llenarTabla() {
+        int lastSelec = p.tblBuscar.getSelectedRow();
+       
         p.tblModel.setRowCount(0);
    
         if (rbAgregarProveedor.isSelected()) {
@@ -307,6 +310,9 @@ public class DialogProveedor extends JDialog {
             for (Negocio neg : ControladorNegocio.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
                 p.tblModel.addRow(new Object[]{neg.getIdNegocio(), neg.getIdProveedor(), neg.getIdTipoProveedor(), neg.getNombreNegocio(), neg.getPrecioAprox(), (neg.isDisponible()) ? "Si" : "No"});
             }
+        }
+         if (lastSelec != -1 && p.tblModel.getRowCount() > lastSelec) {
+            p.tblBuscar.setRowSelectionInterval(lastSelec, lastSelec);
         }
 
     }
@@ -365,6 +371,10 @@ public class DialogProveedor extends JDialog {
         panel1.repaint();
     }
 
+    private void thisWindowClosed(WindowEvent e) {
+       pnlProveedores.getInstancia().cargarNegocios();
+    }
+
   
 
     private void initComponents() {
@@ -378,6 +388,13 @@ public class DialogProveedor extends JDialog {
         //======== this ========
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
+        setTitle("Edicion de Proveedores/Negocios");
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                thisWindowClosed(e);
+            }
+        });
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
@@ -395,14 +412,14 @@ public class DialogProveedor extends JDialog {
             panel1.add(p, "cell 0 0");
 
             //---- rbAgregarProveedor ----
-            rbAgregarProveedor.setText("Nuevo Proveedor");
+            rbAgregarProveedor.setText("Edicion Proveedor");
             rbAgregarProveedor.setSelected(true);
             rbAgregarProveedor.setHorizontalAlignment(SwingConstants.CENTER);
             rbAgregarProveedor.addActionListener(e -> rbAgregarProveedor(e));
             panel1.add(rbAgregarProveedor, "cell 0 1, grow");
 
             //---- rbAgregarNegocio ----
-            rbAgregarNegocio.setText("Nuevo Negocio");
+            rbAgregarNegocio.setText("Edicion Negocio");
             rbAgregarNegocio.setHorizontalAlignment(SwingConstants.CENTER);
             rbAgregarNegocio.addActionListener(e -> rbAgregarNegocio(e));
             panel1.add(rbAgregarNegocio, "cell 0 1, grow");

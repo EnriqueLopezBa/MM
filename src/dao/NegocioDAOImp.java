@@ -48,7 +48,7 @@ public class NegocioDAOImp implements INegocioDAO {
     @Override
     public ArrayList<Negocio> obtenerListaByCadena(String cadena) {
         try (PreparedStatement ps = cn.prepareStatement("SELECT * FROM negocio N\n"
-                + "  JOIN proveedor P ON\n"
+                + "  LEFT JOIN proveedor P ON\n"
                 + "  N.idProveedor = P.idProveedor\n"
                 + "  JOIN tipoProveedor T ON\n"
                 + "  N.idTipoProveedor = T.idTipoProveedor\n"

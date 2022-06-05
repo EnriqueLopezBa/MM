@@ -17,4 +17,6 @@ public interface IProveedorEventoDAO extends CRUD<ProveedorEvento> {
     ArrayList<ProveedorEvento> obtenerListaByIdEvento(int idEvento);
     ArrayList<ProveedorEvento> obtenerListaByIdProveedor(int idProveedor);
     ProveedorEvento obtenerByIdEventoAndIdProveedor(int idEvento, int idProveedor);
+    ProveedorEvento obtenerByIdEventoAndIdNegocio(int idEvento, int idNegocio);
+
 }

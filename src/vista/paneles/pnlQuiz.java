@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import Componentes.Sweet_Alert.Button;
-import Componentes.Sweet_Alert.Message;
 import Componentes.Sweet_Alert.Message.Tipo;
 import ProgressCircle.*;
 import controlador.ControladorCliente;
@@ -15,7 +14,6 @@ import independientes.Constante;
 import independientes.Mensaje;
 import independientes.MyObjectListCellRenderer;
 import java.util.ArrayList;
-import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import modelo.Cliente;
@@ -58,12 +56,12 @@ public class pnlQuiz extends JPanel {
         contador++;
         checkOpciones();
         lblPregunta.setText("<html><p style=\"text-align:center\">" + lista.get(contador).getPregunta() + "</p></html>");
-        cargarEventos();
+     
     }
 
     private pnlQuiz() {
         initComponents();
-        init();
+       
     }
 
     public void cargarEventos() {
@@ -80,12 +78,13 @@ public class pnlQuiz extends JPanel {
         cmbEvento.removeAllItems();
         eventoActual = null;
         eventos = ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.getClienteActivo().getIdCliente());
-
+       
         for (Evento e : eventos) {
             cmbEvento.addItem(e);
         }
         cmbEvento.setRenderer(new MyObjectListCellRenderer());
 
+         init();
     }
 
     private void checkOpciones() {

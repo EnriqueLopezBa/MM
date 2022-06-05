@@ -13,6 +13,7 @@ import independientes.Mensaje;
 import static javax.swing.JOptionPane.showMessageDialog;
 import modelo.Evento;
 import net.miginfocom.swing.*;
+import vista.paneles.pnlQuiz;
 import vista.principales.Principal;
 
 /**
@@ -47,7 +48,11 @@ public class DialogNewEvent extends JDialog {
         Mensaje m = ControladorEvento.getInstancia().registrar(evento);
         if (m.getTipoMensaje() == Tipo.OK) {
             dispose();
+             Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
+               pnlQuiz.getInstancia().cargarEventos();
             Principal.getInstancia().btnQuiz.doClick();
+          
+            return;
         }
         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
 

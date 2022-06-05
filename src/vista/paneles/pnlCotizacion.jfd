@@ -5,39 +5,130 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$layoutConstraints": "fill"
-			"$columnConstraints": "[fill]"
-			"$rowConstraints": "[][fill][fill]"
+			"$columnConstraints": "[33%,fill][3%,fill][33%,fill]"
+			"$rowConstraints": "[][][fill][fill][fill]"
 		} ) {
 			name: "this"
+			"background": new java.awt.Color( 255, 255, 255, 255 )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$columnConstraints": "push[fill]push[fill]push"
+				"$rowConstraints": "[grow,fill]"
+			} ) {
+				name: "panel1"
+				"background": new java.awt.Color( 255, 255, 255, 255 )
+				add( new FormComponent( "Componentes.SvgIcon" ) {
+					name: "lblEnviar"
+					"text": "Enviar"
+					"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\pdfmail.svg" )
+					"horizontalAlignment": 0
+					"cursor": &Cursor0 new java.awt.Cursor( 12 )
+					"verticalAlignment": 1
+					"horizontalTextPosition": 10
+					"toolTipText": "Enviar Cotizacion por correo al cliente"
+					"font": &Font0 new java.awt.Font( "Segoe UI", 1, 16 )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0,alignx center,grow 0 0"
+				} )
+				add( new FormComponent( "Componentes.SvgIcon" ) {
+					name: "lblGenerar"
+					"text": "Generar PDF"
+					"horizontalAlignment": 4
+					"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\pdf.svg" )
+					"cursor": #Cursor0
+					"verticalAlignment": 1
+					"horizontalTextPosition": 10
+					"toolTipText": "Guardar Cotizacion en PDF"
+					"font": #Font0
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblGenerarMouseClicked", true ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "east"
+				} )
+				add( new FormComponent( "Componentes.SvgIcon" ) {
+					name: "lblContrato"
+					"text": "Generar Contrato"
+					"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\contrato.svg" )
+					"font": new java.awt.Font( "Segoe UI", 1, 16 )
+					"cursor": new java.awt.Cursor( 12 )
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblContratoMouseClicked", true ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 0,alignx center,grow 0 0"
+				} )
+				add( new FormComponent( "Componentes.SvgIcon" ) {
+					name: "lblGuardar"
+					"text": "Guardar"
+					"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\save.svg" )
+					"verticalAlignment": 1
+					"cursor": #Cursor0
+					"horizontalTextPosition": 10
+					"toolTipText": "Guardar Cotizacion en el sistema"
+					"font": #Font0
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lblGuardarMouseClicked", true ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "west"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0 4 1,hmax 5%"
+			} )
 			add( new FormComponent( "javax.swing.JComboBox" ) {
 				name: "cmbEvento"
+				"font": &Font1 new java.awt.Font( "Segoe UI", 1, 16 )
 				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbEventoItemStateChanged", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 0, grow 0 0"
+				"value": "cell 0 1,alignx left,growx 0,wmax 20%,hmin 5%"
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "cbCotizaciones"
+				"text": "Cotizaciones"
+				"horizontalAlignment": 0
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbCotizaciones", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 1,hmin 5%, split 2, gap 0 0, growx 0"
+			} )
+			add( new FormComponent( "Componentes.SvgIcon" ) {
+				name: "svgIcon1"
+				"icon": new com.jformdesigner.model.SwingIcon( 1, "C:\\Users\\Enrique\\Documents\\NetBeansProjects\\MM\\src\\img\\help.svg" )
+				"horizontalTextPosition": 2
+				"horizontalAlignment": 2
+				"porcentaje": 2
+				"toolTipText": "Si este no se encuentra tildado se muestra la cotizacion inicial(hecha por el cliente)"
+				addEvent( new FormEvent( "java.awt.event.KeyListener", "keyPressed", "svgIcon1KeyPressed", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 1"
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "cbFinal"
+				"text": "Final"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbFinal", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 1"
+			} )
+			add( new FormComponent( "javax.swing.JSpinner" ) {
+				name: "spinner1"
+				"model": new javax.swing.SpinnerNumberModel {
+					minimum: 0
+				}
+				"font": #Font1
+				"enabled": false
+				addEvent( new FormEvent( "javax.swing.event.ChangeListener", "stateChanged", "spinner1StateChanged", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 1,alignx right,growx 0,wmax 20%,hmin 5%"
 			} )
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "scrollPane1"
 				add( new FormComponent( "Componentes.tableC.Table" ) {
 					name: "tblCotizacion"
-					"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector {
-						add( new java.util.Vector {
-							add( null )
-							add( null )
-							add( null )
-							add( null )
-							add( null )
-							add( null )
-							add( null )
-						} )
-					}, new java.util.Vector {
+					"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector, new java.util.Vector {
 						add( "idEvento" )
-						add( "idProveedor" )
-						add( "Proveedor" )
+						add( "idNegocio" )
+						add( "Tipo" )
+						add( "Negocio" )
 						add( "Inicio" )
 						add( "Fin" )
 						add( "Cotizacion del sistema" )
 						add( "Cotizacion Final" )
+						add( "Comentario" )
 					}, new java.util.Vector {
+						add( null )
 						add( null )
 						add( null )
 						add( null )
@@ -45,7 +136,9 @@ new FormModel {
 						add( null )
 						add( null )
 						add( class java.lang.Integer )
+						add( class java.lang.Object )
 					}, new java.util.Vector {
+						add( false )
 						add( false )
 						add( false )
 						add( false )
@@ -53,7 +146,10 @@ new FormModel {
 						add( false )
 						add( false )
 						add( true )
+						add( false )
 					}, new java.util.Vector {
+						add( null )
+						add( null )
 						add( null )
 						add( null )
 						add( null )
@@ -62,23 +158,59 @@ new FormModel {
 						add( null )
 						add( null )
 					} )
+					"font": new java.awt.Font( "Segoe UI", 1, 16 )
+					"selectionMode": 0
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "tblCotizacionMouseClicked", true ) )
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 1"
+				"value": "cell 0 2, sx"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblInfo"
+				"text": "Informacion Adicional:"
+				"font": &Font2 new java.awt.Font( "Segoe UI", 1, 16 )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 3"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblTotal"
+				"text": "Total Cotizacion:"
+				"font": #Font2
+				"horizontalAlignment": 0
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 3"
 			} )
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "scrollPane2"
 				add( new FormComponent( "javax.swing.JTextArea" ) {
-					name: "txtDescripcion"
+					name: "txtComentarioCliente"
 					"wrapStyleWord": true
+					"lineWrap": true
+					"font": new java.awt.Font( "Segoe UI", 1, 16 )
+					"disabledTextColor": new java.awt.Color( 0, 0, 0, 255 )
 					"editable": false
+					"text": "Aqui apareceran los comentarios del cliente"
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 2"
+				"value": "cell 0 4"
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane3"
+				add( new FormComponent( "javax.swing.JTextArea" ) {
+					name: "txtComentarioAdmin"
+					"lineWrap": true
+					"disabledTextColor": new java.awt.Color( 0, 0, 0, 255 )
+					"text": "Aqui podra poner un mensaje/descripcion/comentario a cada proveedor que seleccione"
+					"font": new java.awt.Font( "Segoe UI", 1, 16 )
+					addEvent( new FormEvent( "java.awt.event.FocusListener", "focusGained", "txtComentarioAdminFocusGained", true ) )
+					addEvent( new FormEvent( "java.awt.event.FocusListener", "focusLost", "txtComentarioAdminFocusLost", true ) )
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 4"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 520, 395 )
+			"size": new java.awt.Dimension( 686, 455 )
 		} )
 	}
 }

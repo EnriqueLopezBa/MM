@@ -6,11 +6,12 @@ new FormModel {
 		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$layoutConstraints": ""
 			"$columnConstraints": "[fill]"
-			"$rowConstraints": "[][][][]"
+			"$rowConstraints": "[][][]"
 		} ) {
 			name: "this"
 			"background": new java.awt.Color( 255, 255, 255, 255 )
 			"defaultCloseOperation": 2
+			"title": "Edicion de Eventos"
 			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosed", "thisWindowClosed", true ) )
 			add( new FormComponent( "vista.paneles.pnlCRUD" ) {
 				name: "p"
@@ -25,16 +26,6 @@ new FormModel {
 				}
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 1"
-			} )
-			add( new FormComponent( "Componentes.TextField" ) {
-				name: "txtPrecioTotal"
-				"labelText": "Precio Total"
-				"font": new java.awt.Font( "Segoe UI", 1, 16 )
-				addEvent( new FormEvent( "java.awt.event.KeyListener", "keyReleased", "txtPrecioTotalKeyReleased", true ) )
-				addEvent( new FormEvent( "java.awt.event.KeyListener", "keyPressed", "txtPrecioTotalKeyPressed", true ) )
-				addEvent( new FormEvent( "java.awt.event.KeyListener", "keyTyped", "txtPrecioTotalKeyTyped", true ) )
-			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 2"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )

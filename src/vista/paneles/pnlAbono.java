@@ -11,6 +11,7 @@ import Componentes.tableC.*;
 import com.raven.datechooserV2.*;
 import controlador.ControladorAbono;
 import controlador.ControladorCliente;
+import controlador.ControladorCotizacion;
 import controlador.ControladorEvento;
 import controlador.ControladorNegocio;
 import controlador.ControladorProveedor;
@@ -19,11 +20,16 @@ import independientes.Constante;
 import independientes.MMException;
 import independientes.Mensaje;
 import independientes.MyObjectListCellRenderer;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import javafx.scene.control.ComboBox;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import modelo.Abono;
 import modelo.Cliente;
+import modelo.Cotizacion;
 import modelo.Evento;
 import modelo.Negocio;
 import modelo.Proveedor;
@@ -40,15 +46,15 @@ public class pnlAbono extends JPanel {
     private Evento eventoActual = null;
     private Proveedor proveedorActual = null;
 
-    
     private static pnlAbono instancia;
-    public static pnlAbono getInstancia(){
+
+    public static pnlAbono getInstancia() {
         if (instancia == null) {
             instancia = new pnlAbono();
         }
         return instancia;
     }
-    
+
     private pnlAbono() {
         initComponents();
         mClientes = (DefaultTableModel) tblCliente.getModel();
@@ -66,12 +72,23 @@ public class pnlAbono extends JPanel {
         p2.btnModificar.setVisible(false);
         ((JLabel) cmbEvento.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
         ((JLabel) cmbEventoP.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-        cargarEventos(true);
+        cargarEventos();
         cargarClientes();
         cargarProveedores();
-        p.tblBuscar.addMouseListener(new MouseAdapter() {
+        tblCliente.getModel().addTableModelListener(new TableModelListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void tableChanged(TableModelEvent e) {
+                if (eventoActual == null) {
+                    return;
+                }
+                actualizarTotalADeber();
+            }
+        });
+        p.tblBuscar.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e); //To change body of generated methods, choose Tools | Templates.
                 if (!Constante.filaSeleccionada(p.tblBuscar)) {
                     return;
                 }
@@ -81,9 +98,10 @@ public class pnlAbono extends JPanel {
                 mClientes.setRowCount(0);
                 lblCantADeber.setText("Cant. A Deber:");
                 lblTotal.setText("Total: ");
-                cargarEventos(true);
+                cargarEventos();
 
             }
+
         });
         //PROVEERDOR
         p2.tblBuscar.addMouseListener(new MouseAdapter() {
@@ -114,26 +132,25 @@ public class pnlAbono extends JPanel {
         });
     }
 
-    private void cargarEventos(boolean cliente) {
+    public void cargarEventos() {
         if (Constante.getClienteActivo() == null) {
             return;
         }
-        if (cbSoloAdeudo.isSelected()) {
-            if (cliente) {
+
+        if (cbSoloAdeudo.isSelected()) { //Solo eventos en donde se deba 
+            if (materialTabbed1.getSelectedIndex() == 0) { //Panel cliente ACTIVO
                 cmbEvento.removeAllItems();
-                for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
-                    Cliente clienteTemp = ControladorCliente.getInstancia().obtenerClienteActivo();
-                    if (ControladorAbono.getInstancia().obtenerCantidadADeber(clienteTemp.getIdCliente(), ev.getIdEvento()) > 0) {
-                        cmbEvento.addItem(ev);
-                        cmbEvento.addItem(ev.getNombreEvento());
-                    }
+                for (Integer idEvento : ControladorAbono.getInstancia().obtenerEventosConAdeudo(Constante.getClienteActivo().getIdCliente())) {
+                    Evento ev = ControladorEvento.getInstancia().obtenerByID(idEvento);
+                    cmbEvento.addItem(ev);
                 }
                 cmbEvento.setRenderer(new MyObjectListCellRenderer());
+
             }
         } else {
-            if (cliente) {
+            if (materialTabbed1.getSelectedIndex() == 0) {
                 cmbEvento.removeAllItems();
-                for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
+                for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.getClienteActivo().getIdCliente())) {
                     cmbEvento.addItem(ev);
                 }
                 cmbEvento.setRenderer(new MyObjectListCellRenderer());
@@ -145,45 +162,38 @@ public class pnlAbono extends JPanel {
         if (cmbEvento.getSelectedIndex() == -1) {
             return;
         }
-        if (materialTabbed1.getSelectedIndex() == 0) {
-            for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
-                if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
-                    eventoActual = ev;
-                    lblTotal.setText("Total : " + eventoActual.getPrecioFinal());
-                    actualizarTotalADeber();
-                    mClientes.setRowCount(0);
-                    cargarTablaAbono();
-                    break;
-                }
-            }
-        } else if (materialTabbed1.getSelectedIndex() == 1) {
-
-            for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente())) {
-                if (ev.getNombreEvento().equals(cmbEvento.getSelectedItem().toString())) {
-                    eventoActual = ev;
-                    lblTotal.setText("Total : " + eventoActual.getPrecioFinal());
-                    actualizarTotalADeber();
-                    cargarTablaAbono();
-                    break;
-                }
-            }
+        eventoActual = (Evento) cmbEvento.getSelectedItem();
+        Object asd = ControladorCotizacion.getInstancia().obtenerTotalCotizacionByIDEventoAndisCotFinal(eventoActual.getIdEvento());
+        if (asd == null) {
+            lbl.setVisible(true);
+            lblCantADeber.setText("Cant. A Deber:");
+            return;
+        }else{
+            DecimalFormat decimal = new DecimalFormat("0");
+            lblTotal.setText("Total: "+decimal.format(asd));
+            actualizarTotalADeber();
+            lbl.setVisible(false);
         }
+            
+        cargarTablaAbono();
+        
 
     }
 
     private void actualizarTotalADeber() {
+        lblCantADeber.setText("Cant. A Deber: $" + ControladorAbono.getInstancia().obtenerCantidadADeber(Constante.getClienteActivo().getIdCliente(), eventoActual.getIdEvento()));
 //        lblCantADeber.setText("Cant. A Deber: " + ControladorAbono.getInstancia().obtenerCantidadADeber(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente(), eventoActual.getIdEvento()));
     }
 
     private void cargarTablaAbono() {
-        ArrayList<Abono> temp = ControladorAbono.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento());
-        if (temp == null) {
-            return;
+        if (materialTabbed1.getSelectedIndex() == 0) {
+            mClientes.setRowCount(0);
+            for (Abono ab : ControladorAbono.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento())) {
+                mClientes.addRow(new Object[]{ab.getIdAbono(), ab.getIdCliente(), ab.getIdEvento(),
+                    ab.getImporte(), ab.getFecha(),});
+            }
         }
-        for (Abono ab : temp) {
-            mClientes.addRow(new Object[]{ab.getIdAbono(), ab.getIdCliente(), ab.getIdEvento(),
-                ab.getImporte(), ab.getFecha(),});
-        }
+
     }
 
     private void cargarClientes() {
@@ -230,9 +240,6 @@ public class pnlAbono extends JPanel {
         if (ControladorCliente.getInstancia().obtenerClienteActivo() == null) {
             throw new MMException("Sin cliente activo/seleccionado");
         }
-        if (eventoActual.getPrecioFinal() == 0) {
-            throw new MMException("Es necesario registrar la cotizacion final");
-        }
         Cliente clienteTemp = ControladorCliente.getInstancia().obtenerClienteActivo();
         int adeber = ControladorAbono.getInstancia().obtenerCantidadADeber(clienteTemp.getIdCliente(), eventoActual.getIdEvento()) - Integer.parseInt(txtImporte.getText().replaceAll(",", ""));
         if (adeber < 0) {
@@ -259,7 +266,7 @@ public class pnlAbono extends JPanel {
             if (m.getTipoMensaje() == Tipo.OK) {
                 mClientes.setRowCount(0);
                 cargarTablaAbono();
-                actualizarTotalADeber();
+
             }
             Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
         } catch (MMException ex) {
@@ -300,13 +307,13 @@ public class pnlAbono extends JPanel {
         if (m.getTipoMensaje() == Tipo.OK) {
             mClientes.setRowCount(0);
             cargarTablaAbono();
-            actualizarTotalADeber();
+
         }
         Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
     }
 
     private void cbSoloAdeudo(ActionEvent e) {
-        cargarEventos(materialTabbed1.getSelectedIndex() == 0);
+        cargarEventos();
     }
 
     private void initComponents() {
@@ -318,6 +325,7 @@ public class pnlAbono extends JPanel {
         lblCantADeber = new JLabel();
         cbSoloAdeudo = new JCheckBox();
         cmbEvento = new JComboBox();
+        lbl = new JLabel();
         label2 = new JLabel();
         txtImporte = new JFormattedTextField();
         txtFecha = new JTextField();
@@ -376,6 +384,7 @@ public class pnlAbono extends JPanel {
                         // rows
                         "[]" +
                         "[]" +
+                        "[grow 0,center]" +
                         "[]0" +
                         "[]" +
                         "[]" +
@@ -403,10 +412,17 @@ public class pnlAbono extends JPanel {
                     cmbEvento.addItemListener(e -> cmbEventoItemStateChanged(e));
                     panel3.add(cmbEvento, "cell 0 1, growy, hmax 10%");
 
+                    //---- lbl ----
+                    lbl.setText("<html><p style=\"text-align:center\"> (Primero selecciona la Cotizacion final)</p></html>");
+                    lbl.setForeground(Color.red);
+                    lbl.setHorizontalAlignment(SwingConstants.CENTER);
+                    lbl.setVisible(false);
+                    panel3.add(lbl, "cell 0 2");
+
                     //---- label2 ----
                     label2.setText("Cantidad");
                     label2.setFont(new Font("Segoe UI", Font.BOLD, 16));
-                    panel3.add(label2, "cell 0 2,aligny bottom,growy 0");
+                    panel3.add(label2, "cell 0 3,aligny bottom,growy 0");
 
                     //---- txtImporte ----
                     txtImporte.setFont(new Font("Segoe UI", Font.BOLD, 18));
@@ -417,18 +433,18 @@ public class pnlAbono extends JPanel {
                             txtAbonoKeyReleased(e);
                         }
                     });
-                    panel3.add(txtImporte, "cell 0 3");
+                    panel3.add(txtImporte, "cell 0 4,alignx center,wmax 50%");
 
                     //---- txtFecha ----
                     txtFecha.setHorizontalAlignment(SwingConstants.CENTER);
                     txtFecha.setFont(new Font("Segoe UI", Font.BOLD, 18));
-                    panel3.add(txtFecha, "cell 0 4");
+                    panel3.add(txtFecha, "cell 0 5");
 
                     //---- btnRegistrar ----
                     btnRegistrar.setText("Registrar");
                     btnRegistrar.setFont(new Font("Segoe UI", Font.BOLD, 16));
                     btnRegistrar.addActionListener(e -> btnRegistrar(e));
-                    panel3.add(btnRegistrar, "cell 0 5,grow");
+                    panel3.add(btnRegistrar, "cell 0 6,grow");
                 }
                 pnlAbonoCliente.add(panel3, "cell 0 0, grow");
 
@@ -597,6 +613,7 @@ public class pnlAbono extends JPanel {
     private JLabel lblCantADeber;
     private JCheckBox cbSoloAdeudo;
     private JComboBox cmbEvento;
+    private JLabel lbl;
     private JLabel label2;
     private JFormattedTextField txtImporte;
     private JTextField txtFecha;

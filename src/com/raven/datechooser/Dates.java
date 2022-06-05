@@ -8,6 +8,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
+import vista.paneles.pnlEventos;
 
 public final class Dates extends javax.swing.JPanel {
 
@@ -30,7 +33,6 @@ public final class Dates extends javax.swing.JPanel {
     private List<Date> diasNoDisponibles;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-
     public Dates() {
         initComponents();
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
@@ -42,13 +44,18 @@ public final class Dates extends javax.swing.JPanel {
 
     }
 
-
-
     public void showDate(int month, int year, SelectedDate select) {
-            List<Date> fechas = new ArrayList<>();
-            ControladorEvento.getInstancia().obtenerEventoByAnio(YEAR).forEach(fecha -> fechas.add(fecha.getFechaInicio()));
-            diasNoDisponibles = fechas;
-        
+        List<Date> fechas = new ArrayList<>();
+        ControladorEvento.getInstancia().obtenerEventoByAnio(YEAR).forEach(fecha -> {
+            try {
+                fechas.add(dateFormat.parse(fecha.getFechaInicio() + ""));
+            } catch (ParseException ex) {
+                Logger.getLogger(Dates.class.getName()).log(Level.SEVERE, null, ex);
+
+            }
+        });
+
+        diasNoDisponibles = fechas;
 
 //        init(fechas);
         m = month;
@@ -79,26 +86,32 @@ public final class Dates extends javax.swing.JPanel {
                 cmd.setBackground(getForeground());
                 cmd.setForeground(new Color(255, 255, 255));
             }
-
-           
-                String tempDate = year + "-" + month + "-" + i;
-                try {
-                    if (diasNoDisponibles != null && diasNoDisponibles.contains(dateFormat.parse(tempDate))) {
-                        cmd.setBackground(new Color(255, 0, 0));
-                        cmd.setForeground(new Color(255, 255, 255));
-                        cmd.setToolTipText("DIA NO DISPONIBLE");
-                        cmd.setDiaDisponible(false);
-                        cmd.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    }
-                } catch (ParseException ex) {
-                    Logger.getLogger(Dates.class.getName()).log(Level.SEVERE, null, ex);
+            String tempDate = year + "-" + month + "-" + i;
+            try {
+//                setMinDate();
+                if (diasNoDisponibles != null && diasNoDisponibles.contains(dateFormat.parse(tempDate))) {
+//                    String toDay = dateFormat.format(new Date());
+//                    if (diasNoDisponibles.contains(dateFormat.parse(toDay))) {
+//                        System.out.println("minimo");
+//                        setMinDate();
+//                        diasNoDisponibles.remove(dateFormat.parse(toDay));
+//                    }
+                    cmd.setBackground(new Color(255, 0, 0));
+                    cmd.setForeground(new Color(255, 255, 255));
+                    cmd.setToolTipText("DIA NO DISPONIBLE");
+                    cmd.setDiaDisponible(false);
+                    cmd.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
-            
+            } catch (ParseException ex) {
+                Logger.getLogger(Dates.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
             start++;
         }
 
     }
+
+   
 
     private void clear() {
         for (int i = 7; i < getComponentCount(); i++) {

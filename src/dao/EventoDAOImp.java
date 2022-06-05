@@ -10,12 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import modelo.Evento;
 
 /**
@@ -48,7 +44,7 @@ public class EventoDAOImp implements IEventoDAO {
             ArrayList<Evento> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new Evento(rs.getInt(1), rs.getInt(2), rs.getInt(3),
-                        rs.getInt(4), rs.getTimestamp(5), rs.getTimestamp(6), rs.getInt(7), rs.getInt(8), rs.getString(9), rs.getString(10), rs.getInt(11)));
+                        rs.getInt(4), rs.getTimestamp(5), rs.getTimestamp(6), rs.getInt(7), rs.getInt(8), rs.getString(9), rs.getString(10)));
             }
             return temp;
         } catch (SQLException e) {
@@ -62,7 +58,7 @@ public class EventoDAOImp implements IEventoDAO {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO WHERE IDEVENTO = " + id)) {
             if (rs.next()) {
                 return new Evento(rs.getInt(1), rs.getInt(2), rs.getInt(3),
-                        rs.getInt(4), rs.getTimestamp(5), rs.getTimestamp(6), rs.getInt(7), rs.getInt(8), rs.getString(9), rs.getString(10), rs.getInt(11));
+                        rs.getInt(4), rs.getTimestamp(5), rs.getTimestamp(6), rs.getInt(7), rs.getInt(8), rs.getString(9), rs.getString(10));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -113,7 +109,7 @@ public class EventoDAOImp implements IEventoDAO {
         }
         try (PreparedStatement ps = cn.prepareStatement("UPDATE evento SET idCliente = ?, idTipoEvento = ?,"
                 + " idLugar = ?, fechaInicio = ?, fechaFinal = ?, noInvitados = ?, presupuesto = ?,"
-                + " estilo = ?, nombreEvento = ?, precioEvento = ? WHERE idEvento = ?")) {
+                + " estilo = ?, nombreEvento = ? WHERE idEvento = ?")) {
             ps.setInt(1, t.getIdCliente());
             ps.setInt(2, t.getIdTipoEvento());
             ps.setInt(3, t.getIdLugar());
@@ -127,8 +123,7 @@ public class EventoDAOImp implements IEventoDAO {
                 ps.setString(8, t.getEstilo());
             }
             ps.setString(9, t.getNombreEvento());
-            ps.setInt(10, t.getPrecioFinal());
-            ps.setInt(11, t.getIdEvento());
+            ps.setInt(10, t.getIdEvento());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Excelente!") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al efectuar cambios");
         } catch (SQLException e) {
             System.err.println("Error actualizar Evento, " + e.getMessage());
@@ -162,7 +157,7 @@ public class EventoDAOImp implements IEventoDAO {
     @Override
     public ArrayList<Evento> obtenerEventoByIDCliente(int idCliente) {
         String consulta = (Constante.getAdmin()) ? "SELECT * FROM EVENTO WHERE IDCLIENTE = " + idCliente
-                : "SELECT * FROM evento WHERE idCliente = " + idCliente + " AND fechaInicio >= GETDATE()";
+                : "SELECT * FROM evento WHERE idCliente = " + idCliente + "";
         try (ResultSet rs = Conexion.getInstancia().Consulta(consulta)) {
             ArrayList<Evento> temp = new ArrayList<>();
             while (rs.next()) {
@@ -177,7 +172,6 @@ public class EventoDAOImp implements IEventoDAO {
                 evento.setPresupuesto(rs.getInt(8));
                 evento.setEstilo(rs.getString(9));
                 evento.setNombreEvento(rs.getString(10));
-                evento.setPrecioFinal(rs.getInt(11));
                 temp.add(evento);
             }
             return temp;
@@ -203,7 +197,6 @@ public class EventoDAOImp implements IEventoDAO {
                 evento.setPresupuesto(rs.getInt(8));
                 evento.setEstilo(rs.getString(9));
                 evento.setNombreEvento(rs.getString(10));
-                evento.setPrecioFinal(rs.getInt(11));
                 temp.add(evento);
             }
             return temp;
@@ -229,7 +222,6 @@ public class EventoDAOImp implements IEventoDAO {
                 evento.setPresupuesto(rs.getInt(8));
                 evento.setEstilo(rs.getString(9));
                 evento.setNombreEvento(rs.getString(10));
-                evento.setPrecioFinal(rs.getInt(11));
                 temp.add(evento);
             }
             return temp;

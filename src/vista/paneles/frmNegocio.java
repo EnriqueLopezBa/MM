@@ -39,6 +39,7 @@ public class frmNegocio extends JPanel {
     private void cargarProveedores(){
         cmbProveedor.removeAllItems();
         for(Proveedor prov : ControladorProveedor.getInstancia().obtenerListaByCadena("")){
+         
             cmbProveedor.addItem(prov);
         }
         cmbProveedor.setRenderer(new MyObjectListCellRenderer());
@@ -47,6 +48,9 @@ public class frmNegocio extends JPanel {
     private void cargarTipoProveedor() {
         cmbTipoProveedor.removeAllItems();
         for (TipoProveedor tipo : ControladorTipoProveedor.getInstancia().obtenerListaByCadena("")) {
+            if (tipo.getTipoProveedor().equals("Local")) {
+                continue;
+            }
             cmbTipoProveedor.addItem(tipo);
         }
         cmbTipoProveedor.setRenderer(new MyObjectListCellRenderer());

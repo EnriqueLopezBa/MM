@@ -7,7 +7,7 @@ public class Evento {
     private int idEvento;
     private int idCliente;
     private int idTipoEvento;
-    private int idLugar;
+    private int idNegocio;
     private Date fechaInicio, fechaFinal;
     private int noInvitados, presupuesto;
     private String estilo, nombreEvento;
@@ -15,11 +15,11 @@ public class Evento {
     public Evento() {
     }
 
-    public Evento(int idEvento, int idCliente, int idTipoEvento, int idLugar, Date fechaInicio, Date fechaFinal, int noInvitados, int presupuesto, String estilo, String nombreEvento) {
+    public Evento(int idEvento, int idCliente, int idTipoEvento, int idNegocio, Date fechaInicio, Date fechaFinal, int noInvitados, int presupuesto, String estilo, String nombreEvento) {
         this.idEvento = idEvento;
         this.idCliente = idCliente;
         this.idTipoEvento = idTipoEvento;
-        this.idLugar = idLugar;
+        this.idNegocio = idNegocio;
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
         this.noInvitados = noInvitados;
@@ -27,6 +27,7 @@ public class Evento {
         this.estilo = estilo;
         this.nombreEvento = nombreEvento;
     }
+
 
     public Date getFechaInicio() {
         return fechaInicio;
@@ -68,13 +69,6 @@ public class Evento {
         this.idTipoEvento = idTipoEvento;
     }
 
-    public int getIdLugar() {
-        return idLugar;
-    }
-
-    public void setIdLugar(int idLugar) {
-        this.idLugar = idLugar;
-    }
 
     public int getNoInvitados() {
         return noInvitados;
@@ -106,6 +100,14 @@ public class Evento {
 
     public void setNombreEvento(String nombreEvento) {
         this.nombreEvento = nombreEvento;
+    }
+
+    public int getIdNegocio() {
+        return idNegocio;
+    }
+
+    public void setIdNegocio(int idNegocio) {
+        this.idNegocio = idNegocio;
     }
 
 }

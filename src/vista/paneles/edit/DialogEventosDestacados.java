@@ -90,7 +90,7 @@ public class DialogEventosDestacados extends JDialog {
     private void cargarTabla() {
         p.tblModel.setRowCount(0);
         for (Evento ev : ControladorEvento.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
-            p.tblModel.addRow(new Object[]{ev.getIdEvento(), ev.getIdLugar(), ev.getNombreEvento()});
+            p.tblModel.addRow(new Object[]{ev.getIdEvento(), ev.getIdNegocio(), ev.getNombreEvento()});
         }
     }
 

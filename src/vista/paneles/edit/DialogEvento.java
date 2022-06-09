@@ -6,7 +6,9 @@ import controlador.ControladorCiudad;
 import controlador.ControladorCliente;
 import controlador.ControladorEstado;
 import controlador.ControladorEvento;
-import controlador.ControladorLugar;
+import controlador.ControladorLugarInformacion;
+import controlador.ControladorNegocio;
+import controlador.ControladorNegocioArea;
 import controlador.ControladorTipoEvento;
 import independientes.Constante;
 import independientes.Mensaje;
@@ -25,8 +27,11 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import modelo.Ciudad;
 import modelo.Cliente;
+import modelo.Estado;
 import modelo.Evento;
-import modelo.Lugar;
+import modelo.LugarInformacion;
+import modelo.Negocio;
+import modelo.NegocioArea;
 import net.miginfocom.swing.*;
 import vista.paneles.*;
 import vista.principales.Principal;
@@ -37,6 +42,9 @@ import vista.principales.Principal;
 public class DialogEvento extends JDialog {
 
     private pnlEventos pun;
+    
+    private SimpleDateFormat localDateFormat = new SimpleDateFormat("yyyy-MM-dd (HH:mm)");
+
 
     public DialogEvento(Principal owner) {
         super(owner);
@@ -49,7 +57,7 @@ public class DialogEvento extends JDialog {
         super.setLocationRelativeTo(pun.i);
         super.getContentPane().setBackground(Color.white);
 
-        p.init(new String[]{"idEvento", "idCliente", "idTipoEvento", "idLugar", "Fecha Inicio", "Fecha Final", "Nombre de Evento", "Num. Invitados", "Presupuesto", "Estilo", "Precio Total"}, 4, false);
+        p.init(new String[]{"idEvento", "idCliente", "idTipoEvento", "idLugar", "Fecha Inicio", "Fecha Final", "Nombre de Evento", "Num. Invitados", "Presupuesto", "Estilo"}, 4, false);
         llenarTabla();
         p.txtBusqueda.addKeyListener(new KeyAdapter() {
             @Override
@@ -76,7 +84,9 @@ public class DialogEvento extends JDialog {
                     Principal.getInstancia().recargarPanelActivo();
 
                     pun.cargarEventos();
-                    pun.cmbEventos.setSelectedItem(p.tblModel.getValueAt(x, 6).toString());
+                    Evento evento = ControladorEvento.getInstancia().obtenerByID((int)p.tblModel.getValueAt(x, 0));
+                    pun.cmbEventos.getModel().setSelectedItem(evento);
+                    pun.eventoActual = evento;
 //                    pun.txtNombreEvento.setText(p.tblModel.getValueAt(x, 6).toString());
                     pun.txtCantInvitados.setText(p.tblModel.getValueAt(x, 7).toString());
                     pun.txtPresupuesto.setText(p.tblModel.getValueAt(x, 8).toString());
@@ -93,12 +103,20 @@ public class DialogEvento extends JDialog {
                         return;
                     }
 
-                    pun.cmbTipoEvento.setSelectedItem(ControladorTipoEvento.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 2)).getTematica());
-                    Lugar lug = ControladorLugar.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 3));
-                    Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lug.getIdCiudad());
-                    pun.cmbEstado.setSelectedItem(ControladorEstado.getInstancia().obtenerByID(ciudad.getIdEstado()).getEstado());
-                    pun.cmbCiudad.setSelectedItem(ciudad.getCiudad());
-                    pun.cmbLugar.setSelectedItem(lug.getNombreLocal());
+                    pun.cmbTipoEvento.getModel().setSelectedItem(ControladorTipoEvento.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 2)).getTematica());
+   
+                    Negocio negocio = ControladorNegocio.getInstancia().obtenerByID((int) p.tblModel.getValueAt(x, 3));
+                    NegocioArea area = ControladorNegocioArea.getInstancia().obtenerListaByIdNegocio(negocio.getIdNegocio()).get(0);
+                    Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(area.getIdCiudad());
+                    LugarInformacion  lugar = ControladorLugarInformacion.getInstancia().obtenerByID(negocio.getIdNegocio());
+                    pun.cmbEstado.getModel().setSelectedItem(ControladorEstado.getInstancia().obtenerByID(ciudad.getIdEstado()));
+                    pun.estadoActual = (Estado) pun.cmbEstado.getSelectedItem();
+                    pun.cargarCiudad();
+                    pun.cmbCiudad.getModel().setSelectedItem(ciudad);
+                    pun.ciudadActual = (Ciudad) pun.cmbCiudad.getSelectedItem();
+                    pun.cargarLugares();
+                    pun.cmbLugar.getModel().setSelectedItem(lugar);
+                    pun.lugarActual = (LugarInformacion) pun.cmbLugar.getSelectedItem();
                     pun.txtEstilo.setText(p.tblModel.getValueAt(x, 7).toString());
 
                 } catch (ParseException ex) {
@@ -129,13 +147,11 @@ public class DialogEvento extends JDialog {
         });
     }
 
-    private SimpleDateFormat localDateFormat = new SimpleDateFormat("yyyy-MM-dd (HH:mm)");
-
     public void llenarTabla() {
         p.tblModel.setRowCount(0);
         for (Evento e : ControladorEvento.getInstancia().obtenerListaByCadena(p.txtBusqueda.getText())) {
             p.tblModel.addRow(new Object[]{e.getIdEvento(), e.getIdCliente(), e.getIdTipoEvento(),
-                e.getIdLugar(), localDateFormat.format(e.getFechaInicio()), localDateFormat.format(e.getFechaFinal()), e.getNombreEvento(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo()});
+                e.getIdNegocio(), localDateFormat.format(e.getFechaInicio()), localDateFormat.format(e.getFechaFinal()), e.getNombreEvento(), e.getNoInvitados(), e.getPresupuesto(), e.getEstilo()});
         }
     }
 

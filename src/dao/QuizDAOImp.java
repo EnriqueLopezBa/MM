@@ -49,7 +49,7 @@ public class QuizDAOImp implements IQuizDAO {
     @Override
     public Mensaje registrar(Quiz t) {
 
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO QUIZ VALUES(?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO CLIENTE.QUIZ VALUES(?,?,?,?,?)")) {
             ps.setInt(1, t.getIdPregunta());
             ps.setInt(2, t.getIdCliente());
             ps.setInt(3, t.getIdEvento());
@@ -89,7 +89,7 @@ public class QuizDAOImp implements IQuizDAO {
 
     @Override
     public ArrayList<Quiz> obtenerListaByIdClienteAndIdEvento(int idCliente, int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM QUIZ WHERE IDCLIENTE = " + idCliente + " AND IDEVENTO = " + idEvento)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE.QUIZ WHERE IDCLIENTE = " + idCliente + " AND IDEVENTO = " + idEvento)) {
             ArrayList<Quiz> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new Quiz(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getString(5)));
@@ -103,7 +103,7 @@ public class QuizDAOImp implements IQuizDAO {
 
     @Override
     public Quiz obtenerByIdPreguntaAndIdEvento(int idPregunta, int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM QUIZ WHERE IDPREGUNTA  = " + idPregunta + " AND IDEVENTO = " + idEvento)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE.QUIZ WHERE IDPREGUNTA  = " + idPregunta + " AND IDEVENTO = " + idEvento)) {
             if (rs.next()) {
                 return new Quiz(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getString(5));
             }
@@ -115,7 +115,7 @@ public class QuizDAOImp implements IQuizDAO {
 
     @Override
     public Mensaje eliminarRespuesta(int idPregunta, int idEvento, int idCliente) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM QUIZ WHERE IDPREGUNTA = " + idPregunta + " AND IDEVENTO = " + idEvento + " AND IDCLIENTE = "+idCliente)) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM CLIENTE.QUIZ WHERE IDPREGUNTA = " + idPregunta + " AND IDEVENTO = " + idEvento + " AND IDCLIENTE = "+idCliente)) {
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Respuesta Eliminada") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
             System.err.println("Error eliminarRespuesta Quiz," + e.getMessage());

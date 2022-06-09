@@ -36,8 +36,8 @@ new FormModel {
 				"value": "cell 2 0,grow, hmax 15%"
 			} )
 			add( new FormComponent( "Componentes.TextField" ) {
-				name: "txtLugar"
-				"labelText": "Nombre del Lugar"
+				name: "txtNegocio"
+				"labelText": "Nombre lugar/negocio"
 				auxiliary() {
 					"JavaCodeGenerator.variableModifiers": 1
 				}

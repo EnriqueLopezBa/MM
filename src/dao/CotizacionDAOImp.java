@@ -52,7 +52,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public Mensaje registrar(Cotizacion t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO COTIZACION VALUES(?,?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO EVENTO.EVENTO.COTIZACION VALUES(?,?,?,?,?,?)")) {
             ps.setInt(1, t.getIdEvento());
             ps.setInt(2, t.getIdNegocio());
             ps.setInt(3, t.getCotizacion());
@@ -68,7 +68,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public Mensaje actualizar(Cotizacion t) {
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE COTIZACION SET COTIZACION = ?, comentario = ?, numCotizacion = ?, fechaCotizacion = ? WHERE IDEVENTO = ? AND IDPROVEEDOR = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE EVENTO.COTIZACION SET EVENTO.COTIZACION = ?, comentario = ?, numCotizacion = ?, fechaCotizacion = ? WHERE IDEVENTO = ? AND IDPROVEEDOR = ?")) {
             ps.setInt(1, t.getCotizacion());
             ps.setString(2, t.getComentario());
             ps.setInt(3, t.getNumCotizacion());
@@ -84,7 +84,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public Mensaje eliminar(Cotizacion t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM COTIZACION WHERE IDEVENTO = ? AND IDNegocio = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM EVENTO.COTIZACION WHERE IDEVENTO = ? AND IDNegocio = ?")) {
             ps.setInt(1, t.getIdEvento());
             ps.setInt(2, t.getIdNegocio());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
@@ -102,7 +102,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public ArrayList<Cotizacion> obtenerListaByIDEvento(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM COTIZACION WHERE IDEVENTO = " + idEvento)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.COTIZACION WHERE IDEVENTO = " + idEvento)) {
             ArrayList<Cotizacion> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new Cotizacion(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getDate(6), rs.getBoolean(7)));
@@ -117,7 +117,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
     @Override
     public Mensaje registrarLote(ArrayList<Cotizacion> lista) {
         for (Cotizacion cotizacion : lista) {
-            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO COTIZACION VALUES(?,?,?,?,?,?,?)")) {
+            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO EVENTO.COTIZACION VALUES(?,?,?,?,?,?,?)")) {
                 ps.setInt(1, cotizacion.getIdEvento());
                 ps.setInt(2, cotizacion.getIdNegocio());
                 ps.setInt(3, cotizacion.getCotizacion());
@@ -144,8 +144,8 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public ArrayList<Cotizacion> obtenerListaByNumCotizacionAndIdClienteAndIdEvento(int numCotizacion, int idCliente, int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT C.* FROM cotizacion  C\n"
-                + "   JOIN evento E ON\n"
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT C.* FROM EVENTO.COTIZACION C\n"
+                + "   JOIN evento.evento E ON\n"
                 + "   E.idEvento = C.idEvento\n"
                 + "    WHERE E.idCliente = " + idCliente
                 + "	 AND C.NumCotizacion = " + numCotizacion
@@ -163,7 +163,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public ArrayList<Cotizacion> obtenerListaByIDEventoAndNumCotizacion(int idEvento, int numCotizacion) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM COTIZACION WHERE IDEVENTO = " + idEvento + " AND numCotizacion = " + numCotizacion)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.COTIZACION WHERE IDEVENTO = " + idEvento + " AND numCotizacion = " + numCotizacion)) {
             ArrayList<Cotizacion> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new Cotizacion(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getDate(6), rs.getBoolean(7)));
@@ -177,7 +177,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public int obtenerNumNuevaCotizacion(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta(" SELECT MAX(NumCotizacion)+1 FROM cotizacion WHERE idEvento = " + idEvento)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta(" SELECT MAX(NumCotizacion)+1 FROM EVENTO.COTIZACION WHERE idEvento = " + idEvento)) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -189,7 +189,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public String obtenerTotalCotizacionByIDEventoAndNumCotizacion(int idEvento, int numCotizacion) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta(" SELECT SUM(cotizacion) FROM cotizacion WHERE idEvento = " + idEvento + " AND NumCotizacion = " + numCotizacion)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta(" SELECT SUM(cotizacion) FROM EVENTO.COTIZACION WHERE idEvento = " + idEvento + " AND NumCotizacion = " + numCotizacion)) {
             if (rs.next()) {
                 return rs.getString(1);
             }
@@ -201,7 +201,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public ArrayList<Cotizacion> obtenerListaByIDEventoAndLastCotizacion(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM COTIZACION WHERE IDEVENTO = " + idEvento + " AND NUMCOTIZACION = (SELECT MAX(NumCotizacion) FROM cotizacion WHERE idEvento = " + idEvento + ")")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.COTIZACION WHERE IDEVENTO = " + idEvento + " AND NUMEVENTO.COTIZACION = (SELECT MAX(NumCotizacion) FROM cotizacion WHERE idEvento = " + idEvento + ")")) {
             ArrayList<Cotizacion> temp = new ArrayList<>();
             while (rs.next()) {
 
@@ -216,7 +216,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public int obtenerLastCotizacion(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT MAX(NUMCOTIZACION) FROM COTIZACION WHERE IDEVENTO = " + idEvento)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT MAX(COTIZACION) FROM EVENTO.COTIZACION WHERE IDEVENTO = " + idEvento)) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -230,7 +230,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
     public ArrayList<Cotizacion> obtenerListaByIdCliete(int idCliente) {
         ArrayList<Cotizacion> temp = new ArrayList<>();
         for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(idCliente)) {
-            try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM COTIZACION WHERE idEvento = " + ev.getIdEvento())) {
+            try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.COTIZACION WHERE idEvento = " + ev.getIdEvento())) {
                 while (rs.next()) {
                     temp.add(new Cotizacion(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getDate(6), rs.getBoolean(7)));
                 }
@@ -244,7 +244,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public void setCotizacionFinal(int idEvento, int numCotizacion) {
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE cotizacion SET cotFinal = 1\n"
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE EVENTO.COTIZACION SET cotFinal = 1\n"
                 + "  WHERE idEvento = " + idEvento + " AND NumCotizacion = " + numCotizacion)) {
             ps.execute();
         } catch (SQLException e) {
@@ -254,7 +254,7 @@ public class CotizacionDAOImp implements ICotizacionDAO {
 
     @Override
     public Object obtenerTotalCotizacionByIDEventoAndisCotFinal(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT SUM(cotizacion) FROM cotizacion WHERE cotFinal = 1 AND idEvento = " + idEvento)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT SUM(cotizacion) FROM EVENTO.COTIZACION WHERE cotFinal = 1 AND idEvento = " + idEvento)) {
             if (rs.next()) {
                 return rs.getObject(1);
             }

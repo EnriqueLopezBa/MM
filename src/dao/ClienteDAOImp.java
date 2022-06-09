@@ -35,7 +35,7 @@ public class ClienteDAOImp implements IClienteDAO {
 
     @Override
     public Cliente obtenerByID(int id) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE IDCLIENTE = " + id)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE.CLIENTE WHERE IDCLIENTE = " + id)) {
             if (rs.next()) {
                 return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6));
             }
@@ -52,7 +52,7 @@ public class ClienteDAOImp implements IClienteDAO {
 
     @Override
     public ArrayList<Cliente> obtenerListaByCadena(String cadena) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM Cliente WHERE "
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE.CLIENTE WHERE "
                 + "nombre + ' ' + apellido LIKE '%" + cadena + "%' OR email LIKE '%" + cadena + "%'"
                 + " OR telefono LIKE '%" + cadena + "%' OR telefono2 LIKE '%" + cadena + "%'")) {
             ArrayList<Cliente> temp = new ArrayList<>();
@@ -73,7 +73,7 @@ public class ClienteDAOImp implements IClienteDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente!");
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO CLIENTE (nombre, apellido, email, telefono, telefono2)"
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO CLIENTE.CLIENTE (nombre, apellido, email, telefono, telefono2)"
                 + " VALUES (?,?,?,?,?)")) {
             ps.setString(1, t.getNombre());
             ps.setString(2, t.getApellido());
@@ -98,7 +98,7 @@ public class ClienteDAOImp implements IClienteDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente!");
         }
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE cliente SET nombre = ?, apellido = ?, email = ?, telefono = ?, telefono2 = ? where idCliente = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE CLIENTE.CLIENTE SET nombre = ?, apellido = ?, email = ?, telefono = ?, telefono2 = ? where idCliente = ?")) {
             ps.setString(1, t.getNombre());
             ps.setString(2, t.getApellido());
             ps.setString(3, t.getCorreo());
@@ -118,7 +118,7 @@ public class ClienteDAOImp implements IClienteDAO {
 
     @Override
     public Mensaje eliminar(Cliente t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM cliente WHERE idCliente = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM CLIENTE.CLIENTE WHERE idCliente = ?")) {
             ps.setInt(1, t.getIdCliente());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Cliente eliminado!") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar!");
         } catch (SQLException e) {
@@ -129,21 +129,21 @@ public class ClienteDAOImp implements IClienteDAO {
 
     @Override
     public String yaExiste(Cliente t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != " + t.getIdCliente() + " and EMAIL = '" + t.getCorreo() + "'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE.CLIENTE WHERE idCliente != " + t.getIdCliente() + " and EMAIL = '" + t.getCorreo() + "'")) {
             if (rs.next()) {
                 return "Correo";
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
-        try (ResultSet rss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != " + t.getIdCliente() + " and TELEFONO = '" + t.getTelefono() + "'")) {
+        try (ResultSet rss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE.CLIENTE WHERE idCliente != " + t.getIdCliente() + " and TELEFONO = '" + t.getTelefono() + "'")) {
             if (rss.next()) {
                 return "Telefono";
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
-        try (ResultSet rsss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE idCliente != " + t.getIdCliente() + " and TELEFONO2 = '" + t.getTelefono2() + "'")) {
+        try (ResultSet rsss = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE.CLIENTE WHERE idCliente != " + t.getIdCliente() + " and TELEFONO2 = '" + t.getTelefono2() + "'")) {
             if (rsss.next()) {
                 return "Telefono 2";
             }
@@ -155,7 +155,7 @@ public class ClienteDAOImp implements IClienteDAO {
 
     @Override
     public Cliente obtenerClienteActivo() {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE WHERE ACTIVO = 1")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE.CLIENTE WHERE ACTIVO = 1")) {
             if (rs.next()) {
                 return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6));
             }
@@ -168,7 +168,7 @@ public class ClienteDAOImp implements IClienteDAO {
     @Override
     public boolean setClienteActivoById(int idCliente) {
         desactivarClienteActivo();
-        try (PreparedStatement pss = cn.prepareStatement("UPDATE CLIENTE SET ACTIVO = 1 WHERE idCliente = " + idCliente)) {
+        try (PreparedStatement pss = cn.prepareStatement("UPDATE CLIENTE.CLIENTE SET ACTIVO = 1 WHERE idCliente = " + idCliente)) {
             return pss.executeUpdate() >= 1;
         } catch (SQLException e) {
             System.err.println("Error setClienteActivoById Cliente, " + e.getMessage());
@@ -178,7 +178,7 @@ public class ClienteDAOImp implements IClienteDAO {
     }
 
     public void desactivarClienteActivo() {
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE cliente SET ACTIVO = 0 WHERE ACTIVO = 1;")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE CLIENTE.CLIENTE SET ACTIVO = 0 WHERE ACTIVO = 1;")) {
             ps.execute();
         } catch (SQLException e) {
             System.err.println(e.getMessage());

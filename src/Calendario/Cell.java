@@ -7,7 +7,9 @@ import controlador.ControladorCiudad;
 import controlador.ControladorCliente;
 import controlador.ControladorEstado;
 import controlador.ControladorEvento;
-import controlador.ControladorLugar;
+import controlador.ControladorLugarInformacion;
+import controlador.ControladorNegocio;
+import controlador.ControladorNegocioArea;
 import independientes.Constante;
 import independientes.Mensaje;
 import java.awt.Color;
@@ -35,7 +37,9 @@ import modelo.Ciudad;
 import modelo.Cliente;
 import modelo.Estado;
 import modelo.Evento;
-import modelo.Lugar;
+import modelo.LugarInformacion;
+import modelo.Negocio;
+import modelo.NegocioArea;
 import vista.paneles.pnlAgenda;
 import vista.principales.Principal;
 
@@ -119,7 +123,7 @@ public class Cell extends JButton implements MouseListener {
             if (evento == null) {
                 return;
             }
-            int x = JOptionPane.showConfirmDialog(this, "Seguro desea borrar este evento?");
+            int x = JOptionPane.showConfirmDialog(this, "Seguro desea borrar este "+ evento.getNombreEvento()+"?");
             if (x == 0) {
                 Mensaje m = ControladorEvento.getInstancia().eliminar(evento);
                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
@@ -172,10 +176,8 @@ public class Cell extends JButton implements MouseListener {
 
         p.setBounds(celdaX, celdaY, (int) as, (int) as2);
         p.lblNombreEvento.setText(evento.getNombreEvento());
-
         JLayeredPane layered = (JLayeredPane) getParent().getParent().getParent();
-        Lugar lugar = ControladorLugar.getInstancia().obtenerByID(evento.getIdLugar());
-
+        LugarInformacion lugar = ControladorLugarInformacion.getInstancia().obtenerByID(evento.getIdNegocio());
         Cliente cliente = ControladorCliente.getInstancia().obtenerByID(evento.getIdCliente());
         if (lugar == null) {
             p.lblLugar.setText("<<Registro no completo>>");
@@ -184,10 +186,12 @@ public class Cell extends JButton implements MouseListener {
             p.lblCliente.setText(cliente.getNombre() + " " + cliente.getApellido());
 
         } else {
-            Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lugar.getIdCiudad());
+            NegocioArea area = ControladorNegocioArea.getInstancia().obtenerListaByIdNegocio(lugar.getIdNegocio()).get(0);
+            Negocio neg = ControladorNegocio.getInstancia().obtenerByID(lugar.getIdNegocio());
+            Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(area.getIdCiudad());
             Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdEstado());
             int canti = ControladorAbono.getInstancia().obtenerCantidadADeber(cliente.getIdCliente(), evento.getIdEvento());
-            p.lblLugar.setText(lugar.getNombreLocal());
+            p.lblLugar.setText(neg.getNombreNegocio());
             p.lblDireccion.setText(estado.getEstado() + ", " + ciudad.getCiudad());
             p.lblCliente.setText(cliente.getNombre() + " " + cliente.getApellido());
             if (canti <= 0) {

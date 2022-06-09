@@ -1,7 +1,7 @@
 package independientes.image_slider;
 
 import controlador.ControladorEtiqueta;
-import controlador.ControladorLugar;
+import controlador.ControladorLugarInformacion;
 import controlador.ControladorLugarImagenes;
 import controlador.ControladorNegocio;
 import controlador.ControladorProveedor;
@@ -15,7 +15,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import modelo.Etiqueta;
-import modelo.Lugar;
+import modelo.LugarInformacion;
 import modelo.LugarImagenes;
 import modelo.Negocio;
 import modelo.Proveedor;
@@ -26,7 +26,7 @@ public class ImageSlider extends javax.swing.JPanel {
 
     private MigLayout imageLayout;
     ScrollBar sb = new ScrollBar();
-    private Lugar lugar;
+    private LugarInformacion lugar;
 
     public ImageSlider() {
         initComponents();
@@ -44,7 +44,7 @@ public class ImageSlider extends javax.swing.JPanel {
                 panelItem.repaint();
                 int x = new Double(panelItem.getWidth() * 0.30).intValue();
                 int y = new Double(panelItem.getHeight() * 0.80).intValue();
-                for (LugarImagenes lu : ControladorLugarImagenes.getInstancia().obtenerListaByIDLugar(lugar.getIdLugar())) {
+                for (LugarImagenes lu : ControladorLugarImagenes.getInstancia().obtenerListaByIDLugar(lugar.getIdNegocio())) {
                     if (sb.getOrientation() == ScrollBar.VERTICAL) {
                         panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 60%, h 30%");
                     } else {
@@ -70,14 +70,14 @@ public class ImageSlider extends javax.swing.JPanel {
         }
     }
 
-    public void lugarImagenes(Lugar lugar) {
+    public void lugarImagenes(LugarInformacion lugar) {
         panelItem.removeAll();
         panelItem.revalidate();
         panelItem.repaint();
         this.lugar = lugar;
         int x = new Double(panelItem.getWidth() * 0.30).intValue();
         int y = new Double(panelItem.getHeight() * 0.80).intValue();
-        for (LugarImagenes lu : ControladorLugarImagenes.getInstancia().obtenerListaByIDLugar(lugar.getIdLugar())) {
+        for (LugarImagenes lu : ControladorLugarImagenes.getInstancia().obtenerListaByIDLugar(lugar.getIdNegocio())) {
             if (sb.getOrientation() == ScrollBar.VERTICAL) {
                 panelItem.add(getItem(new ImageIcon(lu.getImagen()), null, lu), "w 60%, h 30%");
             } else {
@@ -138,7 +138,7 @@ public class ImageSlider extends javax.swing.JPanel {
             arr = "0";
         }
         for (LugarImagenes lugarimg : ControladorLugarImagenes.getInstancia().obtenerListaByIDCiudad(idCiudad, arr)) {
-            Lugar lugar = ControladorLugar.getInstancia().obtenerByID(lugarimg.getIdLugar());
+            LugarInformacion lugar = ControladorLugarInformacion.getInstancia().obtenerByID(lugarimg.getIdNegocio());
             if (sb.getOrientation() == ScrollBar.VERTICAL) {
                 panelItem.add(getItem(new ImageIcon(lugarimg.getImagen()), lugar, lugarimg), "w 60%, h 30%");
             } else {

@@ -136,7 +136,7 @@ public class pnlAbono extends JPanel {
         if (Constante.getClienteActivo() == null) {
             return;
         }
-
+        eventoActual = null;
         if (cbSoloAdeudo.isSelected()) { //Solo eventos en donde se deba 
             if (materialTabbed1.getSelectedIndex() == 0) { //Panel cliente ACTIVO
                 cmbEvento.removeAllItems();
@@ -164,19 +164,17 @@ public class pnlAbono extends JPanel {
         }
         eventoActual = (Evento) cmbEvento.getSelectedItem();
         Object asd = ControladorCotizacion.getInstancia().obtenerTotalCotizacionByIDEventoAndisCotFinal(eventoActual.getIdEvento());
+        cargarTablaAbono();
         if (asd == null) {
             lbl.setVisible(true);
             lblCantADeber.setText("Cant. A Deber:");
             return;
-        }else{
+        } else {
             DecimalFormat decimal = new DecimalFormat("0");
-            lblTotal.setText("Total: "+decimal.format(asd));
+            lblTotal.setText("Total: " + decimal.format(asd));
             actualizarTotalADeber();
             lbl.setVisible(false);
         }
-            
-        cargarTablaAbono();
-        
 
     }
 
@@ -186,8 +184,12 @@ public class pnlAbono extends JPanel {
     }
 
     private void cargarTablaAbono() {
+
         if (materialTabbed1.getSelectedIndex() == 0) {
             mClientes.setRowCount(0);
+            if (eventoActual == null) {
+                return;
+            }
             for (Abono ab : ControladorAbono.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento())) {
                 mClientes.addRow(new Object[]{ab.getIdAbono(), ab.getIdCliente(), ab.getIdEvento(),
                     ab.getImporte(), ab.getFecha(),});
@@ -314,6 +316,7 @@ public class pnlAbono extends JPanel {
 
     private void cbSoloAdeudo(ActionEvent e) {
         cargarEventos();
+        cargarTablaAbono();
     }
 
     private void initComponents() {

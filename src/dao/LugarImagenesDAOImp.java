@@ -49,7 +49,7 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
 
     @Override
     public Mensaje registrar(LugarImagenes t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO LUGARIMAGENES VALUES(?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO LUGAR.IMAGENES VALUES(?,?,?,?,?)")) {
             if (t.getImagen() != null) {
                 String id2 = UUID.nameUUIDFromBytes(t.getImagen()).toString().toUpperCase();
                 t.setId2(id2);
@@ -58,7 +58,7 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
                     return new Mensaje(Message.Tipo.ERROR, x);
                 }
                 ByteArrayInputStream forindex = new ByteArrayInputStream(t.getImagen());
-                ps.setInt(1, t.getIdLugar());
+                ps.setInt(1, t.getIdNegocio());
                 ps.setString(2, id2);
                 ps.setBinaryStream(3, forindex, t.getImagen().length);
                 ps.setString(4, t.getDescripcion());
@@ -74,7 +74,7 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
     @Override
     public Mensaje actualizar(LugarImagenes t) {
 
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE LUGARIMAGENES SET IMAGEN = ?, DESCRIPCION = ?, PREDETERMINADA = ?, ID2 = ? WHERE ID2 = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE LUGAR.IMAGENES SET IMAGEN = ?, DESCRIPCION = ?, PREDETERMINADA = ?, ID2 = ? WHERE ID2 = ?")) {
             String id2 = UUID.nameUUIDFromBytes(t.getImagen()).toString().toUpperCase();
 //            t.setId2(id2);
 
@@ -93,9 +93,9 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
 
     @Override
     public Mensaje eliminar(LugarImagenes t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM LUGARIMAGENES WHERE ID2 = ? AND IDLUGAR = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM LUGAR.IMAGENES WHERE ID2 = ? AND IDNegocio = ?")) {
             ps.setString(1, t.getId2());
-            ps.setInt(2, t.getIdLugar());
+            ps.setInt(2, t.getIdNegocio());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
             System.err.println("Error eliminar LugarImagenes, " + e.getMessage());
@@ -105,7 +105,7 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
 
     @Override
     public String yaExiste(LugarImagenes t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGARIMAGENES WHERE idLugar = " + t.getIdLugar() + "  and ID2 = '" + t.getId2() + "'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR.IMAGENES WHERE idNegocio = " + t.getIdNegocio() + "  and ID2 = '" + t.getId2() + "'")) {
             if (rs.next()) {
                 return "Esta imagen ya existe";
             }
@@ -117,7 +117,7 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
 
     @Override
     public ArrayList<LugarImagenes> obtenerListaByIDLugar(int idLugar) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGARIMAGENES WHERE IDLUGAR = " + idLugar)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR.IMAGENES WHERE IDNegocio = " + idLugar)) {
             ArrayList<LugarImagenes> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new LugarImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), rs.getBoolean(5)));
@@ -131,7 +131,7 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
 
     @Override
     public LugarImagenes obtenerById2(String id2) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGARIMAGENES WHERE ID2 = '" + id2 + "'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR.IMAGENES WHERE ID2 = '" + id2 + "'")) {
             if (rs.next()) {
                 return new LugarImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), rs.getBoolean(5));
             }
@@ -143,17 +143,11 @@ public class LugarImagenesDAOImp implements ILugarImagenesDAO {
 
     @Override
     public ArrayList<LugarImagenes> obtenerListaByIDCiudad(int idCiudad, String etiquetas) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT LUI.*, \n"
-                + "  (\n"
-                + "  SELECT COUNT(*) \n"
-                + "  FROM LugarEtiquetas LUE\n"
-                + "  WHERE LUE.idLugar = LUI.idLugar AND LUE.idEtiqueta IN (" + etiquetas + ")\n"
-                + "  ) AS CDDV\n"
-                + "  FROM lugarImagenes LUI\n"
-                + "  JOIN lugar L ON\n"
-                + "  L.idLugar = LUI.idLugar\n"
-                + "  WHERE L.idCiudad = " + idCiudad + " AND LUI.predeterminada = 1 \n"
-                + "  ORDER BY CDDV DESC")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT LUI.*,(SELECT COUNT(*)  FROM LUGAR.etiquetas LUE  WHERE LUE.idNegocio = LUI.idNegocio AND LUE.idEtiqueta IN ("+ etiquetas +")) AS CDDV FROM LUGAR.IMAGENES LUI\n" +
+"                JOIN lugar.imagenes L ON L.idNegocio = LUI.idNegocio\n" +
+"				join NEGOCIO.area a on L.idNegocio = a.idNegocio\n" +
+"                WHERE a.idCiudad = " + idCiudad + " AND LUI.predeterminada = 1 \n" +
+"                 ORDER BY CDDV DESC")) {
             ArrayList<LugarImagenes> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new LugarImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), true));

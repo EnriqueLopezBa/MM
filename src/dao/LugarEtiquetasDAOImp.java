@@ -42,7 +42,7 @@ public class LugarEtiquetasDAOImp implements ILugarEtiquetasDAO {
 
     @Override
     public LugarEtiquetas obtenerByID(int id) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGARETIQUETAS FROM IDETIQUETA = " + id)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR.ETIQUETAS FROM IDETIQUETA = " + id)) {
             if (rs.next()) {
                 return new LugarEtiquetas(rs.getInt(1), rs.getInt(2));
             }
@@ -54,9 +54,9 @@ public class LugarEtiquetasDAOImp implements ILugarEtiquetasDAO {
 
     @Override
     public Mensaje registrar(LugarEtiquetas t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO LUGARETIQUETAS VALUES(?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO LUGAR.ETIQUETAS VALUES(?,?)")) {
             ps.setInt(1, t.getIdEtiqueta());
-            ps.setInt(2, t.getIdLugar());
+            ps.setInt(2, t.getIdNegocio());
             ps.execute();
         } catch (SQLException e) {
             System.err.println("Error registrar LugarEtiqueta, " + e.getMessage());
@@ -71,9 +71,9 @@ public class LugarEtiquetasDAOImp implements ILugarEtiquetasDAO {
 
     @Override
     public Mensaje eliminar(LugarEtiquetas t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM LUGARETIQUETAS WHERE IDETIQUETA = ? AND IDLUGAR = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM LUGAR.ETIQUETAS WHERE IDETIQUETA = ? AND idNegocio = ?")) {
             ps.setInt(1, t.getIdEtiqueta());
-            ps.setInt(2, t.getIdLugar());
+            ps.setInt(2, t.getIdNegocio());
             ps.execute();
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
@@ -84,8 +84,8 @@ public class LugarEtiquetasDAOImp implements ILugarEtiquetasDAO {
 
     @Override
     public String yaExiste(LugarEtiquetas t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGARETIQUETAS WHERE IDETIQUETA = " + t.getIdEtiqueta()
-                + " AND idLUGAR = " + t.getIdLugar())) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR.ETIQUETAS WHERE IDETIQUETA = " + t.getIdEtiqueta()
+                + " AND idNegocio = " + t.getIdNegocio())) {
             if (rs.next()) {
                 return t.getIdEtiqueta() + "";
             }
@@ -98,9 +98,9 @@ public class LugarEtiquetasDAOImp implements ILugarEtiquetasDAO {
     @Override
     public Mensaje registrarLote(ArrayList<LugarEtiquetas> lote) {
         for (LugarEtiquetas et : lote) {
-            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO LUGARETIQUETAS VALUES(?,?)")) {
+            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO LUGAR.ETIQUETAS VALUES(?,?)")) {
                 ps.setInt(1, et.getIdEtiqueta());
-                ps.setInt(2, et.getIdLugar());
+                ps.setInt(2, et.getIdNegocio());
                 ps.execute();
             } catch (SQLException e) {
                 System.err.println("Error registroLote LugarEtiquetas, " + e.getMessage());
@@ -131,7 +131,7 @@ public class LugarEtiquetasDAOImp implements ILugarEtiquetasDAO {
 
     @Override
     public ArrayList<LugarEtiquetas> obtenerEtiquetasByIDLugar(int idLugar) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGARETIQUETAS WHERE IDLUGAR = " + idLugar)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM LUGAR.ETIQUETAS WHERE idnegocio = " + idLugar)) {
             ArrayList<LugarEtiquetas> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new LugarEtiquetas(rs.getInt(1), rs.getInt(2)));

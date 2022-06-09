@@ -7,15 +7,25 @@ package modelo;
  */
 public class LugarEtiquetas {
     private int idEtiqueta;
-    private int idLugar;
+    private int idNegocio;
 
     public LugarEtiquetas() {
     }
 
-    public LugarEtiquetas(int idEtiqueta, int idLugar) {
+    public LugarEtiquetas(int idEtiqueta, int idNegocio) {
         this.idEtiqueta = idEtiqueta;
-        this.idLugar = idLugar;
+        this.idNegocio = idNegocio;
     }
+
+    public int getIdNegocio() {
+        return idNegocio;
+    }
+
+    public void setIdNegocio(int idNegocio) {
+        this.idNegocio = idNegocio;
+    }
+
+
 
     public int getIdEtiqueta() {
         return idEtiqueta;
@@ -25,13 +35,7 @@ public class LugarEtiquetas {
         this.idEtiqueta = idEtiqueta;
     }
 
-    public int getIdLugar() {
-        return idLugar;
-    }
-
-    public void setIdLugar(int idLugar) {
-        this.idLugar = idLugar;
-    }
+ 
     
     
 }

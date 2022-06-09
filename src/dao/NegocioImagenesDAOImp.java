@@ -34,7 +34,7 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
 
     @Override
     public Mensaje registrar(NegocioImagenes t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO negocioIMAGENES VALUES(?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO negocio.IMAGENES VALUES(?,?,?,?,?)")) {
             if (t.getImagen() != null) {
                 String id2 = UUID.nameUUIDFromBytes(t.getImagen()).toString().toUpperCase();
                 t.setId2(id2);
@@ -58,7 +58,7 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
 
     @Override
     public Mensaje actualizar(NegocioImagenes t) {
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE negocioIMAGENES SET IMAGEN = ?, DESCRIPCION = ?, PREDETERMINADA = ?, ID2 = ? WHERE ID2 = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE negocio.IMAGENES SET IMAGEN = ?, DESCRIPCION = ?, PREDETERMINADA = ?, ID2 = ? WHERE ID2 = ?")) {
             String id2 = UUID.nameUUIDFromBytes(t.getImagen()).toString().toUpperCase();
 //            t.setId2(id2);
             //A traves de un dispaarador se quitan la predeterminada anterior     
@@ -77,7 +77,7 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
 
     @Override
     public Mensaje eliminar(NegocioImagenes t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM negocioIMAGENES WHERE ID2 = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM negocio.IMAGENES WHERE ID2 = ?")) {
             ps.setString(1, t.getId2());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
@@ -88,7 +88,7 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
 
     @Override
     public String yaExiste(NegocioImagenes t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocioIMAGENES WHERE"
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocio.IMAGENES WHERE"
                 + " idNegocio = " + t.getIdNegocio() + "  and ID2 = '" + t.getId2() + "'")) {
             if (rs.next()) {
                 return "Esta imagen ya existe";
@@ -116,7 +116,7 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
 
     @Override
     public ArrayList<NegocioImagenes> obtenerListabyIdNegocio(int idNegocio) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocioIMAGENES WHERE IDNegocio = " + idNegocio)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocio.IMAGENES WHERE IDNegocio = " + idNegocio)) {
             ArrayList<NegocioImagenes> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new NegocioImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), rs.getBoolean(5)));
@@ -130,10 +130,10 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
 
     @Override
     public ArrayList<NegocioImagenes> obtenerListabyIdCiudadAndTipoProveedor(int idCiudad, int idTipoProveedor) {
-        try (PreparedStatement ps = cn.prepareStatement("SELECT N.* FROM negocioImagenes N\n"
-                + "JOIN negocio NE ON\n"
+        try (PreparedStatement ps = cn.prepareStatement("SELECT N.* FROM negocio.IMAGENES N\n"
+                + "JOIN negocio.negocio NE ON\n"
                 + "N.idNegocio = NE.idNegocio\n"
-                + "JOIN negocioArea P ON\n"
+                + "JOIN negocio.area P ON\n"
                 + "P.idNegocio = NE.idNegocio\n"
                 + "WHERE P.idCiudad = ? AND  NE.idTipoProveedor = ? AND PREDETERMINADA = 1;")) {
             ps.setInt(1, idCiudad);
@@ -152,7 +152,7 @@ public class NegocioImagenesDAOImp implements INegocioImagenesDAO {
 
     @Override
     public NegocioImagenes obtenerByID2(String id2) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocioIMAGENES WHERE ID2 = '" + id2 + "'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM negocio.IMAGENES WHERE ID2 = '" + id2 + "'")) {
             if (rs.next()) {
                 return new NegocioImagenes(rs.getInt(1), rs.getString(2), rs.getBytes(3), rs.getString(4), rs.getBoolean(5));
             }

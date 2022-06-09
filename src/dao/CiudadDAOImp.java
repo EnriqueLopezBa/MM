@@ -129,6 +129,7 @@ public class CiudadDAOImp implements ICiudadDAO {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CIUDAD WHERE IDESTADO = " + idEstado)) {
             ArrayList<Ciudad> temp = new ArrayList<>();
             while(rs.next()){
+               
                 temp.add(new Ciudad(rs.getInt(1), rs.getInt(2), rs.getString(3)));
             }
             return temp;

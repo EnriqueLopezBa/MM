@@ -1,4 +1,3 @@
-
 package modelo;
 
 /**
@@ -6,7 +5,8 @@ package modelo;
  * @author Enrique
  */
 public class LugarImagenes {
-    private int idLugar;
+
+    private int idNegocio;
     private String id2;
     private byte[] imagen;
     private String descripcion;
@@ -15,15 +15,21 @@ public class LugarImagenes {
     public LugarImagenes() {
     }
 
-    public LugarImagenes(int idLugar, String id2, byte[] imagen, String descripcion, boolean predeterminada) {
-        this.idLugar = idLugar;
+    public LugarImagenes(int idNegocio, String id2, byte[] imagen, String descripcion, boolean predeterminada) {
+        this.idNegocio = idNegocio;
         this.id2 = id2;
         this.imagen = imagen;
         this.descripcion = descripcion;
         this.predeterminada = predeterminada;
     }
 
-   
+    public int getIdNegocio() {
+        return idNegocio;
+    }
+
+    public void setIdNegocio(int idNegocio) {
+        this.idNegocio = idNegocio;
+    }
 
     public boolean isPredeterminada() {
         return predeterminada;
@@ -32,17 +38,7 @@ public class LugarImagenes {
     public void setPredeterminada(boolean predeterminada) {
         this.predeterminada = predeterminada;
     }
-    
 
-    public int getIdLugar() {
-        return idLugar;
-    }
-
-    public void setIdLugar(int idLugar) {
-        this.idLugar = idLugar;
-    }
-
-  
     public String getId2() {
         return id2;
     }
@@ -67,11 +63,4 @@ public class LugarImagenes {
         this.descripcion = descripcion;
     }
 
-    
-   
- 
-
-
-    
-    
 }

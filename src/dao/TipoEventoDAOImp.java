@@ -37,7 +37,7 @@ public class TipoEventoDAOImp implements ITipoEventoDAO {
 
     @Override
     public ArrayList<TipoEvento> obtenerListaByCadena(String cadena) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM TIPOEVENTO WHERE tipoevento lIKE '%" + cadena + "%'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.TIPO WHERE tipoevento lIKE '%" + cadena + "%'")) {
             ArrayList<TipoEvento> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new TipoEvento(rs.getInt(1), rs.getString(2)));
@@ -51,7 +51,7 @@ public class TipoEventoDAOImp implements ITipoEventoDAO {
 
     @Override
     public TipoEvento obtenerByID(int id) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM TIPOEVENTO WHERE IDTIPOEVENTO = "+id)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.TIPO WHERE IDTIPOEVENTO = "+id)) {
             if (rs.next()) {
                 return new TipoEvento(rs.getInt(1), rs.getString(2));
             }
@@ -67,7 +67,7 @@ public class TipoEventoDAOImp implements ITipoEventoDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO tipoEvento VALUES (?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO EVENTO.TIPO VALUES (?)")) {
             ps.setString(1, t.getTematica());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
         } catch (SQLException e) {
@@ -82,7 +82,7 @@ public class TipoEventoDAOImp implements ITipoEventoDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE tipoEvento SET tipoEvento = ? WHERE idTipoEvento = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE EVENTO.TIPO SET tipoEvento = ? WHERE idTipoEvento = ?")) {
             ps.setString(1, t.getTematica());
             ps.setInt(2, t.getIdTipoEvento());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
@@ -94,7 +94,7 @@ public class TipoEventoDAOImp implements ITipoEventoDAO {
 
     @Override
     public Mensaje eliminar(TipoEvento t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM TIPOEVENTO WHERE IDTIPOEVENTO = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM EVENTO.TIPO WHERE IDTIPOEVENTO = ?")) {
             ps.setInt(1, t.getIdTipoEvento());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
@@ -105,7 +105,7 @@ public class TipoEventoDAOImp implements ITipoEventoDAO {
 
     @Override
     public String yaExiste(TipoEvento t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM tipoEvento WHERE idTipoEvento != "+t.getIdTipoEvento()
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.TIPO WHERE idTipoEvento != "+t.getIdTipoEvento()
                 +"  AND tipoEvento = '"+t.getTematica()+"'")) {
             if (rs.next()) {
                 return t.getTematica();
@@ -118,7 +118,7 @@ public class TipoEventoDAOImp implements ITipoEventoDAO {
 
     @Override
     public TipoEvento obtenerTipoEventoByNombre(String nombre) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM TIPOEVENTO WHERE TIPOEVENTO ='"+nombre+"'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.TIPO WHERE TIPOEVENTO ='"+nombre+"'")) {
             if (rs.next()) {
                 return new TipoEvento(rs.getInt(1), rs.getString(2));
             }

@@ -131,6 +131,9 @@ public class pnlCotizacion extends JPanel {
         }
         cmbEvento.removeAllItems();
         for (Evento ev : ControladorEvento.getInstancia().obtenerEventoByIDCliente(cliente.getIdCliente())) {
+            if (ev.getIdTipoEvento() == 0) {
+                continue;
+            }
             cmbEvento.addItem(ev);
         }
         cmbEvento.setRenderer(new MyObjectListCellRenderer());
@@ -140,6 +143,7 @@ public class pnlCotizacion extends JPanel {
         if (cmbEvento.getSelectedIndex() == -1) {
             return;
         }
+  
         eventoActual = (Evento) cmbEvento.getSelectedItem();
 
         llenarTabla();
@@ -151,7 +155,7 @@ public class pnlCotizacion extends JPanel {
             ArrayList<ProveedorEvento> provE = ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento());
             for (ProveedorEvento pro : provE) {
                 Negocio negocio = ControladorNegocio.getInstancia().obtenerByID(pro.getIdNegocio());
-                TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID(negocio.getIdNegocio());
+                TipoProveedor tipo = ControladorTipoProveedor.getInstancia().obtenerByID(negocio.getIdTipoProveedor());
                 m.addRow(new Object[]{pro.getIdEvento(), pro.getIdNegocio(), tipo.getTipoProveedor(),
                     negocio.getNombreNegocio(), todoFechaAMPM.format(pro.getFechaInicio()), todoFechaAMPM.format(pro.getFechaFinal()), "0"});
             }

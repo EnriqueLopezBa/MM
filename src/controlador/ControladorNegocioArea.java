@@ -52,8 +52,8 @@ public class ControladorNegocioArea {
         return NegocioAreaDAOImp.getInstancia().obtenerListaByIdCiudadAndTipoProveedor(idCiudad, idTipoProveedor);
     }
 
-    public ArrayList<NegocioArea> obtenerListaByIdNegocio(int idProveedor) {
-        return NegocioAreaDAOImp.getInstancia().obtenerListaByIdNegocio(idProveedor);
+    public ArrayList<NegocioArea> obtenerListaByIdNegocio(int idNegocio) {
+        return NegocioAreaDAOImp.getInstancia().obtenerListaByIdNegocio(idNegocio);
     }
 
     public NegocioArea obtenerByIdCiudadAndIdNegocioArea(int idCiudad, int idProveedor) {

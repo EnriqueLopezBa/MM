@@ -47,7 +47,7 @@ public class AbonoProveedoresDAOImp implements IAbonoProveedoresDAO{
     }
 
     public Mensaje registrar(AbonoProveedores t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO ABONOSPROVEEDOR VALUES(?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR.ABONOS VALUES(?,?,?,?)")) {
             ps.setInt(1, t.getIdProveedor());
             ps.setInt(2, t.getIdEvento());
             ps.setInt(3, t.getImporte());
@@ -69,7 +69,7 @@ public class AbonoProveedoresDAOImp implements IAbonoProveedoresDAO{
     }
 
     public Mensaje eliminar(AbonoProveedores t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM ABONOSPROVEEDOR WHERE IDABONO = " + t.getIdAbono())) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM PROVEEDOR.ABONOS WHERE IDABONO = " + t.getIdAbono())) {
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -82,7 +82,7 @@ public class AbonoProveedoresDAOImp implements IAbonoProveedoresDAO{
     }
 
     public ArrayList<AbonoProveedores> obtenerListaByIdEvento(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ABONOSPROVEEDOR WHERE IDEVENTO = " +idEvento)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR.ABONOS WHERE IDEVENTO = " +idEvento)) {
             ArrayList<AbonoProveedores> temp = new ArrayList<>();
             while(rs.next()){
                 temp.add(new AbonoProveedores(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getDate(5)));

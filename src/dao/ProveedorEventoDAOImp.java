@@ -49,7 +49,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
 
     @Override
     public Mensaje registrar(ProveedorEvento t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDORESEVENTO VALUES(?,?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR.EVENTO VALUES(?,?,?,?,?,?)")) {
             ps.setInt(1, t.getIdEvento());
             ps.setInt(2, t.getIdProveedor());
             ps.setInt(3, t.getIdNegocio());
@@ -66,7 +66,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
 
     @Override
     public Mensaje actualizar(ProveedorEvento t) {
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE PROVEEDOREVENTO SET fechaINICIO = ?, fechaFINAL = ?, COMENTARIO = ? "
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE PROVEEDOR.EVENTO SET fechaINICIO = ?, fechaFINAL = ?, COMENTARIO = ? "
                 + "WHERE IDEVENTO = ? AND IDPROVEEDOR = ? AND IDNEGOCIO = ?")) {
             ps.setTimestamp(1, new Timestamp(t.getFechaInicio().getTime()));
             ps.setTimestamp(2, new Timestamp(t.getFechaFinal().getTime()));
@@ -83,7 +83,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
 
     @Override
     public Mensaje eliminar(ProveedorEvento t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM PROVEEDOREVENTO WHERE IDPROVEEDOR = ? AND IDEVENTO = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM PROVEEDOR.EVENTO WHERE IDPROVEEDOR = ? AND IDEVENTO = ?")) {
             ps.setInt(1, t.getIdProveedor());
             ps.setInt(2, t.getIdEvento());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
@@ -97,7 +97,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
 
     @Override
     public String yaExiste(ProveedorEvento t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO =" + t.getIdEvento()
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR.EVENTO WHERE IDEVENTO =" + t.getIdEvento()
                 + " and idNegocio = " + t.getIdNegocio())) {
             if (rs.next()) {
                 return "Negocio repetido";
@@ -114,7 +114,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
             if (!yaExiste(pro).isEmpty()) {
                 continue;
             }
-            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOREVENTO VALUES(?,?,?,?,?,?)")) {
+            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR.EVENTO VALUES(?,?,?,?,?,?)")) {
                 ps.setInt(1, pro.getIdEvento());
                 if (pro.getIdProveedor() == 0) {
                     ps.setNull(2, Types.NULL);
@@ -164,7 +164,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
 
     @Override
     public ArrayList<ProveedorEvento> obtenerListaByIdEvento(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = " + idEvento)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR.EVENTO WHERE IDEVENTO = " + idEvento)) {
             ArrayList<ProveedorEvento> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6)));
@@ -178,7 +178,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
 
     @Override
     public ArrayList<ProveedorEvento> obtenerListaByIdProveedor(int idProveedor) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE idProveedor = " + idProveedor)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR.EVENTO WHERE idProveedor = " + idProveedor)) {
             ArrayList<ProveedorEvento> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6)));
@@ -192,7 +192,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
 
     @Override
     public ProveedorEvento obtenerByIdEventoAndIdProveedor(int idEvento, int idProveedor) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = " + idEvento
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR.EVENTO WHERE IDEVENTO = " + idEvento
                 + " AND IDPROVEEDOR = " + idProveedor)) {
             if (rs.next()) {
                 return new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6));
@@ -205,7 +205,7 @@ public class ProveedorEventoDAOImp implements IProveedorEventoDAO {
 
     @Override
     public ProveedorEvento obtenerByIdEventoAndIdNegocio(int idEvento, int idNegocio) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOREVENTO WHERE IDEVENTO = " + idEvento
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR.EVENTO WHERE IDEVENTO = " + idEvento
                 + " AND idNegocio = " + idNegocio)) {
             if (rs.next()) {
                 return new ProveedorEvento(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6));

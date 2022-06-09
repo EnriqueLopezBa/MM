@@ -10,7 +10,7 @@ import java.awt.Toolkit;
 import javax.swing.JTable;
 import modelo.Cliente;
 import modelo.Evento;
-import modelo.Lugar;
+import modelo.LugarInformacion;
 import modelo.Proveedor;
 import vista.paneles.pnlEventos;
 import vista.paneles.pnlProveedores;
@@ -66,27 +66,27 @@ public class Constante {
     }
 
     public static void actualizarPresupuesto(Evento event) {
-        Lugar lugar = pnlEventos.getInstancia().lugarActual;
-        if (presupuesto <= 0) {
-            if (event != null) {
-                presupuesto = ControladorEvento.getInstancia().obtenerByID(event.getIdEvento()).getPresupuesto();
-            } else if(!pnlEventos.getInstancia().txtPresupuesto.getText().isEmpty()) {
-                presupuesto = Integer.parseInt(pnlEventos.getInstancia().txtPresupuesto.getText().replaceAll(",", ""));
-            }
-            if (presupuesto <= 0) {
-                return;
-            }
-        }
-        int presupuestoTemp = presupuesto;
-        if (lugar != null) {
-            presupuestoTemp -= lugar.getPrecio();
-        }
-        for (int i = 0; i < pnlProveedores.getInstancia().m.getRowCount(); i++) {
-            if (pnlProveedores.getInstancia().m.getValueAt(i, 6) != null) {
-                presupuestoTemp -= (int) pnlProveedores.getInstancia().m.getValueAt(i, 6);
-            }
-        }
-        Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presupuestoTemp);
+//        LugarInformacion lugar = pnlEventos.getInstancia().lugarActual;
+//        if (presupuesto <= 0) {
+//            if (event != null) {
+//                presupuesto = ControladorEvento.getInstancia().obtenerByID(event.getIdEvento()).getPresupuesto();
+//            } else if(!pnlEventos.getInstancia().txtPresupuesto.getText().isEmpty()) {
+//                presupuesto = Integer.parseInt(pnlEventos.getInstancia().txtPresupuesto.getText().replaceAll(",", ""));
+//            }
+//            if (presupuesto <= 0) {
+//                return;
+//            }
+//        }
+//        int presupuestoTemp = presupuesto;
+//        if (lugar != null) {
+//            presupuestoTemp -= lugar.getPrecio();
+//        }
+//        for (int i = 0; i < pnlProveedores.getInstancia().m.getRowCount(); i++) {
+//            if (pnlProveedores.getInstancia().m.getValueAt(i, 6) != null) {
+//                presupuestoTemp -= (int) pnlProveedores.getInstancia().m.getValueAt(i, 6);
+//            }
+//        }
+//        Principal.getInstancia().lblPresupuesto.setText("Presupuesto: " + presupuestoTemp);
     }
 
     public static Cliente getClienteActivo() {

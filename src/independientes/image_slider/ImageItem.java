@@ -1,5 +1,6 @@
 package independientes.image_slider;
 
+import controlador.ControladorNegocio;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,7 +22,7 @@ import javax.swing.JComponent;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import modelo.Lugar;
+import modelo.LugarInformacion;
 import modelo.LugarImagenes;
 import modelo.Negocio;
 import modelo.Proveedor;
@@ -37,7 +38,7 @@ public class ImageItem extends JComponent {
     private Timer timer;
     private boolean show;
 
-    private Lugar lugar;
+    private LugarInformacion lugar;
     private LugarImagenes lugarIMG;
 
     private Negocio negocio;
@@ -45,8 +46,8 @@ public class ImageItem extends JComponent {
 
     public ImageItem(Icon image, MigLayout mig, Object clase, Object claseIMG, ImageSlider puntero) {
         this.image = image;
-        if (clase instanceof Lugar) {
-            this.lugar = (Lugar) clase;
+        if (clase instanceof LugarInformacion) {
+            this.lugar = (LugarInformacion) clase;
         } else if (clase instanceof Negocio) {
             this.negocio = (Negocio) clase;
         }
@@ -134,10 +135,11 @@ public class ImageItem extends JComponent {
             g.dispose();
             g2.drawImage(img, 0, 0, null);
             if (lugar != null && lugarIMG != null) {
+                Negocio neg = ControladorNegocio.getInstancia().obtenerByID(lugar.getIdNegocio());
                 g2.setFont(new Font("Times Roman", Font.PLAIN, 14));
-                g2.drawString("Nombre: " + lugar.getNombreLocal(), 15, height - shadowSize + 15);
+                g2.drawString("Nombre: " + neg.getNombreNegocio(), 15, height - shadowSize + 15);
                 g2.drawString("Capacidad Aprox.: " + lugar.getCapacidad() + "", 15, height - shadowSize + 30);
-                g2.drawString("Precio Aprox.: " + lugar.getPrecio() + "", 15, height - shadowSize + 45);
+                g2.drawString("Precio Aprox.: " + neg.getPrecioAprox()+ "", 15, height - shadowSize + 45);
             } else if (lugarIMG != null) {
                 g2.drawString(lugarIMG.getDescripcion(), 15, height - shadowSize + 15);
             }

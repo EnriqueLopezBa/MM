@@ -46,7 +46,7 @@ public class frmLugar extends JPanel {
         cmbEstado = new JComboBox();
         cmbCiudad = new JComboBox();
         cmbProveedor = new JComboBox();
-        txtLugar = new TextField();
+        txtNegocio = new TextField();
         txtDomicilio = new TextField();
         frmEtiquetas1 = new frmEtiquetas();
         txtCapacidad = new TextField();
@@ -75,9 +75,9 @@ public class frmLugar extends JPanel {
         add(cmbCiudad, "cell 1 0,grow, hmax 15%");
         add(cmbProveedor, "cell 2 0,grow, hmax 15%");
 
-        //---- txtLugar ----
-        txtLugar.setLabelText("Nombre del Lugar");
-        add(txtLugar, "cell 0 1 2 1, growx");
+        //---- txtNegocio ----
+        txtNegocio.setLabelText("Nombre lugar/negocio");
+        add(txtNegocio, "cell 0 1 2 1, growx");
 
         //---- txtDomicilio ----
         txtDomicilio.setLabelText("Domicilio");
@@ -128,7 +128,7 @@ public class frmLugar extends JPanel {
     public JComboBox cmbEstado;
     public JComboBox cmbCiudad;
     public JComboBox cmbProveedor;
-    public TextField txtLugar;
+    public TextField txtNegocio;
     public TextField txtDomicilio;
     public frmEtiquetas frmEtiquetas1;
     public TextField txtCapacidad;

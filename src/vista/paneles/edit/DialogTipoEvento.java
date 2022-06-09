@@ -81,6 +81,9 @@ public class DialogTipoEvento extends JDialog {
                 return;
             }
             int x = p.tblBuscar.getSelectedRow();
+            if (JOptionPane.showConfirmDialog(null, "Seguro que desea eliminar " + p.tblModel.getValueAt(x, 1)+"?") != 0) {
+                return;
+            }
             TipoEvento tipo = new TipoEvento();
             tipo.setIdTipoEvento((int) p.tblModel.getValueAt(x, 0));
             Mensaje m = ControladorTipoEvento.getInstancia().eliinar(tipo);

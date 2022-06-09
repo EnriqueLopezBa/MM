@@ -50,7 +50,7 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
 
     @Override
     public Mensaje registrar(NegocioArea t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO NEGOCIOAREA VALUES(?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO NEGOCIO.AREA VALUES(?,?)")) {
             ps.setInt(1, t.getIdNegocio());
             ps.setInt(2, t.getIdCiudad());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
@@ -66,7 +66,7 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE NEGOCIOAREA SET  IDCIUDAD = ? WHERE idNegocio = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE NEGOCIO.AREA SET  IDCIUDAD = ? WHERE idNegocio = ?")) {
             ps.setInt(1, t.getIdCiudad());
             ps.setInt(2, t.getIdNegocio());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
@@ -78,7 +78,7 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
 
     @Override
     public Mensaje eliminar(NegocioArea t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM NEGOCIOAREA WHERE IDCIUDAD = ? AND idNegocio = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM NEGOCIO.AREA WHERE IDCIUDAD = ? AND idNegocio = ?")) {
             ps.setInt(1, t.getIdCiudad());
             ps.setInt(2, t.getIdNegocio());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
@@ -90,8 +90,8 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
 
     @Override
     public ArrayList<NegocioArea> obtenerListaByIdCiudadAndTipoProveedor(int idCiudad, int idTipoProveedor) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIOAREA N\n"
-                + "  JOIN negocio NE ON\n"
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO.AREA N\n"
+                + "  JOIN negocio.negocio NE ON\n"
                 + "  N.idNegocio = NE.idNegocio\n"
                 + "  WHERE IDCIUDAD = "+idCiudad+" AND  NE.idTipoProveedor = "+idTipoProveedor)) {
             ArrayList<NegocioArea> temp = new ArrayList<>();
@@ -107,7 +107,7 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
 
     @Override
     public ArrayList<NegocioArea> obtenerListaByIdNegocio(int idNegocio) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIOAREA WHERE idNegocio =" + idNegocio)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO.AREA WHERE idNegocio =" + idNegocio)) {
             ArrayList<NegocioArea> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new NegocioArea(rs.getInt(1), rs.getInt(2)));
@@ -121,7 +121,7 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
 
     @Override
     public String yaExiste(NegocioArea t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIOAREA WHERE idNegocio = " + t.getIdNegocio()
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO.AREA WHERE idNegocio = " + t.getIdNegocio()
                 + " AND IDCIUDAD = " + t.getIdCiudad())) {
             if (rs.next()) {
                 return t.getIdNegocio() + "";
@@ -135,7 +135,7 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
     @Override
     public Mensaje registrarLote(ArrayList<NegocioArea> lote) {
         for (NegocioArea et : lote) {
-            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO NEGOCIOAREA VALUES(?,?)")) {
+            try (PreparedStatement ps = cn.prepareStatement("INSERT INTO NEGOCIO.AREA VALUES(?,?)")) {
                 ps.setInt(1, et.getIdNegocio());
                 ps.setInt(2, et.getIdCiudad());
                 ps.execute();
@@ -165,7 +165,7 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
         } else {
             ar = "0";
         }
-        try (PreparedStatement ps = cn.prepareStatement(" DELETE FROM NEGOCIOAREA WHERE idNegocio = " + idNegocio
+        try (PreparedStatement ps = cn.prepareStatement(" DELETE FROM NEGOCIO.AREA WHERE idNegocio = " + idNegocio
                 + "AND idCiudad NOT IN(" + ar + ")")) {
             ps.execute();
         } catch (SQLException e) {
@@ -177,7 +177,7 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
 
     @Override
     public NegocioArea obtenerByIdCiudadAndIdNegocio(int idCiudad, int idNegocio) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIOAREA WHERE idNegocio = " + idNegocio + " and "
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO.AREA WHERE idNegocio = " + idNegocio + " and "
                 + "idCiudad = " + idCiudad)) {
             if (rs.next()) {
                 return new NegocioArea(idNegocio, idCiudad);
@@ -190,7 +190,7 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
 
     @Override
     public NegocioArea obtenerNegocioByNombre(String nombre) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta(" select n.* from negocioArea n\n"
+        try (ResultSet rs = Conexion.getInstancia().Consulta(" select n.* from NEGOCIO.AREA n\n"
                 + "  join ciudad c on\n"
                 + "  n.idCiudad = c.idCiudad\n"
                 + "  where ciudad = '" + nombre + "'")) {
@@ -205,7 +205,7 @@ public class NegocioAreaDAOImp implements INegocioAreaDAO {
 
     @Override
     public NegocioArea obtenerNegocioByLast() {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT TOP 1* FROM NEGOCIOAREA ORDER BY IDNEGOCIO DESC")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT TOP 1* FROM NEGOCIO.AREA ORDER BY IDNEGOCIO DESC")) {
             if (rs.next()) {
                 return new NegocioArea(rs.getInt(1), rs.getInt(2));
             }

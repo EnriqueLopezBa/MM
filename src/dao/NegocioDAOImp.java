@@ -33,7 +33,7 @@ public class NegocioDAOImp implements INegocioDAO {
 
     @Override
     public ArrayList<Negocio> obtenerLista() {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO.NEGOCIO")) {
             ArrayList<Negocio> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new Negocio(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getBoolean(6), rs.getString(7)));
@@ -47,10 +47,10 @@ public class NegocioDAOImp implements INegocioDAO {
 
     @Override
     public ArrayList<Negocio> obtenerListaByCadena(String cadena) {
-        try (PreparedStatement ps = cn.prepareStatement("SELECT * FROM negocio N\n"
-                + "  LEFT JOIN proveedor P ON\n"
+        try (PreparedStatement ps = cn.prepareStatement("SELECT * FROM NEGOCIO.NEGOCIO N\n"
+                + "  LEFT JOIN proveedor.PROVEEDOR P ON\n"
                 + "  N.idProveedor = P.idProveedor\n"
-                + "  JOIN tipoProveedor T ON\n"
+                + "  JOIN PROVEEDOR.TIPO T ON\n"
                 + "  N.idTipoProveedor = T.idTipoProveedor\n"
                 + "  WHERE P.nombre LIKE ? OR N.nombreNegocio LIKE ? OR T.tipoProveedor LIKE ?\n"
                 + "  ORDER BY P.nombre")) {
@@ -72,7 +72,7 @@ public class NegocioDAOImp implements INegocioDAO {
     @Override
     public Negocio obtenerByID(int id
     ) {
-        try (PreparedStatement ps = cn.prepareStatement("SELECT * FROM NEGOCIO WHERE IDNEGOCIO = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("SELECT * FROM NEGOCIO.NEGOCIO WHERE IDNEGOCIO = ?")) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -90,7 +90,7 @@ public class NegocioDAOImp implements INegocioDAO {
         if (!yaExiste(t).isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, "Este negocio ya se encuentra registrado en este proveedor");
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO NEGOCIO VALUES(?,?,?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO NEGOCIO.NEGOCIO VALUES(?,?,?,?,?,?)")) {
             if (t.getIdProveedor() == 0) { // Un nuevo negocio agregado por el cliente
                 ps.setNull(1, Types.NULL);
                 ps.setInt(2, t.getIdTipoProveedor());
@@ -105,7 +105,7 @@ public class NegocioDAOImp implements INegocioDAO {
             ps.setString(3, t.getNombreNegocio());
             ps.setInt(4, t.getPrecioAprox());
             ps.setBoolean(5, t.isDisponible());
-            if (t.getDescripcion().isEmpty() || t.getDescripcion().equals("Puedes añadir una descripcion del negocio")) {
+            if (t.getDescripcion() == null || t.getDescripcion().isEmpty() || t.getDescripcion().equals("Puedes añadir una descripcion del negocio")) {
                 ps.setNull(6, Types.NULL);
             } else {
                 ps.setString(6, t.getDescripcion());
@@ -121,20 +121,20 @@ public class NegocioDAOImp implements INegocioDAO {
     @Override
     public Mensaje actualizar(Negocio t
     ) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO WHERE IDProveedor = " + t.getIdProveedor() + " AND IDNEGOCIO <>" + t.getIdNegocio() + " AND NOMBRENegocio = '" + t.getNombreNegocio() + "'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO.NEGOCIO WHERE IDProveedor = " + t.getIdProveedor() + " AND IDNEGOCIO <>" + t.getIdNegocio() + " AND NOMBRENegocio = '" + t.getNombreNegocio() + "'")) {
             if (rs.next()) {
                 return new Mensaje(Message.Tipo.ERROR, "Este negocio ya existe en otro proveedor");
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE NEGOCIO SET IDPROVEEDOR = ?, IDTIPOPROVEEDOR = ?, NOMBRENEGOCIO = ?, PRECIOAPROX = ?, DISPONIBLE = ?, DESCRIPCION = ? WHERE IDNEGOCIO = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE NEGOCIO.NEGOCIO SET IDPROVEEDOR = ?, IDTIPOPROVEEDOR = ?, NOMBRENEGOCIO = ?, PRECIOAPROX = ?, DISPONIBLE = ?, DESCRIPCION = ? WHERE IDNEGOCIO = ?")) {
             ps.setInt(1, t.getIdProveedor());
             ps.setInt(2, t.getIdTipoProveedor());
             ps.setString(3, t.getNombreNegocio());
             ps.setInt(4, t.getPrecioAprox());
             ps.setBoolean(5, t.isDisponible());
-            if (t.getDescripcion().isEmpty() || t.getDescripcion().equals("Puedes añadir una descripcion del negocio")) {
+            if (t.getDescripcion() == null || t.getDescripcion().isEmpty() || t.getDescripcion().equals("Puedes añadir una descripcion del negocio")) {
                 ps.setNull(6, Types.NULL);
             } else {
                 ps.setString(6, t.getDescripcion());
@@ -150,7 +150,7 @@ public class NegocioDAOImp implements INegocioDAO {
     @Override
     public Mensaje eliminar(Negocio t
     ) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM NEGOCIO WHERE IDNEGOCIO = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM NEGOCIO.NEGOCIO WHERE IDNEGOCIO = ?")) {
             ps.setInt(1, t.getIdNegocio());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
@@ -162,7 +162,7 @@ public class NegocioDAOImp implements INegocioDAO {
     @Override
     public String yaExiste(Negocio t
     ) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO WHERE IDProveedor = " + t.getIdProveedor() + " AND NOMBRENegocio = '" + t.getNombreNegocio() + "'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO.NEGOCIO WHERE IDProveedor = " + t.getIdProveedor() + " AND NOMBRENegocio = '" + t.getNombreNegocio() + "'")) {
             if (rs.next()) {
                 return rs.getString(3);
             }
@@ -175,7 +175,7 @@ public class NegocioDAOImp implements INegocioDAO {
     @Override
     public Negocio obtenerNegocioByIdProvAndNombreNeg(int idProveedor, String nombreNegocio
     ) {
-        try (PreparedStatement ps = cn.prepareStatement("SELECT * FROM NEGOCIO WHERE IDPROVEEDOR = ?, AND NOMBRENEGOCIO = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("SELECT * FROM NEGOCIO.NEGOCIO WHERE IDPROVEEDOR = ?, AND NOMBRENEGOCIO = ?")) {
             ps.setInt(1, idProveedor);
             ps.setString(2, nombreNegocio);
             ResultSet rs = ps.executeQuery();
@@ -192,7 +192,7 @@ public class NegocioDAOImp implements INegocioDAO {
     @Override
     public ArrayList<Negocio> obtenerListaByIdProveedor(int idProveedor
     ) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO WHERE IDPROVEEDOR = " + idProveedor)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO.NEGOCIO WHERE IDPROVEEDOR = " + idProveedor)) {
             ArrayList<Negocio> temp = new ArrayList<Negocio>();
             while (rs.next()) {
                 temp.add(new Negocio(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getBoolean(6), rs.getString(7)));
@@ -207,7 +207,7 @@ public class NegocioDAOImp implements INegocioDAO {
     @Override
     public ArrayList<Negocio> obtenerListaByIdTipoProveedor(int idTipoProveedor
     ) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO WHERE IDTIPOPROVEEDOR = " + idTipoProveedor)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM NEGOCIO.NEGOCIO WHERE IDTIPOPROVEEDOR = " + idTipoProveedor)) {
             ArrayList<Negocio> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new Negocio(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getBoolean(6), rs.getString(7)));
@@ -221,7 +221,7 @@ public class NegocioDAOImp implements INegocioDAO {
 
     @Override
     public Negocio obtenerNegocioByLast() {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT TOP 1* FROM NEGOCIO ORDER BY IDNEGOCIO DESC")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT TOP 1* FROM NEGOCIO.NEGOCIO ORDER BY IDNEGOCIO DESC")) {
             if (rs.next()) {
                 return new Negocio(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getBoolean(6), rs.getString(7));
             }

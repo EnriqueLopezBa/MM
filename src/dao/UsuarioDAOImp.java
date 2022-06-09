@@ -65,14 +65,26 @@ public class UsuarioDAOImp implements IUsuarioDAO {
 
     @Override
     public Usuario obtenerByID(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM USUARIO WHERE IDUSUARIO = "+ id)) {
+            if (rs.next()) {
+                return new Usuario(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerByID Usuario, " +e.getMessage());
+        }        
+        return null;
     }
 
     @Override
     public Mensaje registrar(Usuario t) {
-        if (!yaExiste(t).isEmpty()) {
-            return new Mensaje(Message.Tipo.ERROR, "Ya existe");
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM USUARIO WHERE EMAIL = '" + t.getCorreo() + "'")) {
+            if (rs.next()) {
+                return new Mensaje(Message.Tipo.ERROR, "Este Correo ya existe");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error yaExiste Usuario, " + e.getMessage());
         }
+        
         try (PreparedStatement ps = cn.prepareStatement("INSERT INTO USUARIO VALUES(?,?,?,?,?)")) {
             ps.setInt(1, t.getIdTipoUsuario());
             ps.setString(2, t.getNombre());
@@ -137,7 +149,7 @@ public class UsuarioDAOImp implements IUsuarioDAO {
     public String yaExiste(Usuario t) {
         try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM USUARIO WHERE IDUSUARIO != "+t.getIdSuario()+" AND  EMAIL = '" + t.getCorreo() + "'")) {
             if (rs.next()) {
-                return "Ya existe";
+                return "Este Correo ya existe!";
             }
         } catch (SQLException e) {
             System.err.println("Error yaExiste Usuario, " + e.getMessage());

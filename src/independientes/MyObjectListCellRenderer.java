@@ -1,5 +1,6 @@
 package independientes;
 
+import controlador.ControladorNegocio;
 import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
@@ -12,7 +13,7 @@ import modelo.Estado;
 import modelo.Etiqueta;
 import modelo.Evento;
 import modelo.EventosDestacados;
-import modelo.Lugar;
+import modelo.LugarInformacion;
 import modelo.LugarEtiquetas;
 import modelo.LugarImagenes;
 import modelo.Negocio;
@@ -50,9 +51,12 @@ public class MyObjectListCellRenderer extends DefaultListCellRenderer {
             value = ((TipoUsuario) value).getTipoUsuario();
         } else if (value instanceof TipoProveedor) {
             value = ((TipoProveedor) value).getTipoProveedor();
-        } else if (value instanceof Lugar) {
-            value = ((Lugar) value).getNombreLocal();
-        } else if (value instanceof TipoEvento) {
+        } 
+        else if (value instanceof LugarInformacion) {
+            Negocio neg = ControladorNegocio.getInstancia().obtenerByID(((LugarInformacion) value).getIdNegocio());
+            value = neg.getNombreNegocio();
+        } 
+        else if (value instanceof TipoEvento) {
             value = ((TipoEvento) value).getTematica();
         } else if (value instanceof Proveedor) {
             value = ((Proveedor) value).getNombre();

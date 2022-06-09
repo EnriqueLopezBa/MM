@@ -49,7 +49,7 @@ public class AbonoDAOImp implements IAbonoDAO {
 
     @Override
     public Mensaje registrar(Abono t) {
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO ABONOSCliente VALUES(?,?,?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO CLIENTE.ABONOS VALUES(?,?,?,?)")) {
             ps.setInt(1, t.getIdCliente());
             ps.setInt(2, t.getIdEvento());
             ps.setInt(3, t.getImporte());
@@ -73,10 +73,10 @@ public class AbonoDAOImp implements IAbonoDAO {
 
     @Override
     public Mensaje eliminar(Abono t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM ABONOSCliente WHERE IDABONO = " + t.getIdAbono())) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM CLIENTE.ABONOS WHERE IDABONO = " + t.getIdAbono())) {
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error eliminar Abono, " + e.getMessage());
         }
         return new Mensaje(Message.Tipo.ERROR, "Error");
     }
@@ -88,7 +88,7 @@ public class AbonoDAOImp implements IAbonoDAO {
 
     @Override
     public ArrayList<Abono> obtenerListaByIdEvento(int idEvento) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM ABONOSCliente WHERE IDEVENTO = " + idEvento + " ORDER BY FECHA")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM CLIENTE.ABONOS WHERE IDEVENTO = " + idEvento + " ORDER BY FECHA")) {
             ArrayList<Abono> temp = new ArrayList<>();
             while (rs.next()) {
                 temp.add(new Abono(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getDate(5)));

@@ -232,6 +232,8 @@ new FormModel {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cmbEstado", true ) )
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbEstadoItemStateChanged", true ) )
+				addEvent( new FormEvent( "java.beans.PropertyChangeListener", "propertyChange", "cmbEstadoPropertyChange", true ) )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 1 8"
 			} )

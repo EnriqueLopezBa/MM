@@ -55,7 +55,7 @@ public class EventoDAOImp implements IEventoDAO {
 
     @Override
     public Evento obtenerByID(int id) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO WHERE IDEVENTO = " + id)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.EVENTO WHERE IDEVENTO = " + id)) {
             if (rs.next()) {
                 return new Evento(rs.getInt(1), rs.getInt(2), rs.getInt(3),
                         rs.getInt(4), rs.getTimestamp(5), rs.getTimestamp(6), rs.getInt(7), rs.getInt(8), rs.getString(9), rs.getString(10));
@@ -68,7 +68,7 @@ public class EventoDAOImp implements IEventoDAO {
 
     @Override
     public Mensaje registrar(Evento t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO WHERE IDCLIENTE = " + t.getIdCliente()
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.EVENTO WHERE IDCLIENTE = " + t.getIdCliente()
                 + " AND NOMBREEVENTO = '" + t.getNombreEvento() + "'")) {
             if (rs.next()) {
                 return new Mensaje(Message.Tipo.ERROR, "Usted ya cuenta con un evento con este nombre!");
@@ -76,7 +76,7 @@ public class EventoDAOImp implements IEventoDAO {
         } catch (SQLException e) {
             System.err.println("Error registrar Eventoo, " + e.getMessage());
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO EVENTO(IDCLIENTE, NOMBREEVENTO) VALUES(?,?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO EVENTO.EVENTO(IDCLIENTE, NOMBREEVENTO) VALUES(?,?)")) {
             ps.setInt(1, t.getIdCliente());
             ps.setString(2, t.getNombreEvento());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
@@ -107,12 +107,12 @@ public class EventoDAOImp implements IEventoDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE evento SET idCliente = ?, idTipoEvento = ?,"
-                + " idLugar = ?, fechaInicio = ?, fechaFinal = ?, noInvitados = ?, presupuesto = ?,"
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE EVENTO.EVENTO SET idCliente = ?, idTipoEvento = ?,"
+                + " idNegocio = ?, fechaInicio = ?, fechaFinal = ?, noInvitados = ?, presupuesto = ?,"
                 + " estilo = ?, nombreEvento = ? WHERE idEvento = ?")) {
             ps.setInt(1, t.getIdCliente());
             ps.setInt(2, t.getIdTipoEvento());
-            ps.setInt(3, t.getIdLugar());
+            ps.setInt(3, t.getIdNegocio());
             ps.setTimestamp(4, new java.sql.Timestamp(t.getFechaInicio().getTime()));
             ps.setTimestamp(5, new java.sql.Timestamp(t.getFechaFinal().getTime()));
             ps.setInt(6, t.getNoInvitados());
@@ -133,7 +133,7 @@ public class EventoDAOImp implements IEventoDAO {
 
     @Override
     public Mensaje eliminar(Evento t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM EVENTO WHERE IDEVENTO = " + t.getIdEvento())) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM EVENTO.EVENTO WHERE IDEVENTO = " + t.getIdEvento())) {
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
             System.err.println("Error eliminar Evento, " + e.getMessage());
@@ -143,7 +143,7 @@ public class EventoDAOImp implements IEventoDAO {
 
     @Override
     public String yaExiste(Evento t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO WHERE IDEVENTO != " + t.getIdEvento()
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.EVENTO WHERE IDEVENTO != " + t.getIdEvento()
                 + " and idCliente = " + t.getIdCliente() + " and nombreEvento = '" + t.getNombreEvento() + "'")) {
             if (rs.next()) {
                 return t.getNombreEvento();
@@ -156,7 +156,7 @@ public class EventoDAOImp implements IEventoDAO {
 
     @Override
     public ArrayList<Evento> obtenerEventoByIDCliente(int idCliente) {
-        String consulta = (Constante.getAdmin()) ? "SELECT * FROM EVENTO WHERE IDCLIENTE = " + idCliente
+        String consulta = (Constante.getAdmin()) ? "SELECT * FROM EVENTO.EVENTO WHERE IDCLIENTE = " + idCliente
                 : "SELECT * FROM evento WHERE idCliente = " + idCliente + "";
         try (ResultSet rs = Conexion.getInstancia().Consulta(consulta)) {
             ArrayList<Evento> temp = new ArrayList<>();
@@ -165,7 +165,7 @@ public class EventoDAOImp implements IEventoDAO {
                 evento.setIdEvento(rs.getInt(1));
                 evento.setIdCliente(rs.getInt(2));
                 evento.setIdTipoEvento(rs.getInt(3));
-                evento.setIdLugar(rs.getInt(4));
+                evento.setIdNegocio(rs.getInt(4));
                 evento.setFechaInicio(rs.getTimestamp(5));
                 evento.setFechaFinal(rs.getTimestamp(6));
                 evento.setNoInvitados(rs.getInt(7));
@@ -183,14 +183,14 @@ public class EventoDAOImp implements IEventoDAO {
 
     @Override
     public ArrayList<Evento> obtenerEventoByAnio(int anio) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM evento e WHERE e.fechaInicio LIKE '%" + anio + "%'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.EVENTO e WHERE e.fechaInicio LIKE '%" + anio + "%'")) {
             ArrayList<Evento> temp = new ArrayList<>();
             while (rs.next()) {
                 Evento evento = new Evento();
                 evento.setIdEvento(rs.getInt(1));
                 evento.setIdCliente(rs.getInt(2));
                 evento.setIdTipoEvento(rs.getInt(3));
-                evento.setIdLugar(rs.getInt(4));
+                evento.setIdNegocio(rs.getInt(4));
                 evento.setFechaInicio(rs.getTimestamp(5));
                 evento.setFechaFinal(rs.getTimestamp(6));
                 evento.setNoInvitados(rs.getInt(7));
@@ -208,14 +208,14 @@ public class EventoDAOImp implements IEventoDAO {
 
     @Override
     public ArrayList<Evento> obtenerEventoByDate(Date date) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM evento e WHERE e.fechaProgramada LIKE '%" + date + "%'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM EVENTO.EVENTO e WHERE e.fechaProgramada LIKE '%" + date + "%'")) {
             ArrayList<Evento> temp = new ArrayList<>();
             while (rs.next()) {
                 Evento evento = new Evento();
                 evento.setIdEvento(rs.getInt(1));
                 evento.setIdCliente(rs.getInt(2));
                 evento.setIdTipoEvento(rs.getInt(3));
-                evento.setIdLugar(rs.getInt(4));
+                evento.setIdNegocio(rs.getInt(4));
                 evento.setFechaInicio(rs.getTimestamp(5));
                 evento.setFechaFinal(rs.getTimestamp(6));
                 evento.setNoInvitados(rs.getInt(7));

@@ -15,7 +15,7 @@ import controlador.ControladorCiudad;
 import controlador.ControladorCliente;
 import controlador.ControladorEstado;
 import controlador.ControladorEvento;
-import controlador.ControladorLugar;
+import controlador.ControladorLugarInformacion;
 import controlador.ControladorNegocio;
 import controlador.ControladorProveedor;
 import controlador.ControladorNegocioArea;
@@ -41,7 +41,7 @@ import javax.swing.event.TableModelListener;
 import modelo.Ciudad;
 import modelo.Estado;
 import modelo.Evento;
-import modelo.Lugar;
+import modelo.LugarInformacion;
 import modelo.Negocio;
 import modelo.Proveedor;
 import modelo.NegocioArea;
@@ -119,6 +119,9 @@ public class pnlProveedores extends JPanel {
         }
         cmbNombreEvento.removeAllItems();
         for (Evento e : ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.getClienteActivo().getIdCliente())) {
+            if (e.getIdTipoEvento() == 0) {
+                continue;
+            }
             cmbNombreEvento.addItem(e);
         }
         cmbNombreEvento.setRenderer(new MyObjectListCellRenderer());
@@ -146,7 +149,8 @@ public class pnlProveedores extends JPanel {
 
         cmbNegocio.removeAllItems();
         //Cargar proveedores dependiendo del area donde trabajan los proveedores
-        int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
+        NegocioArea area = ControladorNegocioArea.getInstancia().obtenerListaByIdNegocio(eventoActual.getIdNegocio()).get(0);
+        int idCiudad = area.getIdCiudad();
 
         for (NegocioArea prov : ControladorNegocioArea.getInstancia().obtenerListaByIdCiudadAndTipoProveedor(idCiudad, tipoProveedorActual.getIdTipoProveedor())) {
             Negocio nec = ControladorNegocio.getInstancia().obtenerByID(prov.getIdNegocio());
@@ -214,9 +218,10 @@ public class pnlProveedores extends JPanel {
             return;
         }
         tipoProveedorActual = (TipoProveedor) cmbTipoProveedor.getSelectedItem();
-        int idCiudad = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar()).getIdCiudad();
+        NegocioArea area = ControladorNegocioArea.getInstancia().obtenerListaByIdNegocio(eventoActual.getIdNegocio()).get(0);
+        
         i.init(ScrollBar.VERTICAL);
-        i.negocioImagenesByCiudadAndTipoProveedor(idCiudad, tipoProveedorActual.getIdTipoProveedor());
+        i.negocioImagenesByCiudadAndTipoProveedor(area.getIdCiudad(), tipoProveedorActual.getIdTipoProveedor());
         cargarNegocios();
     }
 
@@ -225,9 +230,12 @@ public class pnlProveedores extends JPanel {
             return;
         }
         eventoActual = (Evento) cmbNombreEvento.getSelectedItem();
+        
         cargarNegocioEvento();
-        Lugar lugar = ControladorLugar.getInstancia().obtenerByID(eventoActual.getIdLugar());
-        Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(lugar.getIdCiudad());
+       
+       
+        NegocioArea area = ControladorNegocioArea.getInstancia().obtenerListaByIdNegocio(eventoActual.getIdNegocio()).get(0);
+        Ciudad ciudad = ControladorCiudad.getInstancia().obtenerById(area.getIdCiudad());
         Estado estado = ControladorEstado.getInstancia().obtenerByID(ciudad.getIdEstado());
         lblInfo.setText(estado.getEstado() + ", " + ciudad.getCiudad());
         if (!soloFecha.format(eventoActual.getFechaInicio()).equals(soloFecha.format(eventoActual.getFechaFinal()))) {

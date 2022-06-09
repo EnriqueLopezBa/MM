@@ -6,7 +6,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import Componentes.TextField;
-import controlador.ControladorLugar;
+import controlador.ControladorLugarInformacion;
 import controlador.ControladorLugarImagenes;
 import independientes.Constante;
 import independientes.MMException;
@@ -18,7 +18,7 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import modelo.Lugar;
+import modelo.LugarInformacion;
 import modelo.LugarImagenes;
 import net.miginfocom.swing.*;
 import vista.paneles.*;
@@ -31,7 +31,7 @@ public class DialogLugarImagenes extends JDialog {
 
     private byte[] imagen = null;
     private File abre = null;
-    private Lugar lugar;
+    private LugarInformacion lugar;
 
     public byte[] getImagen() {
         return imagen;
@@ -48,7 +48,7 @@ public class DialogLugarImagenes extends JDialog {
         }
     }
 
-    public DialogLugarImagenes(Principal owner, Lugar lugar) {
+    public DialogLugarImagenes(Principal owner, LugarInformacion lugar) {
         super(owner);
         initComponents();
         this.lugar = lugar;
@@ -81,7 +81,7 @@ public class DialogLugarImagenes extends JDialog {
                 try {
                     validaDatos();
                     LugarImagenes temp = new LugarImagenes();
-                    temp.setIdLugar(lugar.getIdLugar());
+                    temp.setIdNegocio(lugar.getIdNegocio());
                     temp.setImagen(getImagen());
                     temp.setDescripcion(txtDescripcion.getText());
                     temp.setPredeterminada(cbPredeterminada.isSelected());
@@ -103,7 +103,7 @@ public class DialogLugarImagenes extends JDialog {
                     if (x != -1) {
                         validaDatos();
                         LugarImagenes temp = new LugarImagenes();
-                        temp.setIdLugar((int) p.tblModel.getValueAt(x, 0));
+                        temp.setIdNegocio((int) p.tblModel.getValueAt(x, 0));
                         temp.setId2(p.tblModel.getValueAt(x, 1).toString());
                         temp.setImagen(getImagen());
                         temp.setDescripcion(txtDescripcion.getText());
@@ -134,7 +134,7 @@ public class DialogLugarImagenes extends JDialog {
                     return;
                 }
                 LugarImagenes lu = new LugarImagenes();
-                lu.setIdLugar((int) p.tblModel.getValueAt(x, 0));
+                lu.setIdNegocio((int) p.tblModel.getValueAt(x, 0));
                 lu.setId2(p.tblModel.getValueAt(x, 1).toString());
                 Mensaje m = ControladorLugarImagenes.getInstancia().eliminar(lu);
                 if (m.getTipoMensaje() == Tipo.OK) {
@@ -164,8 +164,8 @@ public class DialogLugarImagenes extends JDialog {
 
     private void llenarTabla() {
         p.tblModel.setRowCount(0);
-        for (LugarImagenes lu : ControladorLugarImagenes.getInstancia().obtenerListaByIDLugar(lugar.getIdLugar())) {
-            p.tblModel.addRow(new Object[]{lu.getIdLugar(), lu.getId2(), lu.getDescripcion()});
+        for (LugarImagenes lu : ControladorLugarImagenes.getInstancia().obtenerListaByIDLugar(lugar.getIdNegocio())) {
+            p.tblModel.addRow(new Object[]{lu.getIdNegocio(), lu.getId2(), lu.getDescripcion()});
         }
     }
 

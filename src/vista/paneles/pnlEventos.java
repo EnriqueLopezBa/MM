@@ -30,9 +30,12 @@ import controlador.ControladorCiudad;
 import controlador.ControladorCliente;
 import controlador.ControladorEstado;
 import controlador.ControladorEvento;
-import controlador.ControladorLugar;
+import controlador.ControladorLugarInformacion;
+import controlador.ControladorNegocio;
+import controlador.ControladorNegocioArea;
 import controlador.ControladorProveedorEvento;
 import controlador.ControladorTipoEvento;
+import controlador.ControladorTipoProveedor;
 import independientes.Constante;
 import independientes.MMException;
 import independientes.Mensaje;
@@ -59,7 +62,9 @@ import modelo.Ciudad;
 import modelo.Estado;
 import modelo.Etiqueta;
 import modelo.Evento;
-import modelo.Lugar;
+import modelo.LugarInformacion;
+import modelo.Negocio;
+import modelo.NegocioArea;
 import modelo.ProveedorEvento;
 import modelo.TipoEvento;
 import net.miginfocom.swing.MigLayout;
@@ -67,7 +72,7 @@ import vista.paneles.edit.DialogCiudad;
 import vista.paneles.edit.DialogEstado;
 import vista.paneles.edit.DialogEtiqueta;
 import vista.paneles.edit.DialogEvento;
-import vista.paneles.edit.DialogLugar;
+import vista.paneles.edit.DialogLugarInformacion;
 import vista.paneles.edit.DialogTipoEvento;
 import vista.principales.Principal;
 
@@ -78,11 +83,11 @@ public class pnlEventos extends JPanel {
     private SimpleDateFormat soloFecha = new SimpleDateFormat("yyyy-MM-dd");
     private SimpleDateFormat soloHora = new SimpleDateFormat("hh:mm aa");
 
-    private Evento eventoActual = null;
+    public Evento eventoActual = null;
     public Estado estadoActual = null;
     public Ciudad ciudadActual = null;
     public TipoEvento tipoEventoActual = null;
-    public Lugar lugarActual = null;
+    public LugarInformacion lugarActual = null;
 
     public frmEtiquetas frm;
 
@@ -189,7 +194,8 @@ public class pnlEventos extends JPanel {
             return;
         }
         cmbLugar.removeAllItems();
-        for (Lugar c : ControladorLugar.getInstancia().obtenerListaByIDCIudad(ciudadActual.getIdCiudad())) {
+        for (LugarInformacion c : ControladorLugarInformacion.getInstancia().obtenerListaByIDCIudad(ciudadActual.getIdCiudad())) {
+
             cmbLugar.addItem(c);
         }
         cmbLugar.setRenderer(new MyObjectListCellRenderer());
@@ -209,11 +215,7 @@ public class pnlEventos extends JPanel {
     }
 
     private void cmbEstado(ActionEvent e) {
-        if (cmbEstado.getSelectedIndex() == -1) {
-            return;
-        }
-        estadoActual = (Estado) cmbEstado.getSelectedItem();
-        cargarCiudad();
+
     }
 
     private void lblEditEstadoMouseClicked() {
@@ -317,7 +319,6 @@ public class pnlEventos extends JPanel {
                     }
                 }
             }
-
             pnlEventos.getInstancia().fechaInicio.setSelectedDate(new SelectedDate(d11.getDayOfMonth(), d11.getMonthValue(), d11.getYear()));
             pnlEventos.getInstancia().fechaFinal.setSelectedDate(new SelectedDate(d11.getDayOfMonth(), d11.getMonthValue(), d11.getYear()));
         } catch (ParseException ex) {
@@ -327,7 +328,7 @@ public class pnlEventos extends JPanel {
     }
 
     private void lblEditLugarMouseClicked(MouseEvent e) {
-        DialogLugar temp = new DialogLugar(Principal.getInstancia());
+        DialogLugarInformacion temp = new DialogLugarInformacion(Principal.getInstancia());
         temp.setVisible(true);
         temp.addWindowListener(new WindowAdapter() {
             @Override
@@ -348,7 +349,6 @@ public class pnlEventos extends JPanel {
     private void btnAceptar(ActionEvent e) {
         try {
             validarDatos(txtPresupuesto, txtCantInvitados, cmbLugar);
-
             eventoActual.setIdCliente(ControladorCliente.getInstancia().obtenerClienteActivo().getIdCliente());
             eventoActual.setIdTipoEvento(tipoEventoActual.getIdTipoEvento());
             eventoActual.setFechaInicio(obtenerFecha(txtFechaInicio, txtHorarioInicio));
@@ -356,21 +356,25 @@ public class pnlEventos extends JPanel {
             eventoActual.setNoInvitados(Integer.parseInt(txtCantInvitados.getText().replaceAll(",", "")));
             eventoActual.setPresupuesto(Integer.parseInt(txtPresupuesto.getText().replaceAll(",", "")));
             eventoActual.setEstilo(txtEstilo.getText());
-
-            Lugar lu = new Lugar();
-            lu.setIdCiudad(ciudadActual.getIdCiudad());
+            Negocio negocio = new Negocio();
             if (cbOtro.isSelected()) {
                 if (cmbLugar.getEditor().getItem().toString().isEmpty()) {
                     Constante.mensaje("Inserte el nombre del lugar donde quiere que sea su evento", Tipo.ADVERTENCIA);
                     cmbLugar.requestFocus();
                     return;
                 }
-                lu.setNombreLocal(cmbLugar.getEditor().getItem().toString());
-                ControladorLugar.getInstancia().registrar(lu);
-                eventoActual.setIdLugar(ControladorLugar.getInstancia().obtenerLugarByLast().getIdLugar());
+                negocio.setNombreNegocio(cmbLugar.getEditor().getItem().toString());
+                negocio.setIdTipoProveedor(ControladorTipoProveedor.getInstancia().obtenerTipoProveedorByNombre("local").getIdTipoProveedor());
+                ControladorNegocio.getInstancia().registrar(negocio); //Regitrar negocio
+                NegocioArea negArea = new NegocioArea();
+                negArea.setIdNegocio(ControladorNegocio.getInstancia().obtenerNegocioByLast().getIdNegocio());
+                negArea.setIdCiudad(ciudadActual.getIdCiudad());
+                ControladorNegocioArea.getInstancia().registrar(negArea); //Registrar Area negocio
+                eventoActual.setIdNegocio(ControladorNegocio.getInstancia().obtenerNegocioByLast().getIdNegocio());
             } else {
-                lu.setNombreLocal(cmbLugar.getSelectedItem().toString());
-                eventoActual.setIdLugar(lugarActual.getIdLugar());
+                negocio.setNombreNegocio(cmbLugar.getSelectedItem().toString());
+
+                eventoActual.setIdNegocio(lugarActual.getIdNegocio());
             }
             Mensaje m = ControladorEvento.getInstancia().actualizar(eventoActual);
             if (m.getTipoMensaje() == Tipo.OK) {
@@ -379,12 +383,30 @@ public class pnlEventos extends JPanel {
                 }
                 //Actualizo las fechas de los proveedores del evento forzosamente
                 for (ProveedorEvento pro : ControladorProveedorEvento.getInstancia().obtenerListaByIdEvento(eventoActual.getIdEvento())) {
-                    if (pro.getFechaInicio().before(eventoActual.getFechaInicio())) {
-                        pro.setFechaInicio(eventoActual.getFechaInicio());
+                    System.out.println("camans");
+                    DateTimeFormatter formateador = DateTimeFormatter.ofPattern("uuuu-MM-dd hh:mm a");
+                    LocalDateTime fechaYHoraLocal1 = LocalDateTime.parse(sdf.format(pro.getFechaInicio()), formateador);
+                    LocalDateTime fechaYHoraLocal2 = LocalDateTime.parse(sdf.format(eventoActual.getFechaInicio()), formateador);
+                    long dias = ChronoUnit.DAYS.between(fechaYHoraLocal1, fechaYHoraLocal2);
+                    if (dias > 0) {
+                        fechaYHoraLocal1 = fechaYHoraLocal1.plusDays(dias);
+                        pro.setFechaInicio(Date.from(fechaYHoraLocal1.atZone(ZoneId.systemDefault()).toInstant()));
+                        ControladorProveedorEvento.getInstancia().actualizar(pro);
+                    } else {
+                        fechaYHoraLocal1 = fechaYHoraLocal1.minusDays(dias * -1);
+                        pro.setFechaInicio(Date.from(fechaYHoraLocal1.atZone(ZoneId.systemDefault()).toInstant()));
                         ControladorProveedorEvento.getInstancia().actualizar(pro);
                     }
-                    if (pro.getFechaFinal().after(eventoActual.getFechaFinal())) {
-                        pro.setFechaFinal(eventoActual.getFechaInicio());
+                    fechaYHoraLocal1 = LocalDateTime.parse(sdf.format(pro.getFechaFinal()), formateador);
+                    fechaYHoraLocal2 = LocalDateTime.parse(sdf.format(eventoActual.getFechaFinal()), formateador);
+                    dias = ChronoUnit.DAYS.between(fechaYHoraLocal1, fechaYHoraLocal2);
+                    if (dias > 0) {
+                        fechaYHoraLocal1 = fechaYHoraLocal1.plusDays(dias);
+                        pro.setFechaFinal(Date.from(fechaYHoraLocal1.atZone(ZoneId.systemDefault()).toInstant()));
+                        ControladorProveedorEvento.getInstancia().actualizar(pro);
+                    } else {
+                        fechaYHoraLocal1 = fechaYHoraLocal1.minusDays(dias * -1);
+                        pro.setFechaFinal(Date.from(fechaYHoraLocal1.atZone(ZoneId.systemDefault()).toInstant()));
                         ControladorProveedorEvento.getInstancia().actualizar(pro);
                     }
                 }
@@ -425,7 +447,7 @@ public class pnlEventos extends JPanel {
         LocalDateTime fechaYHoraLocal2 = LocalDateTime.parse(soloFecha.format(new Date()) + " " + soloHora.format(new Date()), formateador);
 
         long dias = ChronoUnit.DAYS.between(fechaYHoraLocal2, fechaYHoraLocal1);
-        if (dias < 7) {
+        if (dias < 6) {
             txtFechaInicio.requestFocus();
             setMinDate();
             throw new MMException("Minimo 1 semana de anticipacion");
@@ -498,7 +520,7 @@ public class pnlEventos extends JPanel {
         if (cbOtro.isSelected() || cmbLugar.getSelectedIndex() == -1) {
             return;
         }
-        lugarActual = (Lugar) cmbLugar.getSelectedItem();
+        lugarActual = (LugarInformacion) cmbLugar.getSelectedItem();
         Constante.actualizarPresupuesto(null);
     }
 
@@ -512,6 +534,18 @@ public class pnlEventos extends JPanel {
         ciudadActual = (Ciudad) cmbCiudad.getSelectedItem();
         cargarLugarImagenes();
         cargarLugares();
+    }
+
+    private void cmbEstadoItemStateChanged(ItemEvent e) {
+        if (cmbEstado.getSelectedIndex() == -1) {
+            return;
+        }
+        estadoActual = (Estado) cmbEstado.getSelectedItem();
+        cargarCiudad();
+    }
+
+    private void cmbEstadoPropertyChange(PropertyChangeEvent e) {
+
     }
 
     private void initComponents() {
@@ -758,6 +792,8 @@ public class pnlEventos extends JPanel {
         cmbEstado.setNextFocusableComponent(cmbCiudad);
         cmbEstado.setFont(new Font("Segoe UI", Font.BOLD, 15));
         cmbEstado.addActionListener(e -> cmbEstado(e));
+        cmbEstado.addItemListener(e -> cmbEstadoItemStateChanged(e));
+        cmbEstado.addPropertyChangeListener(e -> cmbEstadoPropertyChange(e));
         add(cmbEstado, "cell 1 8");
 
         //---- cmbCiudad ----

@@ -23,6 +23,10 @@ public class ControladorUsuario {
         return instancia;
     }
 
+    public Usuario obtenerByID(int id) {
+        return UsuarioDAOImp.getInstancia().obtenerByID(id);
+    }
+
     public Mensaje registrarUsuario(Usuario usuario) {
         return UsuarioDAOImp.getInstancia().registrar(usuario);
     }

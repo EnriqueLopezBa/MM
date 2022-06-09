@@ -37,7 +37,7 @@ public class TipoProveedorDAOImp implements ITipoProveedorDAO {
 
     @Override
     public ArrayList<TipoProveedor> obtenerListaByCadena(String cadena) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM TIPOPROVEEDOR WHERE TIPOPROVEEDOR LIKE '%"+cadena+"%'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR.TIPO WHERE TIPOPROVEEDOR LIKE '%"+cadena+"%'")) {
             ArrayList<TipoProveedor> temp = new ArrayList();
             while(rs.next()){
                 temp.add(new TipoProveedor(rs.getInt(1), rs.getString(2)));
@@ -51,7 +51,7 @@ public class TipoProveedorDAOImp implements ITipoProveedorDAO {
 
     @Override
     public TipoProveedor obtenerByID(int id) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM TIPOPROVEEDOR WHERE IDTIPOPROVEEDOR = "+ id)) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR.TIPO WHERE IDTIPOPROVEEDOR = "+ id)) {
             if (rs.next()) {
                 return new TipoProveedor(rs.getInt(1), rs.getString(2));
             }
@@ -67,7 +67,7 @@ public class TipoProveedorDAOImp implements ITipoProveedorDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO TIPOPROVEEDOR VALUES(?)")) {
+        try (PreparedStatement ps = cn.prepareStatement("INSERT INTO PROVEEDOR.TIPO VALUES(?)")) {
             ps.setString(1, t.getTipoProveedor());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Registrado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al registrar");
         } catch (SQLException e) {
@@ -82,7 +82,7 @@ public class TipoProveedorDAOImp implements ITipoProveedorDAO {
         if (!x.isEmpty()) {
             return new Mensaje(Message.Tipo.ERROR, x + " ya existente");
         }
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE TIPOPROVEEDOR SET TIPOPROVEEDOR = ? WHERE IDTIPOPROVEEDOR = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE PROVEEDOR.TIPO SET TIPOPROVEEDOR = ? WHERE IDTIPOPROVEEDOR = ?")) {
             ps.setString(1, t.getTipoProveedor());
             ps.setInt(2, t.getIdTipoProveedor());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al actualizar");
@@ -94,7 +94,7 @@ public class TipoProveedorDAOImp implements ITipoProveedorDAO {
 
     @Override
     public Mensaje eliminar(TipoProveedor t) {
-        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM TIPOPROVEEDOR WHERE IDTIPOPROVEEDOR = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement("DELETE FROM PROVEEDOR.TIPO WHERE IDTIPOPROVEEDOR = ?")) {
             ps.setInt(1, t.getIdTipoProveedor());
             return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Eliminado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Problema al eliminar");
         } catch (SQLException e) {
@@ -105,7 +105,7 @@ public class TipoProveedorDAOImp implements ITipoProveedorDAO {
 
     @Override
     public String yaExiste(TipoProveedor t) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM TIPOPROVEEDOR WHERE TIPOPROVEEDOR = '"+t.getTipoProveedor()+"'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR.TIPO WHERE TIPOPROVEEDOR = '"+t.getTipoProveedor()+"'")) {
             if (rs.next()) {
                 return t.getTipoProveedor();
             }
@@ -117,7 +117,7 @@ public class TipoProveedorDAOImp implements ITipoProveedorDAO {
 
     @Override
     public TipoProveedor obtenerTipoProveedorByNombre(String nombre) {
-        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM TIPOPROVEEDOR WHERE TIPOPROVEEDOR = '"+nombre+"'")) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PROVEEDOR.TIPO WHERE TIPOPROVEEDOR = '"+nombre+"'")) {
             if (rs.next()) {
                 return new TipoProveedor(rs.getInt(1), rs.getString(2));
             }

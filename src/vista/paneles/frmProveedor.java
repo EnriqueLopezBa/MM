@@ -57,7 +57,7 @@ public class frmProveedor extends JPanel {
     }
 
     private void txtTelefonoKeyTyped(KeyEvent e) {
-        if (!Character.isDigit(e.getKeyChar()) || txtTelefono.getText().length() > 10) {
+        if (!Character.isDigit(e.getKeyChar()) || txtTelefono.getText().length() >= 10) {
             e.consume();
         }
     }
@@ -67,7 +67,7 @@ public class frmProveedor extends JPanel {
     }
 
     private void txtTelefono2KeyTyped(KeyEvent e) {
-          if (!Character.isDigit(e.getKeyChar()) || txtTelefono2.getText().length() > 10) {
+          if (!Character.isDigit(e.getKeyChar()) || txtTelefono2.getText().length() >= 10) {
             e.consume();
         }
     }

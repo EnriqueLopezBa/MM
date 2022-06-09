@@ -114,11 +114,28 @@ public class DialogUsuario extends JDialog {
                 Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
             }
         });
+        p.tblBuscar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e); //To change body of generated methods, choose Tools | Templates.
+                int x = p.tblBuscar.getSelectedRow();
+                if (x == -1) {
+                    return;
+                }
+                TipoUsuario tipo = ControladorTipoUsuario.getInstancia().obtenerByID((int)p.tblModel.getValueAt(x, 1));
+                cmbTipoUsuario.getModel().setSelectedItem(tipo);
+                Usuario usuario = ControladorUsuario.getInstancia().obtenerByID((int)p.tblModel.getValueAt(x, 0));
+                txtNombre.setText(usuario.getNombre());
+                txtApellido.setText(usuario.getApellido());
+                txtCorreo.setText(usuario.getCorreo());
+            }
+
+        });
     }
 
     private void validaDatos() throws MMException {
         if (tipoUsuarioActual == null) {
-            cbTipoUsario.requestFocus();
+            cmbTipoUsuario.requestFocus();
             throw new MMException("Selecciona Tipo de Usuario");
         }
         if (txtNombre.getText().isEmpty()) {
@@ -152,11 +169,11 @@ public class DialogUsuario extends JDialog {
     }
 
     private void cargarTipoUsuario() {
-        cbTipoUsario.removeAllItems();
+        cmbTipoUsuario.removeAllItems();
         for (TipoUsuario ti : ControladorTipoUsuario.getInstancia().obtenerListaByCadena("")) {
-            cbTipoUsario.addItem(ti);
+            cmbTipoUsuario.addItem(ti);
         }
-        cbTipoUsario.setRenderer(new MyObjectListCellRenderer());
+        cmbTipoUsuario.setRenderer(new MyObjectListCellRenderer());
     }
 
     private void lblEditTipoUsuarioMouseClicked(MouseEvent e) {
@@ -173,13 +190,10 @@ public class DialogUsuario extends JDialog {
     }
 
     private void cbTipoUsarioItemStateChanged(ItemEvent e) {
-        if (cbTipoUsario.getSelectedIndex() == -1) {
+        if (cmbTipoUsuario.getSelectedIndex() == -1) {
             return;
         }
-        if (tipoUsuarioActual != null && tipoUsuarioActual == cbTipoUsario.getSelectedItem()) {
-            return;
-        }
-        tipoUsuarioActual = (TipoUsuario)cbTipoUsario.getSelectedItem();
+        tipoUsuarioActual = (TipoUsuario) cmbTipoUsuario.getSelectedItem();
 //        for (TipoUsuario ti : ControladorTipoUsuario.getInstancia().obtenerListaByCadena("")) {
 //            if (ti.getTipoUsuario().equals(cbTipoUsario.getSelectedItem())) {
 //                tipoUsuarioActual = ti;
@@ -191,7 +205,7 @@ public class DialogUsuario extends JDialog {
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         p = new pnlCRUD();
-        cbTipoUsario = new JComboBox();
+        cmbTipoUsuario = new JComboBox();
         lblEditTipoUsuario = new JLabel();
         txtNombre = new TextField();
         txtApellido = new TextField();
@@ -214,9 +228,9 @@ public class DialogUsuario extends JDialog {
             "[]"));
         contentPane.add(p, "cell 0 0, spanx");
 
-        //---- cbTipoUsario ----
-        cbTipoUsario.addItemListener(e -> cbTipoUsarioItemStateChanged(e));
-        contentPane.add(cbTipoUsario, "cell 0 1");
+        //---- cmbTipoUsuario ----
+        cmbTipoUsuario.addItemListener(e -> cbTipoUsarioItemStateChanged(e));
+        contentPane.add(cmbTipoUsuario, "cell 0 1");
 
         //---- lblEditTipoUsuario ----
         lblEditTipoUsuario.setIcon(new ImageIcon(getClass().getResource("/img/edit.png")));
@@ -227,7 +241,7 @@ public class DialogUsuario extends JDialog {
                 lblEditTipoUsuarioMouseClicked(e);
             }
         });
-        contentPane.add(lblEditTipoUsuario, "cell 1 1,grow 0 0");
+        contentPane.add(lblEditTipoUsuario, "cell 0 1");
 
         //---- txtNombre ----
         txtNombre.setLabelText("Nombre");
@@ -251,7 +265,7 @@ public class DialogUsuario extends JDialog {
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private pnlCRUD p;
-    private JComboBox cbTipoUsario;
+    private JComboBox cmbTipoUsuario;
     private JLabel lblEditTipoUsuario;
     private TextField txtNombre;
     private TextField txtApellido;

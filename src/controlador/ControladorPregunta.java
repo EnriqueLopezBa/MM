@@ -28,6 +28,14 @@ public class ControladorPregunta {
         return instancia;
     }
 
+    public ArrayList<Pregunta> obtenerListaByCadena(String cadena) {
+        return PreguntaDAOImp.getInstancia().obtenerListaByCadena(cadena);
+    }
+
+    public Mensaje actualizar(Pregunta t) {
+        return PreguntaDAOImp.getInstancia().actualizar(t);
+    }
+
     public Mensaje eliminar(Pregunta t) {
         return PreguntaDAOImp.getInstancia().eliminar(t);
     }

@@ -37,7 +37,16 @@ public class PreguntaDAOImp implements IPreguntaDAO {
 
     @Override
     public ArrayList<Pregunta> obtenerListaByCadena(String cadena) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT * FROM PREGUNTA WHERE PREGUNTA LIKE '%" + cadena + "%'")) {
+            ArrayList<Pregunta> temp = new ArrayList<>();
+            while (rs.next()) {
+                temp.add(new Pregunta(rs.getInt(1), rs.getString(2), rs.getBoolean(3), rs.getString(4)));
+            }
+            return temp;
+        } catch (SQLException e) {
+            System.err.println("Error obtenerListaByCadena Pregunta, " + e.getMessage());
+        }
+        return null;
     }
 
     @Override
@@ -67,7 +76,15 @@ public class PreguntaDAOImp implements IPreguntaDAO {
 
     @Override
     public Mensaje actualizar(Pregunta t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (PreparedStatement ps = cn.prepareStatement("UPDATE PREGUNTA SET PREGUNTA = ?, OPCIONES = ? WHERE IDPREGUNTA = ?")) {
+            ps.setString(1, t.getPregunta());
+            ps.setString(2, t.getOpciones());
+            ps.setInt(3, t.getIdPregunta());
+            return (ps.executeUpdate() >= 1) ? new Mensaje(Message.Tipo.OK, "Actualizado correctamente") : new Mensaje(Message.Tipo.ADVERTENCIA, "Intentelo mas tarde");
+        } catch (SQLException e) {
+            System.err.println("Error actualizar Pregunta, " + e.getMessage());
+        }
+        return new Mensaje(Message.Tipo.ERROR, "Error");
     }
 
     @Override

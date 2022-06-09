@@ -16,6 +16,8 @@ new FormModel {
 				} ) {
 					name: "pnlAbonoCliente"
 					"background": &Color0 new java.awt.Color( 255, 255, 255, 255 )
+					addEvent( new FormEvent( "java.awt.event.ComponentListener", "componentShown", "pnlAbonoClienteComponentShown", true ) )
+					addEvent( new FormEvent( "java.awt.event.ComponentListener", "componentHidden", "pnlAbonoClienteComponentHidden", true ) )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 						"$columnConstraints": "[fill]"
 						"$rowConstraints": "[][][grow 0,center][]0[][][]"
@@ -145,6 +147,7 @@ new FormModel {
 				} ) {
 					name: "pnlAbonoProveedores"
 					"background": #Color0
+					addEvent( new FormEvent( "java.awt.event.ComponentListener", "componentShown", "pnlAbonoProveedoresComponentShown", true ) )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 						"$columnConstraints": "[fill]"
 						"$rowConstraints": "[][][]0[][][]"
@@ -168,14 +171,15 @@ new FormModel {
 							"value": "cell 0 0"
 						} )
 						add( new FormComponent( "javax.swing.JCheckBox" ) {
-							name: "checkBox1"
+							name: "cbSoloAdeudoP"
 							"text": "Solo con adeudo"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbSoloAdeudoP", true ) )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 0 1, grow 0 00"
 						} )
 						add( new FormComponent( "javax.swing.JComboBox" ) {
 							name: "cmbEventoP"
-							addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbEventoItemStateChanged", true ) )
+							addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbEventoPItemStateChanged", true ) )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 0 1, growy, hmax 10%"
 						} )
@@ -203,7 +207,7 @@ new FormModel {
 						add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
 							name: "btnRegistrarP"
 							"text": "Registrar"
-							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnRegistrar", true ) )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnRegistrarP", true ) )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 0 5,grow"
 						} )

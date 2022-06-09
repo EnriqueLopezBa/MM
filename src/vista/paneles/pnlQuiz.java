@@ -22,6 +22,7 @@ import modelo.Pregunta;
 import modelo.Quiz;
 import net.miginfocom.swing.*;
 import vista.paneles.edit.DialogQuiz;
+import vista.paneles.edit.DialogQuizPreguntas;
 import vista.principales.Principal;
 
 public class pnlQuiz extends JPanel {
@@ -56,12 +57,12 @@ public class pnlQuiz extends JPanel {
         contador++;
         checkOpciones();
         lblPregunta.setText("<html><p style=\"text-align:center\">" + lista.get(contador).getPregunta() + "</p></html>");
-     
+
     }
 
     private pnlQuiz() {
         initComponents();
-       
+
     }
 
     public void cargarEventos() {
@@ -78,13 +79,13 @@ public class pnlQuiz extends JPanel {
         cmbEvento.removeAllItems();
         eventoActual = null;
         eventos = ControladorEvento.getInstancia().obtenerEventoByIDCliente(Constante.getClienteActivo().getIdCliente());
-       
+
         for (Evento e : eventos) {
             cmbEvento.addItem(e);
         }
         cmbEvento.setRenderer(new MyObjectListCellRenderer());
 
-         init();
+        init();
     }
 
     private void checkOpciones() {
@@ -176,10 +177,10 @@ public class pnlQuiz extends JPanel {
             return;
         }
         contador--;
-         if (constante > 0) {
+        if (constante > 0) {
             circleProgressBar1.setValor(constante * -1);
         }
-        
+
         checkOpciones();
         lblPregunta.setText("<html><p style=\"text-align:center\">" + lista.get(contador).getPregunta() + "</p></html>");
         Quiz quiz = ControladorQuiz.getInstancia().obtenerByIdPreguntaAndIdEvento(lista.get(contador).getIdPregunta(), eventoActual.getIdEvento());
@@ -321,6 +322,11 @@ public class pnlQuiz extends JPanel {
         checarRespuestaGuardada();
     }
 
+    private void lblModificarPreguntasMouseClicked(MouseEvent e) {
+        DialogQuizPreguntas temp = new DialogQuizPreguntas(Principal.getInstancia(), this);
+        temp.setVisible(true);
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         cmbEvento = new JComboBox();
@@ -332,6 +338,7 @@ public class pnlQuiz extends JPanel {
         btnAtras = new Button();
         btnSiguiente = new Button();
         lblModificar = new JLabel();
+        lblModificarPreguntas = new JLabel();
 
         //======== this ========
         setBackground(Color.white);
@@ -357,6 +364,7 @@ public class pnlQuiz extends JPanel {
         lblEliminar.setIcon(new ImageIcon(getClass().getResource("/img/delete.png")));
         lblEliminar.setFont(new Font("Segoe UI", Font.BOLD, 15));
         lblEliminar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblEliminar.setVisible(false);
         lblEliminar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -420,7 +428,7 @@ public class pnlQuiz extends JPanel {
         add(btnSiguiente, "cell 1 3,align right top,height 5%!, w 30%!");
 
         //---- lblModificar ----
-        lblModificar.setText("Edicion");
+        lblModificar.setText("Edicion Respuestas");
         lblModificar.setHorizontalAlignment(SwingConstants.CENTER);
         lblModificar.setForeground(new Color(0, 102, 153));
         lblModificar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -432,7 +440,22 @@ public class pnlQuiz extends JPanel {
                 lblModificarMouseClicked(e);
             }
         });
-        add(lblModificar, "cell 0 4, spanx");
+        add(lblModificar, "cell 0 4");
+
+        //---- lblModificarPreguntas ----
+        lblModificarPreguntas.setText("Edicion Preguntas");
+        lblModificarPreguntas.setHorizontalAlignment(SwingConstants.CENTER);
+        lblModificarPreguntas.setForeground(new Color(0, 102, 153));
+        lblModificarPreguntas.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblModificarPreguntas.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblModificarPreguntas.setIcon(new ImageIcon(getClass().getResource("/img/admin.png")));
+        lblModificarPreguntas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                lblModificarPreguntasMouseClicked(e);
+            }
+        });
+        add(lblModificarPreguntas, "cell 1 4");
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -446,5 +469,6 @@ public class pnlQuiz extends JPanel {
     private Button btnAtras;
     private Button btnSiguiente;
     private JLabel lblModificar;
+    private JLabel lblModificarPreguntas;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

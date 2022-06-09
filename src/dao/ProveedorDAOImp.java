@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import modelo.Proveedor;
+import modelo.ProveedorAdeudo;
 
 /**
  *
@@ -154,4 +155,46 @@ public class ProveedorDAOImp implements IProveedorDAO {
         return null;
     }
 
+    @Override
+    public ArrayList<ProveedorAdeudo> obtenerProveedoresConEventos() {
+        try (ResultSet rs = Conexion.getInstancia().Consulta(";WITH CTE AS \n"
+                + "(\n"
+                + "SELECT  \n"
+                + "      idEvento\n"
+                + "      ,idNegocio\n"
+                + "      ,idProveedor,cotizacion, ADEUDO"
+                + "     , ROW_NUMBER() OVER(PARTITION BY IDPROVEEDOR ORDER BY IDPROVEEDOR DESC) AS \"RowNumber\"\n"
+                + "  FROM VW_ADEUDOPROVEEDORES\n"
+                + "  )\n"
+                + "\n"
+                + "  SELECT \n"
+                + "       idEvento\n"
+                + "      ,idNegocio\n"
+                + "      ,idProveedor,cotizacion, ADEUDO"
+                + "  FROM CTE WHERE RowNumber=1\n"
+                + "  ORDER BY idProveedor DESC")) {
+            ArrayList<ProveedorAdeudo> temp = new ArrayList<>();
+            while (rs.next()) {
+                temp.add(new ProveedorAdeudo(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getInt(5)));
+            }
+            return temp;
+        } catch (SQLException e) {
+            System.err.println("Error obtenerProveedoresConEventos Proveedor," + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public Object obtenerTotalCotizacionByIDEventoAndIDNegocio(int idEvent, int idNegocio) {
+        try (ResultSet rs = Conexion.getInstancia().Consulta("SELECT cotizacion FROM EVENTO.COTIZACION WHERE cotFinal = 1 AND idEvento = "+idEvent+" AND IDNEGOCIO = "+ idNegocio)) {
+            if (rs.next()) {
+                return rs.getObject(1);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }     
+        return null;
+    }
+
+    
 }

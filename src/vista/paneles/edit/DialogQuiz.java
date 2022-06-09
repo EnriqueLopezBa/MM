@@ -49,16 +49,7 @@ public class DialogQuiz extends JDialog {
         p.btnEliminar.setVisible(false);
         p.btnModificar.setVisible(false);
         cargarClientes();
-        
-//        addComponentListener(new ComponentAdapter() {
-//            @Override
-//            public void componentHidden(ComponentEvent e) {
-//                super.componentHidden(e); //To change body of generated methods, choose Tools | Templates.
-//                Constante.removeClienteTemporal();
-//                dispose();
-//            }
-//            
-//        });
+
         p.txtBusqueda.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -122,53 +113,7 @@ public class DialogQuiz extends JDialog {
         }
     }
     
-    private void validaDatos(JTextPane f) throws MMException {
-        if (f.getText().isEmpty()) {
-            f.requestFocus();
-            throw new MMException("Pregunta vacia");
-        }
-    }
-    
-    private void btnAgregarOpcion(ActionEvent e) {
-        String dato = showInputDialog(null, "Escriba la opcion");
-        if (dato != null) {
-            mLista.addElement(dato);
-            list.setModel(mLista);
-        }
-        
-    }
-    
-    private void btnEliminar(ActionEvent e) {
-        if (list.getSelectedIndex() == -1) {
-            return;
-        }
-        mLista.remove(list.getSelectedIndex());
-        list.setModel(mLista);
-    }
-    
-    private void btnAgregar(ActionEvent e) {
-        try {
-            validaDatos(txtPregunta);
-            String opciones = "";
-            
-            if (!mLista.isEmpty()) {
-                for (Object a : mLista.toArray()) {
-                    opciones += a + ",";
-                }
-                opciones = opciones.substring(0, opciones.length() - 1);
-            }
-            
-            Pregunta pregunta = new Pregunta();
-            pregunta.setPregunta(txtPregunta.getText());
-            pregunta.setEscuestaSatisfaccion(cb.isSelected());
-            pregunta.setOpciones(opciones);
-            Mensaje m = ControladorPregunta.getInstancia().registrar(pregunta);
-            Constante.mensaje(m.getMensaje(), m.getTipoMensaje());
-        } catch (MMException ee) {
-            Constante.mensaje(ee.getMessage(), Message.Tipo.ERROR);
-        }
-    }
-    
+ 
     private void cbEventosItemStateChanged(ItemEvent e) {
         if (cbEventos.getSelectedIndex() == -1 && eventoActual == null) {
             return;
@@ -200,22 +145,11 @@ public class DialogQuiz extends JDialog {
     
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        pnlPregunta = new JPanel();
-        lblPregunta = new JLabel();
-        scrollPane3 = new JScrollPane();
-        txtPregunta = new JTextPane();
-        btnAgregarOpcion = new Button();
-        scrollPane2 = new JScrollPane();
-        list = new JList();
-        cb = new JCheckBox();
-        btnAgregar = new Button();
         panel1 = new JPanel();
         cbEventos = new JComboBox();
         scrollPane1 = new JScrollPane();
         tblPregunta = new JTable();
         p = new pnlCRUD();
-        popupMenu1 = new JPopupMenu();
-        btnEliminar = new JMenuItem();
         popupMenu2 = new JPopupMenu();
         btnEliminarRespuesta = new JMenuItem();
 
@@ -230,67 +164,6 @@ public class DialogQuiz extends JDialog {
             // rows
             "[grow, fill]" +
             "[grow,fill]"));
-
-        //======== pnlPregunta ========
-        {
-            pnlPregunta.setBackground(Color.white);
-            pnlPregunta.setLayout(new MigLayout(
-                "fill",
-                // columns
-                "[grow 25, fill]" +
-                "[grow 75, fill]",
-                // rows
-                "[grow,fill]" +
-                "[grow,fill]" +
-                "[]" +
-                "[grow,fill]"));
-
-            //---- lblPregunta ----
-            lblPregunta.setText("Pregunta");
-            lblPregunta.setFont(new Font("Segoe UI", Font.BOLD, 18));
-            pnlPregunta.add(lblPregunta, "cell 0 0");
-
-            //======== scrollPane3 ========
-            {
-
-                //---- txtPregunta ----
-                txtPregunta.setFont(new Font("Segoe UI", Font.BOLD, 16));
-                scrollPane3.setViewportView(txtPregunta);
-            }
-            pnlPregunta.add(scrollPane3, "cell 1 0, h 10%!");
-
-            //---- btnAgregarOpcion ----
-            btnAgregarOpcion.setText("Agregar Opcion");
-            btnAgregarOpcion.setFont(new Font("Segoe UI", Font.BOLD, 20));
-            btnAgregarOpcion.addActionListener(e -> btnAgregarOpcion(e));
-            pnlPregunta.add(btnAgregarOpcion, "cell 0 1,aligny center,height 10%!");
-
-            //======== scrollPane2 ========
-            {
-
-                //---- list ----
-                list.setVisibleRowCount(4);
-                list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-                list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                list.setComponentPopupMenu(popupMenu1);
-                scrollPane2.setViewportView(list);
-            }
-            pnlPregunta.add(scrollPane2, "cell 1 1");
-
-            //---- cb ----
-            cb.setText("Encuesta de satisfaccion");
-            cb.setFont(new Font("Segoe UI", Font.BOLD, 15));
-            pnlPregunta.add(cb, "cell 0 2");
-
-            //---- btnAgregar ----
-            btnAgregar.setText("Agregar");
-            btnAgregar.setColorBackground(new Color(0, 255, 51));
-            btnAgregar.setColorBackground2(new Color(0, 204, 51));
-            btnAgregar.setFont(new Font("Segoe UI", Font.BOLD, 18));
-            btnAgregar.addActionListener(e -> btnAgregar(e));
-            pnlPregunta.add(btnAgregar, "cell 0 3 2 1,height 10%!");
-        }
-        contentPane.add(pnlPregunta, "cell 0 1");
 
         //======== panel1 ========
         {
@@ -334,20 +207,10 @@ public class DialogQuiz extends JDialog {
             }
             panel1.add(scrollPane1, "cell 0 2");
         }
-        contentPane.add(panel1, "cell 1 1");
+        contentPane.add(panel1, "cell 0 1, spanx");
         contentPane.add(p, "cell 0 2, spanx");
         pack();
         setLocationRelativeTo(getOwner());
-
-        //======== popupMenu1 ========
-        {
-
-            //---- btnEliminar ----
-            btnEliminar.setText("Eliminar");
-            btnEliminar.setIcon(new ImageIcon(getClass().getResource("/img/delete.png")));
-            btnEliminar.addActionListener(e -> btnEliminar(e));
-            popupMenu1.add(btnEliminar);
-        }
 
         //======== popupMenu2 ========
         {
@@ -361,22 +224,11 @@ public class DialogQuiz extends JDialog {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    private JPanel pnlPregunta;
-    private JLabel lblPregunta;
-    private JScrollPane scrollPane3;
-    private JTextPane txtPregunta;
-    private Button btnAgregarOpcion;
-    private JScrollPane scrollPane2;
-    private JList list;
-    private JCheckBox cb;
-    private Button btnAgregar;
     private JPanel panel1;
     private JComboBox cbEventos;
     private JScrollPane scrollPane1;
     private JTable tblPregunta;
     private pnlCRUD p;
-    private JPopupMenu popupMenu1;
-    private JMenuItem btnEliminar;
     private JPopupMenu popupMenu2;
     private JMenuItem btnEliminarRespuesta;
     // JFormDesigner - End of variables declaration  //GEN-END:variables

@@ -12,69 +12,6 @@ new FormModel {
 			"background": new java.awt.Color( 255, 255, 255, 255 )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 				"$layoutConstraints": "fill"
-				"$columnConstraints": "[grow 25, fill][grow 75, fill]"
-				"$rowConstraints": "[grow,fill][grow,fill][][grow,fill]"
-			} ) {
-				name: "pnlPregunta"
-				"background": new java.awt.Color( 255, 255, 255, 255 )
-				add( new FormComponent( "javax.swing.JLabel" ) {
-					name: "lblPregunta"
-					"text": "Pregunta"
-					"font": new java.awt.Font( "Segoe UI", 1, 18 )
-				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-					"value": "cell 0 0"
-				} )
-				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-					name: "scrollPane3"
-					add( new FormComponent( "javax.swing.JTextPane" ) {
-						name: "txtPregunta"
-						"font": new java.awt.Font( "Segoe UI", 1, 16 )
-					} )
-				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-					"value": "cell 1 0, h 10%!"
-				} )
-				add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
-					name: "btnAgregarOpcion"
-					"text": "Agregar Opcion"
-					"font": new java.awt.Font( "Segoe UI", 1, 20 )
-					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAgregarOpcion", true ) )
-				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-					"value": "cell 0 1,aligny center,height 10%!"
-				} )
-				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-					name: "scrollPane2"
-					add( new FormComponent( "javax.swing.JList" ) {
-						name: "list"
-						"visibleRowCount": 4
-						"layoutOrientation": 2
-						"selectionMode": 0
-						"componentPopupMenu": new FormReference( "popupMenu1" )
-					} )
-				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-					"value": "cell 1 1"
-				} )
-				add( new FormComponent( "javax.swing.JCheckBox" ) {
-					name: "cb"
-					"text": "Encuesta de satisfaccion"
-					"font": new java.awt.Font( "Segoe UI", 1, 15 )
-				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-					"value": "cell 0 2"
-				} )
-				add( new FormComponent( "Componentes.Sweet_Alert.Button" ) {
-					name: "btnAgregar"
-					"text": "Agregar"
-					"colorBackground": new java.awt.Color( 0, 255, 51, 255 )
-					"colorBackground2": new java.awt.Color( 0, 204, 51, 255 )
-					"font": new java.awt.Font( "Segoe UI", 1, 18 )
-					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAgregar", true ) )
-				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-					"value": "cell 0 3 2 1,height 10%!"
-				} )
-			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 1"
-			} )
-			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
-				"$layoutConstraints": "fill"
 				"$columnConstraints": "[fill]"
 				"$rowConstraints": "[][][][]"
 			} ) {
@@ -118,7 +55,7 @@ new FormModel {
 					"value": "cell 0 2"
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 1 1"
+				"value": "cell 0 1, spanx"
 			} )
 			add( new FormComponent( "vista.paneles.pnlCRUD" ) {
 				name: "p"
@@ -127,18 +64,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 690, 390 )
-		} )
-		add( new FormContainer( "javax.swing.JPopupMenu", new FormLayoutManager( class javax.swing.JPopupMenu ) ) {
-			name: "popupMenu1"
-			add( new FormComponent( "javax.swing.JMenuItem" ) {
-				name: "btnEliminar"
-				"text": "Eliminar"
-				"icon": new com.jformdesigner.model.SwingIcon( 0, "/img/delete.png" )
-				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEliminar", true ) )
-			} )
-		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 35, 390 )
+			"size": new java.awt.Dimension( 690, 460 )
 		} )
 		add( new FormContainer( "javax.swing.JPopupMenu", new FormLayoutManager( class javax.swing.JPopupMenu ) ) {
 			name: "popupMenu2"
@@ -148,7 +74,7 @@ new FormModel {
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEliminarRespuesta", true ) )
 			} )
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 215, 400 )
+			"location": new java.awt.Point( 715, 260 )
 		} )
 	}
 }

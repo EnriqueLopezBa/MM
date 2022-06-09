@@ -2,6 +2,7 @@ package idao;
 
 import java.util.ArrayList;
 import modelo.Proveedor;
+import modelo.ProveedorAdeudo;
 
 /**
  *
@@ -11,5 +12,7 @@ public interface IProveedorDAO extends CRUD<Proveedor> {
 
 
     Proveedor obtenerByLast();
+    ArrayList<ProveedorAdeudo> obtenerProveedoresConEventos();
+    Object obtenerTotalCotizacionByIDEventoAndIDNegocio(int idEvent, int idNegocio);
  
 }
